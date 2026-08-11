@@ -14,12 +14,13 @@ public class Medicamento {
     private String categoriaTerapeutica;
     private LocalDateTime atualizadoEm;
     private UUID idFornecedor;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public Medicamento() {
     }
 
-    public Medicamento(UUID idMedicamento, String nome, double doseMl, String principioAtivo, int carenciaIndicada, String categoriaTerapeutica, LocalDateTime atualizadoEm, UUID idFornecedor) {
+    public Medicamento(UUID idMedicamento, String nome, double doseMl, String principioAtivo, int carenciaIndicada, String categoriaTerapeutica, LocalDateTime atualizadoEm, UUID idFornecedor, boolean ativo) {
         this.idMedicamento = idMedicamento;
         this.nome = nome;
         this.doseMl = doseMl;
@@ -28,6 +29,7 @@ public class Medicamento {
         this.categoriaTerapeutica = categoriaTerapeutica;
         this.atualizadoEm = atualizadoEm;
         this.idFornecedor = idFornecedor;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -61,6 +63,10 @@ public class Medicamento {
 
     public UUID getIdFornecedor() {
         return idFornecedor;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

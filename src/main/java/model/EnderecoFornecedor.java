@@ -13,12 +13,13 @@ public class EnderecoFornecedor {
     private String estado;
     private String cidade;
     private UUID idFornecedor;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public EnderecoFornecedor() {
     }
 
-    public EnderecoFornecedor(int numero, String observacoes, LocalDateTime atualizadoEm, String bairro, String estado, String cidade, UUID idFornecedor) {
+    public EnderecoFornecedor(int numero, String observacoes, LocalDateTime atualizadoEm, String bairro, String estado, String cidade, UUID idFornecedor, boolean ativo) {
         this.numero = numero;
         this.observacoes = observacoes;
         this.atualizadoEm = atualizadoEm;
@@ -26,6 +27,7 @@ public class EnderecoFornecedor {
         this.estado = estado;
         this.cidade = cidade;
         this.idFornecedor = idFornecedor;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -55,6 +57,10 @@ public class EnderecoFornecedor {
 
     public UUID getIdFornecedor() {
         return idFornecedor;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

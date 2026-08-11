@@ -17,12 +17,13 @@ public class EstoqueMedicamento {
     private int qtdDisponivel;
     private LocalDateTime atualizadoEm;
     private UUID idMedicamento;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public EstoqueMedicamento() {
     }
 
-    public EstoqueMedicamento(UUID idEstoqueMedicamento, LocalDate dataValidade, String status, String localArmazenamento, LocalDate dataFabricacao, String loteFabricacao, LocalDate dataEntrega, int qtdDisponivel, LocalDateTime atualizadoEm, UUID idMedicamento) {
+    public EstoqueMedicamento(UUID idEstoqueMedicamento, LocalDate dataValidade, String status, String localArmazenamento, LocalDate dataFabricacao, String loteFabricacao, LocalDate dataEntrega, int qtdDisponivel, LocalDateTime atualizadoEm, UUID idMedicamento, boolean ativo) {
         this.idEstoqueMedicamento = idEstoqueMedicamento;
         this.dataValidade = dataValidade;
         this.status = status;
@@ -33,6 +34,7 @@ public class EstoqueMedicamento {
         this.qtdDisponivel = qtdDisponivel;
         this.atualizadoEm = atualizadoEm;
         this.idMedicamento = idMedicamento;
+        this.ativo = ativo;
     }
 
     //  METODOS GETTERS
@@ -75,6 +77,12 @@ public class EstoqueMedicamento {
     public UUID getIdMedicamento() {
         return idMedicamento;
     }
+
+    public boolean getAtivo() {
+        return ativo;
+    }
+
+
 
     // METODOS SETTERS
     public void setQtdDisponivel(int qtdDisponivel) {

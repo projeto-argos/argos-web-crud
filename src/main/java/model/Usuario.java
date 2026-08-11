@@ -14,12 +14,13 @@ public class Usuario {
     private String cnpj;
     private String cargo;
     private LocalDateTime atualizadoEm;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public Usuario() {
     }
 
-    public Usuario(UUID idUsuario, String telefone, String nome, String cpf, String email, String cnpj, String cargo, LocalDateTime atualizadoEm) {
+    public Usuario(UUID idUsuario, String telefone, String nome, String cpf, String email, String cnpj, String cargo, LocalDateTime atualizadoEm, boolean ativo) {
         this.idUsuario = idUsuario;
         this.telefone = telefone;
         this.nome = nome;
@@ -28,6 +29,7 @@ public class Usuario {
         this.cnpj = cnpj;
         this.cargo = cargo;
         this.atualizadoEm = atualizadoEm;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -61,6 +63,10 @@ public class Usuario {
 
     public LocalDateTime getAtualizadoEm() {
         return atualizadoEm;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

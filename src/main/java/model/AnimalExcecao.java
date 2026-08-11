@@ -14,12 +14,13 @@ public class AnimalExcecao {
     private int brinco;
     private LocalDateTime atualizadoEm;
     private UUID idLote;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public AnimalExcecao() {
     }
 
-    public AnimalExcecao(UUID idAnimal, double peso, LocalDate dataNascimento, String observacoes, int brinco, LocalDateTime atualizadoEm, UUID idLote) {
+    public AnimalExcecao(UUID idAnimal, double peso, LocalDate dataNascimento, String observacoes, int brinco, LocalDateTime atualizadoEm, UUID idLote, boolean ativo) {
         this.idAnimal = idAnimal;
         this.peso = peso;
         this.dataNascimento = dataNascimento;
@@ -27,6 +28,7 @@ public class AnimalExcecao {
         this.brinco = brinco;
         this.atualizadoEm = atualizadoEm;
         this.idLote = idLote;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -56,6 +58,10 @@ public class AnimalExcecao {
 
     public UUID getIdLote() {
         return idLote;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

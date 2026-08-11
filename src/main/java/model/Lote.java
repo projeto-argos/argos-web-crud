@@ -10,6 +10,8 @@ public class Lote {
     private String categoria;
     private LocalDateTime atualizadoEm;
     private UUID idRebanho;
+    private boolean ativo;
+    private int qtdCabecas;
 
     // METODOS CONSTRUTORES
 
@@ -17,11 +19,13 @@ public class Lote {
     public Lote() {
     }
 
-    public Lote(UUID idLote, String categoria, LocalDateTime atualizadoEm, UUID idRebanho) {
+    public Lote(UUID idLote, String categoria, LocalDateTime atualizadoEm, UUID idRebanho, boolean ativo, int qtdCabecas) {
         this.idLote = idLote;
         this.categoria = categoria;
         this.atualizadoEm = atualizadoEm;
         this.idRebanho = idRebanho;
+        this.ativo = ativo;
+        this.qtdCabecas = qtdCabecas;
     }
 
     // METODOS GETTERS
@@ -40,6 +44,16 @@ public class Lote {
     public UUID getIdRebanho() {
         return idRebanho;
     }
+
+    public boolean getAtivo() {
+        return ativo;
+    }
+
+    public int getQtdCabecas() {
+        return qtdCabecas;
+    }
+
+
 
     // METODOS SETTERS
     public void setCategoria(String categoria) {

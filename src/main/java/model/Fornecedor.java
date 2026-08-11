@@ -12,18 +12,20 @@ public class Fornecedor {
     private String telefone;
     private String email;
     private LocalDateTime atualizadoEm;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public Fornecedor() {
     }
 
-    public Fornecedor(UUID idFornecedor, String cnpj, String nome, String telefone, String email, LocalDateTime atualizadoEm) {
+    public Fornecedor(UUID idFornecedor, String cnpj, String nome, String telefone, String email, LocalDateTime atualizadoEm, boolean ativo) {
         this.idFornecedor = idFornecedor;
         this.cnpj = cnpj;
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.atualizadoEm = atualizadoEm;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -49,6 +51,10 @@ public class Fornecedor {
 
     public LocalDateTime getAtualizadoEm() {
         return atualizadoEm;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

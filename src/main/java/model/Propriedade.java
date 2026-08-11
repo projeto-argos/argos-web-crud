@@ -11,17 +11,19 @@ public class Propriedade {
     private String telefone;
     private String nome;
     private UUID idUsuario;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public Propriedade() {
     }
 
-    public Propriedade(UUID idPropriedade, LocalDateTime atualizadoEm, String telefone, String nome, UUID idUsuario) {
+    public Propriedade(UUID idPropriedade, LocalDateTime atualizadoEm, String telefone, String nome, UUID idUsuario, boolean ativo) {
         this.idPropriedade = idPropriedade;
         this.atualizadoEm = atualizadoEm;
         this.telefone = telefone;
         this.nome = nome;
         this.idUsuario = idUsuario;
+        this.ativo = ativo;
     }
 
 
@@ -44,6 +46,10 @@ public class Propriedade {
 
     public UUID getIdUsuario() {
         return idUsuario;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

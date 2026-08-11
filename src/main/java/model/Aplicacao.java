@@ -17,12 +17,13 @@ public class Aplicacao {
     private UUID idAnimal;
     private UUID idMedicamento;
     private UUID idEstoqueMedicamento;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public Aplicacao() {
     }
 
-    public Aplicacao(UUID idAplicacao, double doseAplicada, String membroAplicacao, String objetivo, LocalDateTime dataHora, String localAplicacao, String observacoes, LocalDateTime atualizadoEm, UUID idAnimal, UUID idMedicamento, UUID idEstoqueMedicamento) {
+    public Aplicacao(UUID idAplicacao, double doseAplicada, String membroAplicacao, String objetivo, LocalDateTime dataHora, String localAplicacao, String observacoes, LocalDateTime atualizadoEm, UUID idAnimal, UUID idMedicamento, UUID idEstoqueMedicamento, boolean ativo) {
         this.idAplicacao = idAplicacao;
         this.doseAplicada = doseAplicada;
         this.membroAplicacao = membroAplicacao;
@@ -34,6 +35,7 @@ public class Aplicacao {
         this.idAnimal = idAnimal;
         this.idMedicamento = idMedicamento;
         this.idEstoqueMedicamento = idEstoqueMedicamento;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -80,6 +82,10 @@ public class Aplicacao {
 
     public UUID getIdEstoqueMedicamento() {
         return idEstoqueMedicamento;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

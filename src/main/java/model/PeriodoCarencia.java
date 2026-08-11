@@ -12,17 +12,19 @@ public class PeriodoCarencia {
     private LocalDate dataFimCarencia;
     private LocalDateTime atualizadoEm;
     private UUID idAnimal;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public PeriodoCarencia() {
     }
 
-    public PeriodoCarencia(UUID idCarencia, boolean liberadoParaAbate, LocalDate dataFimCarencia, LocalDateTime atualizadoEm, UUID idAnimal) {
+    public PeriodoCarencia(UUID idCarencia, boolean liberadoParaAbate, LocalDate dataFimCarencia, LocalDateTime atualizadoEm, UUID idAnimal, boolean ativo) {
         this.idCarencia = idCarencia;
         this.liberadoParaAbate = liberadoParaAbate;
         this.dataFimCarencia = dataFimCarencia;
         this.atualizadoEm = atualizadoEm;
         this.idAnimal = idAnimal;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -45,6 +47,10 @@ public class PeriodoCarencia {
 
     public UUID getIdAnimal() {
         return idAnimal;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

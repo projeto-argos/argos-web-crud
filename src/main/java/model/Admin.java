@@ -7,16 +7,18 @@ public class Admin {
     private String nome;
     private String email;
     private String telefone;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
 
     public Admin() {
     }
-    public Admin(String cpf, String nome, String email, String telefone) {
+    public Admin(String cpf, String nome, String email, String telefone, boolean ativo) {
         this.cpf = cpf;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -34,6 +36,10 @@ public class Admin {
 
     public String getTelefone() {
         return telefone;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

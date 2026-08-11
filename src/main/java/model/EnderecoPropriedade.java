@@ -13,12 +13,13 @@ public class EnderecoPropriedade {
     private String estado;
     private LocalDateTime atualizadoEm;
     private UUID idPropriedade;
+    private boolean ativo;
 
     // METODOS CONSTRUTORES
     public EnderecoPropriedade() {
     }
 
-    public EnderecoPropriedade(String bairro, String observacoes, int numero, String cidade, String estado, LocalDateTime atualizadoEm, UUID idPropriedade) {
+    public EnderecoPropriedade(String bairro, String observacoes, int numero, String cidade, String estado, LocalDateTime atualizadoEm, UUID idPropriedade, boolean ativo) {
         this.bairro = bairro;
         this.observacoes = observacoes;
         this.numero = numero;
@@ -26,6 +27,7 @@ public class EnderecoPropriedade {
         this.estado = estado;
         this.atualizadoEm = atualizadoEm;
         this.idPropriedade = idPropriedade;
+        this.ativo = ativo;
     }
 
     // METODOS GETTERS
@@ -55,6 +57,10 @@ public class EnderecoPropriedade {
 
     public UUID getIdPropriedade() {
         return idPropriedade;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
     }
 
     // METODOS SETTERS

@@ -12,18 +12,23 @@ public class Rebanho {
     private String nome;
     private LocalDateTime atualizadoEm;
     private UUID idPropriedade;
+    private boolean ativo;
+    private int qtdCabecas;
 
     // METODOS CONSTRUTORES
     public Rebanho() {
     }
 
-    public Rebanho(UUID idRebanho, String raca, String finalidade, String nome, LocalDateTime atualizadoEm, UUID idPropriedade) {
+    public Rebanho(UUID idRebanho, String raca, String finalidade, String nome, LocalDateTime atualizadoEm, UUID idPropriedade, boolean ativo, int qtdCabecas) {
         this.idRebanho = idRebanho;
         this.raca = raca;
         this.finalidade = finalidade;
         this.nome = nome;
         this.atualizadoEm = atualizadoEm;
         this.idPropriedade = idPropriedade;
+        this.ativo = ativo;
+        this.qtdCabecas = qtdCabecas;
+
     }
 
     // METODOS GETTERS
@@ -49,6 +54,14 @@ public class Rebanho {
 
     public UUID getIdPropriedade() {
         return idPropriedade;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
+    }
+
+    public int getQtdCabecas() {
+        return qtdCabecas;
     }
 
     // METODOS SETTERS
