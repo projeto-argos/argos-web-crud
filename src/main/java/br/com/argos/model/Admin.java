@@ -1,4 +1,4 @@
-package model;
+package br.com.argos.model;
 
 public class Admin {
 
