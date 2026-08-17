@@ -11,7 +11,6 @@ Aplicação web do projeto interdisciplinar ARGOS, desenvolvida em Java com Mave
 - PostgreSQL
 - HTML
 - CSS
-- JavaScript
 
 ## Arquitetura
 
@@ -30,7 +29,6 @@ src/
     └── webapp/
         ├── assets/
         │   ├── css/
-        │   ├── js/
         │   └── img/
         └── WEB-INF/
 ```
