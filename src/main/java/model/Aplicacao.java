@@ -94,6 +94,8 @@ public class Aplicacao {
         this.observacoes = observacoes;
     }
 
+
+
     // SAIDA FORMATADA
     @Override
     public String toString(){

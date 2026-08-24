@@ -42,6 +42,10 @@ public class Admin {
         return ativo;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
     // METODOS SETTERS
 
     public void setNome(String nome) {
@@ -54,6 +58,14 @@ public class Admin {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     // SAIDA FORMATADA

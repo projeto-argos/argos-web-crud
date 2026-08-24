@@ -57,6 +57,10 @@ public class Fornecedor {
         return ativo;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
     // METODOS SETTERS
 
     public void setEmail(String email) {
@@ -69,6 +73,22 @@ public class Fornecedor {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void setIdFornecedor(UUID idFornecedor) {
+        this.idFornecedor = idFornecedor;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 
     // SAIDA FORMATADA

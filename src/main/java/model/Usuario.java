@@ -69,6 +69,10 @@ public class Usuario {
         return ativo;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
     // METODOS SETTERS
 
     public void setTelefone(String telefone) {
@@ -85,6 +89,26 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public void setIdUsuario(UUID idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 
     // SAIDA FORMATADA

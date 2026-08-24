@@ -3,6 +3,7 @@ package dao;
 import br.com.argos.connection.ConnectionFactory;
 import model.Aplicacao;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -109,28 +110,32 @@ public class AplicacaoDAO {
     }
 
     private Aplicacao mapearAplicacao(ResultSet rs) throws SQLException {
-        Aplicacao aplicacao = new Aplicacao();
-        aplicacao.setIdAplicacao(rs.getObject("id_aplicacao", UUID.class));
-        aplicacao.setDoseAplicada(rs.getDouble("dose_aplicada"));
-        aplicacao.setMembroAplicacao(rs.getString("membro_aplicacao"));
-        aplicacao.setObjetivo(rs.getString("objetivo"));
-        aplicacao.setLocalAplicacao(rs.getString("local_aplicacao"));
-        aplicacao.setObservacoes(rs.getString("observacoes"));
-        aplicacao.setAtivo(rs.getBoolean("ativo"));
-        aplicacao.setIdAnimal(rs.getObject("id_animal", UUID.class));
-        aplicacao.setIdMedicamento(rs.getObject("id_medicamento", UUID.class));
-        aplicacao.setIdEstoqueMedicamento(rs.getObject("id_estoque_medicamento", UUID.class));
+        UUID idAplicacao = rs.getObject("id_aplicacao", UUID.class);
+        double doseAplicada = rs.getDouble("dose_aplicada");
+        String membroAplicacao = rs.getString("membro_aplicacao");
+        String objetivo = rs.getString("objetivo");
+        String localAplicacao = rs.getString("local_aplicacao");
+        String observacoes = rs.getString("observacoes");
+        UUID idAnimal = rs.getObject("id_animal", UUID.class);
+        UUID idMedicamento = rs.getObject("id_medicamento", UUID.class);
+        UUID idEstoqueMedicamento = rs.getObject("id_estoque_medicamento", UUID.class);
+        boolean ativo = rs.getBoolean("ativo");
 
-        Timestamp dataHora = rs.getTimestamp("data_hora");
-        if (dataHora != null) {
-            aplicacao.setDataHora(dataHora.toLocalDateTime());
+        LocalDateTime dataHora = null;
+        Timestamp tsDataHora = rs.getTimestamp("data_hora");
+        if (tsDataHora != null) {
+            dataHora = tsDataHora.toLocalDateTime();
         }
 
-        Timestamp atualizadoEm = rs.getTimestamp("atualizado_em");
-        if (atualizadoEm != null) {
-            aplicacao.setAtualizadoEm(atualizadoEm.toLocalDateTime());
+        LocalDateTime atualizadoEm = null;
+        Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+        if (tsAtualizadoEm != null) {
+            atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        return aplicacao;
+        // A ORDEM aqui precisa bater EXATAMENTE com a ordem do construtor no Model
+        return new Aplicacao(idAplicacao, doseAplicada, membroAplicacao, objetivo, dataHora,
+                localAplicacao, observacoes, atualizadoEm, idAnimal, idMedicamento,
+                idEstoqueMedicamento, ativo);
     }
 }

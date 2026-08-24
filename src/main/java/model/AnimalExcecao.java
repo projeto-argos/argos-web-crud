@@ -64,6 +64,10 @@ public class AnimalExcecao {
         return ativo;
     }
 
+    public boolean isAtivo() {
+        return ativo;
+    }
+
     // METODOS SETTERS
 
 
@@ -73,6 +77,10 @@ public class AnimalExcecao {
 
     public void setPeso(double peso) {
         this.peso = peso;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 
     // SAIDA FORMATADA
