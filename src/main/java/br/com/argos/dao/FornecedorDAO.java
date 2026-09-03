@@ -1,10 +1,11 @@
-package dao;
+package br.com.argos.dao;
 
 //IMPORTS
 
-import model.Fornecedor;
+import br.com.argos.model.Fornecedor;
 import br.com.argos.connection.ConnectionFactory;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class FornecedorDAO {
             stmt.setBoolean(5, fornecedor.isAtivo());
 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao inserir fornecedor no banco: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -63,7 +67,13 @@ public class FornecedorDAO {
             while (rs.next()) {
                 fornecedores.add(mapearFornecedor(rs));
             }
+
+        } catch (SQLException e) {
+        System.err.println("Erro ao listar fornecedores: " + e.getMessage());
+        e.printStackTrace(); // imprime a exception inteira
+        throw e;
         }
+
         return fornecedores;
     }
 
@@ -84,6 +94,9 @@ public class FornecedorDAO {
             stmt.setObject(6, fornecedor.getIdFornecedor());
 
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar fornecedor no banco: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -96,22 +109,29 @@ public class FornecedorDAO {
 
             stmt.setObject(1, id);
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao deletar fornecedor no banco: " + e.getMessage());
+            throw e;
         }
     }
 
     private Fornecedor mapearFornecedor(ResultSet rs) throws SQLException {
-        Fornecedor fornecedor = new Fornecedor();
-        fornecedor.setIdFornecedor(rs.getObject("id_fornecedor", UUID.class));
-        fornecedor.setCnpj(rs.getString("cnpj"));
-        fornecedor.setNome(rs.getString("nome"));
-        fornecedor.setTelefone(rs.getString("telefone"));
-        fornecedor.setEmail(rs.getString("email"));
-        fornecedor.setAtivo(rs.getBoolean("ativo"));
-        Timestamp timestamp = rs.getTimestamp("atualizado_em");
-        if (timestamp != null){
-            fornecedor.setAtualizadoEm(timestamp.toLocalDateTime());
+        UUID idFornecedor = rs.getObject("id_fornecedor", UUID.class);
+        String cnpj = rs.getString("cnpj");
+        String nome = rs.getString("nome");
+        String telefone = rs.getString("telefone");
+        String email = rs.getString("email");
+
+        LocalDateTime atualizadoEm = null;
+        Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+        if (tsAtualizadoEm != null) {
+            atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        return fornecedor;
+        boolean ativo = rs.getBoolean("ativo");
+
+//         A ordem precisa bater exatamente com a ordem do construtor no Model
+        return new Fornecedor(idFornecedor, cnpj, nome, telefone, email,
+                atualizadoEm, ativo);
     }
 }

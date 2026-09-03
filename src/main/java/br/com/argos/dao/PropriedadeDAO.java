@@ -1,10 +1,11 @@
-package dao;
+package br.com.argos.dao;
 
 //IMPORTS
 
-import model.Propriedade;
+import br.com.argos.model.Propriedade;
 import br.com.argos.connection.ConnectionFactory;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -65,7 +66,12 @@ public class PropriedadeDAO {
             while (rs.next()) {
                 propriedades.add(mapearPropriedade(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar propriedade: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return propriedades;
     }
 
@@ -106,18 +112,21 @@ public class PropriedadeDAO {
     }
 
     private Propriedade mapearPropriedade(ResultSet rs) throws SQLException {
-        Propriedade propriedade = new Propriedade();
-        propriedade.setIdPropriedade(rs.getObject("id_propriedade", UUID.class));
-        propriedade.setIdUsuario(rs.getObject("id_usuario", UUID.class));
-        propriedade.setNome(rs.getString("nome"));
-        propriedade.setTelefone(rs.getString("telefone"));
-        propriedade.setAtivo(rs.getBoolean("ativo"));
-        Timestamp timestamp = rs.getTimestamp("atualizado_em");
-        if (timestamp != null){
-            propriedade.setAtualizadoEm(timestamp.toLocalDateTime());
+        UUID idPropriedade = rs.getObject("id_propriedade", UUID.class);
+
+        LocalDateTime atualizadoEm = null;
+        Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+        if (tsAtualizadoEm != null) {
+            atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        return propriedade;
+        String telefone = rs.getString("telefone");
+        String nome = rs.getString("nome");
+        UUID idUsuario = rs.getObject("id_usuario", UUID.class);
+        boolean ativo = rs.getBoolean("ativo");
+
+        //A ordem precisa bater exatamente com a ordem do construtor no Model
+        return new Propriedade(idPropriedade, atualizadoEm, telefone, nome, idUsuario, ativo);
     }
 
 }

@@ -59,7 +59,7 @@ public class EnderecoPropriedade {
         return idPropriedade;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

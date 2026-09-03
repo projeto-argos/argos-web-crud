@@ -45,7 +45,7 @@ public class Lote {
         return idRebanho;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

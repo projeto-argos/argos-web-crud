@@ -1,10 +1,11 @@
-package dao;
+package br.com.argos.dao;
 
 //  IMPORTS
 
-import model.Rebanho;
+import br.com.argos.model.Rebanho;
 import br.com.argos.connection.ConnectionFactory;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -69,7 +70,12 @@ public class RebanhoDAO {
             while (rs.next()) {
                 rebanhos.add(mapearRebanho(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar rebanho: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return rebanhos;
     }
 
@@ -115,20 +121,23 @@ public class RebanhoDAO {
     //    MAPEAR REBANHO
 
     private Rebanho mapearRebanho(ResultSet rs) throws SQLException {
-        Rebanho rebanho = new Rebanho();
-        rebanho.setIdRebanho(rs.getObject("id_rebanho", UUID.class));
-        rebanho.setIdPropriedade(rs.getObject("id_propriedade", UUID.class));
-        rebanho.setNome(rs.getString("nome"));
-        rebanho.setRaca(rs.getString("raca"));
-        rebanho.setAtivo(rs.getBoolean("ativo"));
-        rebanho.setFinalidade(rs.getString("finalidade"));
-        rebanho.setQtdCabecas(rs.getInt("qtd_cabecas"));
+        UUID idRebanho = rs.getObject("id_rebanho", UUID.class);
+        String raca = rs.getString("raca");
+        String finalidade = rs.getString("finalidade");
+        String nome = rs.getString("nome");
 
-        Timestamp timestamp = rs.getTimestamp("atualizado_em");
-        if (timestamp != null){
-            rebanho.setAtualizadoEm(timestamp.toLocalDateTime());
+        LocalDateTime atualizadoEm = null;
+        Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+        if (tsAtualizadoEm != null) {
+            atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        return rebanho;
+        UUID idPropriedade = rs.getObject("id_propriedade", UUID.class);
+        boolean ativo = rs.getBoolean("ativo");
+        int qtdCabecas = rs.getInt("qtd_cabecas");
+
+        // A ordem precisa bater exatamente com a ordem do construtor no Model
+        return new Rebanho(idRebanho, raca, finalidade, nome, atualizadoEm,
+                idPropriedade, ativo, qtdCabecas);
     }
 }

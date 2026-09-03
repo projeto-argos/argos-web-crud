@@ -48,7 +48,7 @@ public class Propriedade {
         return idUsuario;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

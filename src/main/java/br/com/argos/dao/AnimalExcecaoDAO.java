@@ -1,10 +1,13 @@
-package dao;
+package br.com.argos.dao;
 
 //IMPORTS
 
 import br.com.argos.connection.ConnectionFactory;
-import model.AnimalExcecao;
+import br.com.argos.model.AnimalExcecao;
+
+import java.time.LocalDate;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -67,7 +70,12 @@ public class AnimalExcecaoDAO {
             while (rs.next()) {
                 animalExcecaos.add(mapearAnimal(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar animal exceção: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return animalExcecaos;
     }
 
@@ -110,25 +118,30 @@ public class AnimalExcecaoDAO {
     }
 
 //    MAPEAR ANIMAL
-    private AnimalExcecao mapearAnimal(ResultSet rs) throws SQLException {
-        AnimalExcecao animalExcecao = new AnimalExcecao();
-        animalExcecao.setIdAnimal(rs.getObject("id_animal", UUID.class));
-        animalExcecao.setIdLote(rs.getObject("id_lote", UUID.class));
-        animalExcecao.setPeso(rs.getDouble("peso"));
-        animalExcecao.setBrinco(rs.getInt("brinco"));
-        animalExcecao.setAtivo(rs.getBoolean("ativo"));
-        animalExcecao.setObservacoes(rs.getString("observacoes"));
+private AnimalExcecao mapearAnimal(ResultSet rs) throws SQLException {
+    UUID idAnimal = rs.getObject("id_animal", UUID.class);
+    double peso = rs.getDouble("peso");
 
-        Date dataNascimento = rs.getDate("data_nascimento");
-        if (dataNascimento != null) {
-            animalExcecao.setDataNascimento(dataNascimento.toLocalDate());
-        }
-
-        Timestamp timestamp = rs.getTimestamp("atualizado_em");
-        if (timestamp != null){
-            animalExcecao.setAtualizadoEm(timestamp.toLocalDateTime());
-        }
-
-        return animalExcecao;
+    LocalDate dataNascimento = null;
+    Date dtDataNascimento = rs.getDate("data_nascimento");
+    if (dtDataNascimento != null) {
+        dataNascimento = dtDataNascimento.toLocalDate();
     }
+
+    String observacoes = rs.getString("observacoes");
+    int brinco = rs.getInt("brinco");
+
+    LocalDateTime atualizadoEm = null;
+    Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+    if (tsAtualizadoEm != null) {
+        atualizadoEm = tsAtualizadoEm.toLocalDateTime();
+    }
+
+    UUID idLote = rs.getObject("id_lote", UUID.class);
+    boolean ativo = rs.getBoolean("ativo");
+
+    // Lembrar --> A ordem precisa bater exatamente com a ordem do construtor no Model
+    return new AnimalExcecao(idAnimal, peso, dataNascimento, observacoes, brinco,
+            atualizadoEm, idLote, ativo);
+}
 }

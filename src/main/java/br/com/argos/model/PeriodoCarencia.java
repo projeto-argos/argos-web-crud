@@ -49,7 +49,7 @@ public class PeriodoCarencia {
         return idAnimal;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

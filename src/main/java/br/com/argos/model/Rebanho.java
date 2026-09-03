@@ -56,7 +56,7 @@ public class Rebanho {
         return idPropriedade;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

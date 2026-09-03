@@ -65,7 +65,7 @@ public class Usuario {
         return atualizadoEm;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

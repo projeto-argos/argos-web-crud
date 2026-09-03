@@ -1,8 +1,8 @@
-package dao;
+package br.com.argos.dao;
 
 //IMPORTS
 
-import model.Admin;
+import br.com.argos.model.Admin;
 import br.com.argos.connection.ConnectionFactory;
 
 import java.sql.*;
@@ -59,7 +59,12 @@ public class AdminDAO {
             while (rs.next()) {
                 administradores.add(mapearAdmin(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar admin: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return administradores;
     }
 
@@ -98,12 +103,13 @@ public class AdminDAO {
     }
 
     private Admin mapearAdmin(ResultSet rs) throws SQLException {
-        Admin admin = new Admin();
-        admin.setCpf(rs.getString("cpf"));
-        admin.setNome(rs.getString("nome"));
-        admin.setTelefone(rs.getString("telefone"));
-        admin.setEmail(rs.getString("email"));
-        admin.setAtivo(rs.getBoolean("ativo"));
-        return admin;
+        String cpf = rs.getString("cpf");
+        String nome = rs.getString("nome");
+        String email = rs.getString("email");
+        String telefone = rs.getString("telefone");
+        boolean ativo = rs.getBoolean("ativo");
+
+        // Lembrar --> A ordem precisa bater exatamente com a ordem do construtor no Model
+        return new Admin(cpf, nome, email, telefone, ativo);
     }
 }

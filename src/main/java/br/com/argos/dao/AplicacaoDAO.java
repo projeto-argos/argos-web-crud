@@ -1,7 +1,7 @@
-package dao;
+package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
-import model.Aplicacao;
+import br.com.argos.model.Aplicacao;
 import java.util.UUID;
 import java.time.LocalDateTime;
 
@@ -66,7 +66,12 @@ public class AplicacaoDAO {
             while (rs.next()) {
                 aplicacoes.add(mapearAplicacao(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar aplicação: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return aplicacoes;
     }
 
@@ -133,7 +138,7 @@ public class AplicacaoDAO {
             atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        // A ORDEM aqui precisa bater EXATAMENTE com a ordem do construtor no Model
+        // Lembrar --> A ordem precisa bater exatamente com a ordem do construtor no Model
         return new Aplicacao(idAplicacao, doseAplicada, membroAplicacao, objetivo, dataHora,
                 localAplicacao, observacoes, atualizadoEm, idAnimal, idMedicamento,
                 idEstoqueMedicamento, ativo);

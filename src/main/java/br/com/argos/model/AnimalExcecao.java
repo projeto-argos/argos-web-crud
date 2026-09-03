@@ -60,7 +60,7 @@ public class AnimalExcecao {
         return idLote;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

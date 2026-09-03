@@ -1,9 +1,10 @@
-package dao;
+package br.com.argos.dao;
 
 //IMPORTS
 
-import model.Usuario;
+import br.com.argos.model.Usuario;
 import br.com.argos.connection.ConnectionFactory;
+import java.time.LocalDateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -62,7 +63,12 @@ public class UsuarioDAO {
             while (rs.next()) {
                 usuarios.add(mapearUsuario(rs));
             }
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar usuário: " + e.getMessage());
+            e.printStackTrace(); // imprime a exception inteira
+            throw e;
         }
+
         return usuarios;
     }
 
@@ -104,20 +110,24 @@ public class UsuarioDAO {
     }
 
     private Usuario mapearUsuario(ResultSet rs) throws SQLException {
-        Usuario u = new Usuario();
-        u.setIdUsuario(rs.getObject("id_usuario", UUID.class));
-        u.setCnpj(rs.getString("cnpj"));
-        u.setNome(rs.getString("nome"));
-        u.setTelefone(rs.getString("telefone"));
-        u.setEmail(rs.getString("email"));
-        u.setCpf(rs.getString("cpf"));
-        u.setCargo(rs.getString("cargo"));
-        u.setAtivo(rs.getBoolean("ativo"));
-        Timestamp timestamp = rs.getTimestamp("atualizado_em");
-        if (timestamp != null){
-            u.setAtualizadoEm(timestamp.toLocalDateTime());
+        UUID idUsuario = rs.getObject("id_usuario", UUID.class);
+        String telefone = rs.getString("telefone");
+        String nome = rs.getString("nome");
+        String cpf = rs.getString("cpf");
+        String email = rs.getString("email");
+        String cnpj = rs.getString("cnpj");
+        String cargo = rs.getString("cargo");
+
+        LocalDateTime atualizadoEm = null;
+        Timestamp tsAtualizadoEm = rs.getTimestamp("atualizado_em");
+        if (tsAtualizadoEm != null) {
+            atualizadoEm = tsAtualizadoEm.toLocalDateTime();
         }
 
-        return u;
+        boolean ativo = rs.getBoolean("ativo");
+
+        // A ordem precisa bater exatamente com a ordem do construtor no Model
+        return new Usuario(idUsuario, telefone, nome, cpf, email, cnpj, cargo,
+                atualizadoEm, ativo);
     }
 }
