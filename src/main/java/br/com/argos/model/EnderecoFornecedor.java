@@ -59,7 +59,7 @@ public class EnderecoFornecedor {
         return idFornecedor;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

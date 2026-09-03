@@ -24,14 +24,16 @@ hs_err_pid*
 replay_pid*
 
 # Maven
-target/
+/target/
 
 # IntelliJ IDEA
-.idea/
+/.idea/
 *.iml
-out/
+/out/
 
-# Variáveis de ambiente
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# .env
 .env
-.env.*
-!.env.example

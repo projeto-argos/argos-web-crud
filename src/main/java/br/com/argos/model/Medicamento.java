@@ -65,7 +65,7 @@ public class Medicamento {
         return idFornecedor;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

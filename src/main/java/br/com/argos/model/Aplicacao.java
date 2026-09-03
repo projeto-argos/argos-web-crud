@@ -84,7 +84,7 @@ public class Aplicacao {
         return idEstoqueMedicamento;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 

@@ -53,7 +53,7 @@ public class Fornecedor {
         return atualizadoEm;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 
@@ -69,6 +69,14 @@ public class Fornecedor {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
 
     // SAIDA FORMATADA

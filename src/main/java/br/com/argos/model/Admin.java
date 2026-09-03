@@ -38,7 +38,7 @@ public class Admin {
         return telefone;
     }
 
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 
