@@ -17,7 +17,7 @@ public class Animal {
     private LocalDate exceptionStartDate; // DATA DE INICIO DA EXCEÇÃO DO ANIMAL
     private LocalDate exceptionEndDate; // DATA DO FIM DA EXCEÇÃO DO ANIMAL
     private LocalDate birthDate; // DATA DE NASCIMENTO DO ANIMAL
-    private LocalDateTime updateAt; // ATUALIZADO EM
+    private LocalDateTime updatedAt; // ATUALIZADO EM
     private boolean active; // ATIVO
     private boolean clearedForSlaughter; // LIBERADO PARA ABATE
 
@@ -25,7 +25,7 @@ public class Animal {
     public Animal() {
     }
 
-    public Animal(UUID idAnimal, UUID batchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updateAt, boolean active, boolean clearedForSlaughter) {
+    public Animal(UUID idAnimal, UUID batchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
         this.idAnimal = idAnimal;
         this.batchId = batchId;
         this.weight = weight;
@@ -35,7 +35,7 @@ public class Animal {
         this.exceptionStartDate = exceptionStartDate;
         this.exceptionEndDate = exceptionEndDate;
         this.birthDate = birthDate;
-        this.updateAt = updateAt;
+        this.updatedAt = updatedAt;
         this.active = active;
         this.clearedForSlaughter = clearedForSlaughter;
     }
@@ -90,8 +90,8 @@ public class Animal {
         return birthDate;
     }
 
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public boolean isActive() {
@@ -140,7 +140,7 @@ public class Animal {
     }
 
     public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
+        this.updatedAt = updatedAt;
     }
 
     public void setActive(boolean active) {
@@ -164,7 +164,7 @@ public class Animal {
                 ", exceptionStartDate=" + exceptionStartDate +
                 ", exceptionEndDate=" + exceptionEndDate +
                 ", birthDate=" + birthDate +
-                ", updateAt=" + updateAt +
+                ", updateAt=" + updatedAt +
                 ", active=" + active +
                 ", clearedForSlaughter=" + clearedForSlaughter +
                 '}';
