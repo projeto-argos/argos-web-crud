@@ -7,16 +7,16 @@ import java.util.UUID;
 public class User {
 
     // ATRIBUTOS
-    private UUID idUser;
-    private String fullName;
-    private String cpf;
-    private String email;
-    private String phone;
-    private String role;
-    private String password;
-    private LocalDate birthDate;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idUser; // ID DO USÚARIO
+    private String fullName; // NOME COMPLETO DO USÚARIO
+    private String cpf; // CPF DO USÚARIO
+    private String email; // EMAIL DO USÚARIO
+    private String phone; // TELEFONE DO USÚARIO
+    private String role; // CARGO DO USÚARIO
+    private String password; // SENHA DO USÚARIO
+    private LocalDate birthDate; // DATA DE NASCIMENTO DO USÚARIO
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
     public User() {
