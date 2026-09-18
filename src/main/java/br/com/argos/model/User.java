@@ -1,47 +1,54 @@
 package br.com.argos.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Admin {
+public class User {
 
     // ATRIBUTOS
-    private UUID idAdmin;
+    private UUID idUser;
     private String fullName;
     private String cpf;
     private String email;
     private String phone;
+    private String role;
     private String password;
+    private LocalDate birthDate;
     private LocalDateTime updatedAt;
     private boolean active;
 
     // MÉTODOS CONSTRUTORES
-    public Admin() {
+    public User() {
     }
 
-    public Admin(UUID idAdmin, String fullName, String cpf, String email, String phone, String password, LocalDateTime updatedAt, boolean active) {
-        this.idAdmin = idAdmin;
+    public User(UUID idUser, String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate, LocalDateTime updatedAt, boolean active) {
+        this.idUser = idUser;
         this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
         this.phone = phone;
+        this.role = role;
         this.password = password;
+        this.birthDate = birthDate;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public Admin(String fullName, String cpf, String email, String phone, String password, boolean active) {
+    public User(String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate, boolean active) {
         this.fullName = fullName;
         this.cpf = cpf;
         this.email = email;
         this.phone = phone;
+        this.role = role;
         this.password = password;
+        this.birthDate = birthDate;
         this.active = active;
     }
 
     // MÉTODOS GETTERS
-    public UUID getIdAdmin() {
-        return idAdmin;
+    public UUID getIdUser() {
+        return idUser;
     }
 
     public String getFullName() {
@@ -60,8 +67,16 @@ public class Admin {
         return phone;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -73,8 +88,8 @@ public class Admin {
     }
 
     // MÉTODOS SETTERS
-    public void setIdAdmin(UUID idAdmin) {
-        this.idAdmin = idAdmin;
+    public void setIdUser(UUID idUser) {
+        this.idUser = idUser;
     }
 
     public void setFullName(String fullName) {
@@ -93,8 +108,16 @@ public class Admin {
         this.phone = phone;
     }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
@@ -105,17 +128,18 @@ public class Admin {
         this.active = active;
     }
 
-    // MÉTODO TO STRING
-
+    // MÉTODO TOSTRING
     @Override
     public String toString() {
-        return "Admin{" +
-                "idAdmin=" + idAdmin +
+        return "User{" +
+                "idUser=" + idUser +
                 ", fullName='" + fullName + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", role='" + role + '\'' +
                 ", password='" + password + '\'' +
+                ", birthDate=" + birthDate +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
