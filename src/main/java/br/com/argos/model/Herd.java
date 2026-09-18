@@ -6,33 +6,36 @@ import java.util.UUID;
 public class Herd {
 
     // ATRIBUTOS
-    private UUID idHerd;
-    private UUID propertyId;
-    private String name;
-    private String breed;
-    private String description;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idHerd; // ID DO REBANHO
+    private UUID propertyId; // ID DA PROPRIEDADE DO REBANHO
+    private Integer originalHeadCount; // QUANTIDADE ORIGINAL DE CABEÇAS DO REBANHO
+    private String name; // NOME DO REBANHO
+    private String breed; // RAÇA DO REBANHO
+    private String  purpose; // FINALIDADE DO REBANHO
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
     public Herd() {
     }
 
-    public Herd(UUID idHerd, UUID propertyId, String name, String breed, String description, LocalDateTime updatedAt, boolean active) {
+    public Herd(UUID idHerd, UUID propertyId, Integer originalHeadCount, String name, String breed, String purpose, LocalDateTime updatedAt, boolean active) {
         this.idHerd = idHerd;
         this.propertyId = propertyId;
+        this.originalHeadCount = originalHeadCount;
         this.name = name;
         this.breed = breed;
-        this.description = description;
+        this.purpose = purpose;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public Herd(UUID propertyId, String name, String breed, String description, boolean active) {
+    public Herd(UUID propertyId, Integer originalHeadCount, String name, String breed, String purpose, boolean active) {
         this.propertyId = propertyId;
+        this.originalHeadCount = originalHeadCount;
         this.name = name;
         this.breed = breed;
-        this.description = description;
+        this.purpose = purpose;
         this.active = active;
     }
 
@@ -45,6 +48,10 @@ public class Herd {
         return propertyId;
     }
 
+    public Integer getOriginalHeadCount() {
+        return originalHeadCount;
+    }
+
     public String getName() {
         return name;
     }
@@ -53,8 +60,8 @@ public class Herd {
         return breed;
     }
 
-    public String getDescription() {
-        return description;
+    public String getPurpose() {
+        return purpose;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -74,6 +81,10 @@ public class Herd {
         this.propertyId = propertyId;
     }
 
+    public void setOriginalHeadCount(Integer originalHeadCount) {
+        this.originalHeadCount = originalHeadCount;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -82,8 +93,8 @@ public class Herd {
         this.breed = breed;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
@@ -100,9 +111,10 @@ public class Herd {
         return "Herd{" +
                 "idHerd=" + idHerd +
                 ", propertyId=" + propertyId +
+                ", originalHeadCount=" + originalHeadCount +
                 ", name='" + name + '\'' +
                 ", breed='" + breed + '\'' +
-                ", description='" + description + '\'' +
+                ", purpose='" + purpose + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
