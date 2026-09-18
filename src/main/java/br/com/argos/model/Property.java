@@ -6,15 +6,15 @@ import java.util.UUID;
 public class Property {
 
     // ATRIBUTOS
-    private UUID idProperty;
-    private UUID userId;
-    private UUID addressId;
-    private String name;
-    private String phone;
-    private String cnpj;
-    private String email;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idProperty; // ID DA PROPRIEDADE
+    private UUID userId; // ID DO USUARIO DA PROPRIEDADE
+    private UUID addressId; // ID DO ENDEREÇO DA PROPRIEDADE
+    private String name; // NOME DA PROPRIEDADE
+    private String phone; // TELEFONE DA PROPRIEDADE
+    private String cnpj; // CNPJ DA PROPRIEDADE
+    private String email; // EMAIL DA PROPRIEDADE
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
     public Property() {
