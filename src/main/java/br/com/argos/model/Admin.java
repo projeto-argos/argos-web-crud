@@ -6,14 +6,14 @@ import java.util.UUID;
 public class Admin {
 
     // ATRIBUTOS
-    private UUID idAdmin;
-    private String fullName;
-    private String cpf;
-    private String email;
-    private String phone;
-    private String password;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idAdmin; // ID DO ADMIN
+    private String fullName; // NOME COMPLETO DO ADMIN
+    private String cpf; // CPF DO ADMIN
+    private String email; // EMAIL DO ADMIN
+    private String phone; // TELEFONE DO ADMIN
+    private String password; // SENHA DO ADMIN
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
     public Admin() {
