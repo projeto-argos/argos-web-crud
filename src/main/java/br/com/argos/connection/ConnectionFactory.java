@@ -9,56 +9,39 @@ import java.util.Properties;
 
 public class ConnectionFactory {
 
-    private static final Properties env = new Properties();
+    private static final Properties ENV = new Properties();
 
     static {
-        try (InputStream input =
-                     ConnectionFactory.class
-                             .getClassLoader()
-                             .getResourceAsStream(".env")) {
+        try (InputStream input = ConnectionFactory.class
+                .getClassLoader()
+                .getResourceAsStream(".env")) {
 
             if (input == null) {
-                throw new RuntimeException(
-                        "Arquivo .env não encontrado no classpath."
-                );
+                throw new RuntimeException("The .env file was not found in resources.");
             }
 
-            env.load(input);
+            ENV.load(input);
 
         } catch (IOException e) {
-            throw new RuntimeException(
-                    "Não foi possível carregar o arquivo .env",
-                    e
-            );
+            throw new RuntimeException("Failed to load .env file.", e);
         }
 
-        // Força o carregamento e auto-registro do driver do PostgreSQL.
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "Driver do PostgreSQL não encontrado no classpath.",
-                    e
-            );
+            throw new RuntimeException("PostgreSQL driver not found.", e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
-
-        String url = env.getProperty("DB_URL");
-        String user = env.getProperty("DB_USER");
-        String password = env.getProperty("DB_PASSWORD");
+        String url = ENV.getProperty("DB_URL");
+        String user = ENV.getProperty("DB_USER");
+        String password = ENV.getProperty("DB_PASSWORD");
 
         if (url == null || user == null || password == null) {
-            throw new RuntimeException(
-                    "DB_URL, DB_USER ou DB_PASSWORD não encontrados no .env"
-            );
+            throw new RuntimeException("Missing DB_URL, DB_USER, or DB_PASSWORD in .env file.");
         }
 
-        return DriverManager.getConnection(
-                url,
-                user,
-                password
-        );
+        return DriverManager.getConnection(url, user, password);
     }
 }

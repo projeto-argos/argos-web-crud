@@ -1,115 +1,130 @@
 package br.com.argos.dao;
 
-//IMPORTS
-
-import br.com.argos.model.Admin;
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.model.Admin;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class AdminDAO {
 
-    public void inserir(Admin admin) throws SQLException {
-        String sql = "INSERT INTO admin (cpf, nome, telefone, email, ativo) " +
-                "VALUES (?, ?, ?, ?, ?)";
+    // INSERT
+    public void insert(Admin admin) throws SQLException {
+        String sql = "INSERT INTO admin (nome_completo, cpf, telefone, email, senha, ativo, atualizado_em) " +
+                "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, admin.getCpf());
-            stmt.setString(2, admin.getNome());
-            stmt.setString(3, admin.getTelefone());
+            stmt.setString(1, admin.getFullName());
+            stmt.setString(2, admin.getCpf());
+            stmt.setString(3, admin.getPhone());
             stmt.setString(4, admin.getEmail());
-            stmt.setBoolean(5, admin.isAtivo());
+            stmt.setString(5, admin.getPassword());
+            stmt.setBoolean(6, admin.isActive());
 
             stmt.executeUpdate();
-        } catch (SQLException e){
-            System.err.println("Erro ao inserir admin no banco " + e.getMessage());
-            throw e; // relança, pra quem chamou (futuramente o Servlet) também saber que deu erro
+        } catch (SQLException e) {
+            System.err.println("Error inserting admin: " + e.getMessage());
+            throw e;
         }
     }
 
-    public Admin buscarPorId(String cpf) throws SQLException {
-        String sql = "SELECT * FROM admin WHERE cpf = ?";
+    // FIND BY ID
+    public Admin findById(UUID id) throws SQLException {
+        String sql = "SELECT * FROM admin WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, cpf);
+            stmt.setObject(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapearAdmin(rs);
+                    return mapAdmin(rs);
                 }
             }
         }
         return null;
     }
 
-    public List<Admin> listarTodos() throws SQLException {
-        String sql = "SELECT * FROM admin ORDER BY nome";
-        List<Admin> administradores = new ArrayList<>();
+    // FIND ALL
+    public List<Admin> findAll() throws SQLException {
+        String sql = "SELECT * FROM admin ORDER BY nome_completo";
+        List<Admin> admins = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                administradores.add(mapearAdmin(rs));
+                admins.add(mapAdmin(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Erro ao listar admin: " + e.getMessage());
-            e.printStackTrace(); // imprime a exception inteira
+            System.err.println("Error listing admins: " + e.getMessage());
+            e.printStackTrace();
             throw e;
         }
 
-        return administradores;
+        return admins;
     }
 
-    public void atualizar(Admin admin) throws SQLException {
-        String sql = "UPDATE admin SET nome = ?, telefone = ?, email = ?, ativo = ? " +
-                "WHERE cpf = ?";
+    // UPDATE
+    public void update(Admin admin) throws SQLException {
+        String sql = "UPDATE admin SET nome_completo = ?, telefone = ?, email = ?, senha = ?, ativo = ?, atualizado_em = now() " +
+                "WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, admin.getNome());
-            stmt.setString(2, admin.getTelefone());
+            stmt.setString(1, admin.getFullName());
+            stmt.setString(2, admin.getPhone());
             stmt.setString(3, admin.getEmail());
-            stmt.setBoolean(4, admin.isAtivo());
-            stmt.setString(5, admin.getCpf());
+            stmt.setString(4, admin.getPassword());
+            stmt.setBoolean(5, admin.isActive());
+            stmt.setObject(6, admin.getId());
 
-            stmt.executeUpdate();
-        } catch (SQLException e){
-            System.err.println("Erro ao atualizar admin no banco " + e.getMessage());
-            throw e; // relança, pra quem chamou (futuramente o Servlet) também saber que deu erro
-        }
-    }
-
-    public void deletar(String cpf) throws SQLException {
-        String sql = "DELETE FROM admin WHERE cpf = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cpf);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Erro ao deletar admin no banco " + e.getMessage());
-            throw e; // relança, pra quem chamou (futuramente o Servlet) também saber que deu erro
+            System.err.println("Error updating admin: " + e.getMessage());
+            throw e;
         }
     }
 
-    private Admin mapearAdmin(ResultSet rs) throws SQLException {
-        String cpf = rs.getString("cpf");
-        String nome = rs.getString("nome");
-        String email = rs.getString("email");
-        String telefone = rs.getString("telefone");
-        boolean ativo = rs.getBoolean("ativo");
+    // DELETE
+    public void delete(UUID id) throws SQLException {
+        String sql = "DELETE FROM admin WHERE id_admin = ?";
 
-        // Lembrar --> A ordem precisa bater exatamente com a ordem do construtor no Model
-        return new Admin(cpf, nome, email, telefone, ativo);
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error deleting admin: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    // MAP RESULT SET
+    private Admin mapAdmin(ResultSet rs) throws SQLException {
+        UUID id = rs.getObject("id_admin", UUID.class);
+        String cpf = rs.getString("cpf");
+        String fullName = rs.getString("nome_completo");
+        String email = rs.getString("email");
+        String phone = rs.getString("telefone");
+        String password = rs.getString("senha");
+        boolean active = rs.getBoolean("ativo");
+
+        LocalDateTime updatedAt = null;
+        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        if (tsUpdatedAt != null) {
+            updatedAt = tsUpdatedAt.toLocalDateTime();
+        }
+
+        return new Admin(id, cpf, fullName, email, phone, password, active, updatedAt);
     }
 }
