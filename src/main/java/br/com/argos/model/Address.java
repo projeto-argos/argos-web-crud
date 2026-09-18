@@ -6,42 +6,47 @@ import java.util.UUID;
 public class Address {
 
     // ATRIBUTOS
-    private UUID idAddress;
-    private String complement;
-    private String street;
-    private String city;
-    private String state;
-    private LocalDateTime updatedAt;
-    private boolean active;
-    private Integer number;
+    private UUID idAddress; // ID DO ENDEREÇO
+    private Integer number; // NÚMERO DO ENDEREÇO
+    private String complement; // COMPLEMENTO DO ENDEREÇO
+    private String street; // RUA DO ENDEREÇO
+    private String city; // CIDADE DO ENDEREÇO
+    private String state; // ESTADO DO ENDEREÇO
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
+
 
     // MÉTODOS CONSTRUTORES
     public Address() {
     }
 
-    public Address(UUID idAddress, String complement, String street, String city, String state, LocalDateTime updatedAt, boolean active, Integer number) {
+    public Address(UUID idAddress, Integer number, String complement, String street, String city, String state, LocalDateTime updatedAt, boolean active) {
         this.idAddress = idAddress;
+        this.number = number;
         this.complement = complement;
         this.street = street;
         this.city = city;
         this.state = state;
         this.updatedAt = updatedAt;
         this.active = active;
-        this.number = number;
     }
 
-    public Address(String complement, String street, String city, String state, boolean active, Integer number) {
+    public Address(Integer number, String complement, String street, String city, String state, boolean active) {
+        this.number = number;
         this.complement = complement;
         this.street = street;
         this.city = city;
         this.state = state;
         this.active = active;
-        this.number = number;
     }
 
     // MÉTODOS GETTERS
     public UUID getIdAddress() {
         return idAddress;
+    }
+
+    public Integer getNumber() {
+        return number;
     }
 
     public String getComplement() {
@@ -68,13 +73,13 @@ public class Address {
         return active;
     }
 
-    public Integer getNumber() {
-        return number;
-    }
-
     // MÉTODOS SETTERS
     public void setIdAddress(UUID idAddress) {
         this.idAddress = idAddress;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public void setComplement(String complement) {
@@ -101,22 +106,18 @@ public class Address {
         this.active = active;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     // MÉTODOS TOSTRING
     @Override
     public String toString() {
         return "Address{" +
                 "idAddress=" + idAddress +
+                ", number=" + number +
                 ", complement='" + complement + '\'' +
                 ", street='" + street + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
-                ", number=" + number +
                 '}';
     }
 }
