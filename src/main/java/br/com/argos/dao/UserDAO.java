@@ -1,19 +1,20 @@
 package br.com.argos.dao;
 
-import br.com.argos.model.User;
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.model.User;
 
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class UserDAO {
 
+    // CREATE
     public void insert(User user) throws SQLException {
-        String sql = "INSERT INTO usuario (nome_completo, telefone, email, cpf, cargo, data_nascimento, senha, ativo, atualizado_em) " +
+        String sql = "INSERT INTO users (full_name, phone, email, cpf, role, birth_date, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -26,9 +27,9 @@ public class UserDAO {
             stmt.setString(5, user.getRole());
 
             if (user.getBirthDate() != null) {
-                stmt.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
+                stmt.setDate(6, Date.valueOf(user.getBirthDate()));
             } else {
-                stmt.setNull(6, java.sql.Types.DATE);
+                stmt.setNull(6, Types.DATE);
             }
 
             stmt.setString(7, user.getPassword());
@@ -41,8 +42,9 @@ public class UserDAO {
         }
     }
 
+    // READ
     public User findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM usuario WHERE id_usuario = ?";
+        String sql = "SELECT * FROM users WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -59,7 +61,7 @@ public class UserDAO {
     }
 
     public List<User> findAll() throws SQLException {
-        String sql = "SELECT * FROM usuario ORDER BY nome_completo";
+        String sql = "SELECT * FROM users ORDER BY full_name";
         List<User> users = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -71,16 +73,16 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing users: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
         return users;
     }
 
+    // UPDATE
     public void update(User user) throws SQLException {
-        String sql = "UPDATE usuario SET nome_completo = ?, telefone = ?, email = ?, cpf = ?, cargo = ?, data_nascimento = ?, senha = ?, ativo = ?, atualizado_em = now() " +
-                "WHERE id_usuario = ?";
+        String sql = "UPDATE users SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, password = ?, active = ?, updated_at = now() " +
+                "WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -92,14 +94,14 @@ public class UserDAO {
             stmt.setString(5, user.getRole());
 
             if (user.getBirthDate() != null) {
-                stmt.setDate(6, java.sql.Date.valueOf(user.getBirthDate()));
+                stmt.setDate(6, Date.valueOf(user.getBirthDate()));
             } else {
-                stmt.setNull(6, java.sql.Types.DATE);
+                stmt.setNull(6, Types.DATE);
             }
 
             stmt.setString(7, user.getPassword());
             stmt.setBoolean(8, user.isActive());
-            stmt.setObject(9, user.getId());
+            stmt.setObject(9, user.getIdUser());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -108,8 +110,9 @@ public class UserDAO {
         }
     }
 
+    // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM usuario WHERE id_usuario = ?";
+        String sql = "DELETE FROM users WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -122,29 +125,30 @@ public class UserDAO {
         }
     }
 
+    // MAPPER
     private User mapUser(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_usuario", UUID.class);
-        String phone = rs.getString("telefone");
-        String fullName = rs.getString("nome_completo");
+        UUID id = rs.getObject("id_user", UUID.class);
+        String fullName = rs.getString("full_name");
         String cpf = rs.getString("cpf");
         String email = rs.getString("email");
-        String role = rs.getString("cargo");
-        String password = rs.getString("senha");
+        String phone = rs.getString("phone");
+        String role = rs.getString("role");
+        String password = rs.getString("password");
 
         LocalDate birthDate = null;
-        java.sql.Date sqlDate = rs.getDate("data_nascimento");
+        Date sqlDate = rs.getDate("birth_date");
         if (sqlDate != null) {
             birthDate = sqlDate.toLocalDate();
         }
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        boolean active = rs.getBoolean("ativo");
+        boolean active = rs.getBoolean("active");
 
-        return new User(id, phone, fullName, cpf, email, role, birthDate, password, updatedAt, active);
+        return new User(id, fullName, cpf, email, phone, role, password, birthDate, updatedAt, active);
     }
 }
