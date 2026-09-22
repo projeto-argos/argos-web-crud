@@ -12,25 +12,24 @@ import java.util.UUID;
 
 public class BatchDAO {
 
-    // INSERT
+    // CREATE
     public void insert(Batch batch) throws SQLException {
-        String sql = "INSERT INTO lote (categoria, id_rebanho, ativo, quantidade_original_cabecas, codigo_lote, data_abertura, atualizado_em) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO batches (herd_id, category, opening_date, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, batch.getCategory());
-            stmt.setObject(2, batch.getHerdId());
-            stmt.setBoolean(3, batch.isActive());
-            stmt.setInt(4, batch.getOriginalHeadCount());
-            stmt.setString(5, batch.getCode());
+            stmt.setObject(1, batch.getHerdId());
+            stmt.setString(2, batch.getCategory());
 
-            if (batch.getOpenDate() != null) {
-                stmt.setDate(6, java.sql.Date.valueOf(batch.getOpenDate()));
+            if (batch.getOpeningDate() != null) {
+                stmt.setDate(3, Date.valueOf(batch.getOpeningDate()));
             } else {
-                stmt.setNull(6, java.sql.Types.DATE);
+                stmt.setNull(3, Types.DATE);
             }
+
+            stmt.setBoolean(4, batch.isActive());
 
             stmt.executeUpdate();
 
@@ -40,9 +39,9 @@ public class BatchDAO {
         }
     }
 
-    // FIND BY ID
+    // READ
     public Batch findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM lote WHERE id_lote = ?";
+        String sql = "SELECT * FROM batches WHERE id_batch = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -58,9 +57,8 @@ public class BatchDAO {
         return null;
     }
 
-    // FIND ALL
     public List<Batch> findAll() throws SQLException {
-        String sql = "SELECT * FROM lote ORDER BY categoria ASC";
+        String sql = "SELECT * FROM batches ORDER BY category ASC";
         List<Batch> batches = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -72,7 +70,6 @@ public class BatchDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing batches: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -81,25 +78,23 @@ public class BatchDAO {
 
     // UPDATE
     public void update(Batch batch) throws SQLException {
-        String sql = "UPDATE lote SET categoria = ?, id_rebanho = ?, ativo = ?, quantidade_original_cabecas = ?, codigo_lote = ?, data_abertura = ?, atualizado_em = now() " +
-                "WHERE id_lote = ?";
+        String sql = "UPDATE batches SET herd_id = ?, category = ?, opening_date = ?, active = ?, updated_at = now() " +
+                "WHERE id_batch = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, batch.getCategory());
-            stmt.setObject(2, batch.getHerdId());
-            stmt.setBoolean(3, batch.isActive());
-            stmt.setInt(4, batch.getOriginalHeadCount());
-            stmt.setString(5, batch.getCode());
+            stmt.setObject(1, batch.getHerdId());
+            stmt.setString(2, batch.getCategory());
 
-            if (batch.getOpenDate() != null) {
-                stmt.setDate(6, java.sql.Date.valueOf(batch.getOpenDate()));
+            if (batch.getOpeningDate() != null) {
+                stmt.setDate(3, Date.valueOf(batch.getOpeningDate()));
             } else {
-                stmt.setNull(6, java.sql.Types.DATE);
+                stmt.setNull(3, Types.DATE);
             }
 
-            stmt.setObject(7, batch.getId());
+            stmt.setBoolean(4, batch.isActive());
+            stmt.setObject(5, batch.getIdBatch());
 
             stmt.executeUpdate();
 
@@ -111,7 +106,7 @@ public class BatchDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM lote WHERE id_lote = ?";
+        String sql = "DELETE FROM batches WHERE id_batch = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -125,27 +120,26 @@ public class BatchDAO {
         }
     }
 
-    // MAP RESULT SET
+    // MAPPER
     private Batch mapBatch(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_lote", UUID.class);
-        String category = rs.getString("categoria");
-        UUID herdId = rs.getObject("id_rebanho", UUID.class);
-        boolean active = rs.getBoolean("ativo");
-        int originalHeadCount = rs.getInt("quantidade_original_cabecas");
-        String code = rs.getString("codigo_lote");
+        UUID id = rs.getObject("id_batch", UUID.class);
+        UUID herdId = rs.getObject("herd_id", UUID.class);
+        String category = rs.getString("category");
 
-        LocalDate openDate = null;
-        java.sql.Date sqlDate = rs.getDate("data_abertura");
+        LocalDate openingDate = null;
+        Date sqlDate = rs.getDate("opening_date");
         if (sqlDate != null) {
-            openDate = sqlDate.toLocalDate();
+            openingDate = sqlDate.toLocalDate();
         }
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Batch(id, category, updatedAt, herdId, active, originalHeadCount, code, openDate);
+        boolean active = rs.getBoolean("active");
+
+        return new Batch(id, herdId, category, openingDate, updatedAt, active);
     }
 }

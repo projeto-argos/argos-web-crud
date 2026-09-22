@@ -11,22 +11,25 @@ import java.util.UUID;
 
 public class AddressDAO {
 
-    // INSERT
+    // CREATE
     public void insert(Address address) throws SQLException {
-        String sql = "INSERT INTO endereco (cep, logradouro, numero, bairro, cidade, estado, observacoes, ativo, atualizado_em) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO addresses (zip_code, street, number, complement, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, address.getZipCode());
             stmt.setString(2, address.getStreet());
-            stmt.setInt(3, address.getNumber());
-            stmt.setString(4, address.getNeighborhood());
-            stmt.setString(5, address.getCity());
-            stmt.setString(6, address.getState());
-            stmt.setString(7, address.getNotes());
-            stmt.setBoolean(8, address.isActive());
+
+            if (address.getNumber() != null) {
+                stmt.setInt(3, address.getNumber());
+            } else {
+                stmt.setNull(3, Types.INTEGER);
+            }
+
+            stmt.setString(4, address.getComplement());
+            stmt.setBoolean(5, address.isActive());
 
             stmt.executeUpdate();
 
@@ -36,9 +39,9 @@ public class AddressDAO {
         }
     }
 
-    // FIND BY ID
+    // READ
     public Address findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM endereco WHERE id_endereco = ?";
+        String sql = "SELECT * FROM addresses WHERE id_address = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -54,9 +57,8 @@ public class AddressDAO {
         return null;
     }
 
-    // FIND ALL
     public List<Address> findAll() throws SQLException {
-        String sql = "SELECT * FROM endereco ORDER BY cidade";
+        String sql = "SELECT * FROM addresses ORDER BY street";
         List<Address> addresses = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -69,7 +71,6 @@ public class AddressDAO {
 
         } catch (SQLException e) {
             System.err.println("Error listing addresses: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
         return addresses;
@@ -77,22 +78,24 @@ public class AddressDAO {
 
     // UPDATE
     public void update(Address address) throws SQLException {
-        String sql = "UPDATE endereco SET cep = ?, logradouro = ?, numero = ?, bairro = ?, " +
-                "cidade = ?, estado = ?, observacoes = ?, ativo = ?, atualizado_em = now() " +
-                "WHERE id_endereco = ?";
+        String sql = "UPDATE addresses SET zip_code = ?, street = ?, number = ?, complement = ?, " +
+                "active = ?, updated_at = now() WHERE id_address = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, address.getZipCode());
             stmt.setString(2, address.getStreet());
-            stmt.setInt(3, address.getNumber());
-            stmt.setString(4, address.getNeighborhood());
-            stmt.setString(5, address.getCity());
-            stmt.setString(6, address.getState());
-            stmt.setString(7, address.getNotes());
-            stmt.setBoolean(8, address.isActive());
-            stmt.setObject(9, address.getId());
+
+            if (address.getNumber() != null) {
+                stmt.setInt(3, address.getNumber());
+            } else {
+                stmt.setNull(3, Types.INTEGER);
+            }
+
+            stmt.setString(4, address.getComplement());
+            stmt.setBoolean(5, address.isActive());
+            stmt.setObject(6, address.getIdAddress());
 
             stmt.executeUpdate();
 
@@ -104,7 +107,7 @@ public class AddressDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM endereco WHERE id_endereco = ?";
+        String sql = "DELETE FROM addresses WHERE id_address = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -118,24 +121,28 @@ public class AddressDAO {
         }
     }
 
-    // MAP RESULT SET
+    // MAPPER
     private Address mapAddress(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_endereco", UUID.class);
-        String zipCode = rs.getString("cep");
-        String street = rs.getString("logradouro");
-        int number = rs.getInt("numero");
-        String neighborhood = rs.getString("bairro");
-        String city = rs.getString("cidade");
-        String state = rs.getString("estado");
-        String notes = rs.getString("observacoes");
-        boolean active = rs.getBoolean("ativo");
+        UUID id = rs.getObject("id_address", UUID.class);
+        String zipCode = rs.getString("zip_code");
+        String street = rs.getString("street");
+
+        // Tratamento seguro para Integer que pode ser nulo no banco
+        Integer number = null;
+        int dbNumber = rs.getInt("number");
+        if (!rs.wasNull()) {
+            number = dbNumber;
+        }
+
+        String complement = rs.getString("complement");
+        boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Address(id, zipCode, street, number, neighborhood, city, state, notes, updatedAt, active);
+        return new Address(id, zipCode, street, number, complement, updatedAt, active);
     }
 }

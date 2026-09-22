@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public class AdminDAO {
 
-    // INSERT
+    // CREATE
     public void insert(Admin admin) throws SQLException {
-        String sql = "INSERT INTO admin (nome_completo, cpf, telefone, email, senha, ativo, atualizado_em) " +
+        String sql = "INSERT INTO admins (full_name, cpf, phone, email, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -33,9 +33,9 @@ public class AdminDAO {
         }
     }
 
-    // FIND BY ID
+    // READ
     public Admin findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM admin WHERE id_admin = ?";
+        String sql = "SELECT * FROM admins WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -51,9 +51,8 @@ public class AdminDAO {
         return null;
     }
 
-    // FIND ALL
     public List<Admin> findAll() throws SQLException {
-        String sql = "SELECT * FROM admin ORDER BY nome_completo";
+        String sql = "SELECT * FROM admins ORDER BY full_name";
         List<Admin> admins = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -65,7 +64,6 @@ public class AdminDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing admins: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -74,18 +72,19 @@ public class AdminDAO {
 
     // UPDATE
     public void update(Admin admin) throws SQLException {
-        String sql = "UPDATE admin SET nome_completo = ?, telefone = ?, email = ?, senha = ?, ativo = ?, atualizado_em = now() " +
+        String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, password = ?, active = ?, updated_at = now() " +
                 "WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, admin.getFullName());
-            stmt.setString(2, admin.getPhone());
-            stmt.setString(3, admin.getEmail());
-            stmt.setString(4, admin.getPassword());
-            stmt.setBoolean(5, admin.isActive());
-            stmt.setObject(6, admin.getId());
+            stmt.setString(2, admin.getCpf());
+            stmt.setString(3, admin.getPhone());
+            stmt.setString(4, admin.getEmail());
+            stmt.setString(5, admin.getPassword());
+            stmt.setBoolean(6, admin.isActive());
+            stmt.setObject(7, admin.getIdAdmin());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -96,7 +95,7 @@ public class AdminDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM admin WHERE id_admin = ?";
+        String sql = "DELETE FROM admins WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -109,22 +108,22 @@ public class AdminDAO {
         }
     }
 
-    // MAP RESULT SET
+    // MAPPER
     private Admin mapAdmin(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_admin", UUID.class);
+        String fullName = rs.getString("full_name");
         String cpf = rs.getString("cpf");
-        String fullName = rs.getString("nome_completo");
         String email = rs.getString("email");
-        String phone = rs.getString("telefone");
-        String password = rs.getString("senha");
-        boolean active = rs.getBoolean("ativo");
+        String phone = rs.getString("phone");
+        String password = rs.getString("password");
+        boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Admin(id, cpf, fullName, email, phone, password, active, updatedAt);
+        return new Admin(id, fullName, cpf, email, phone, password, updatedAt, active);
     }
 }

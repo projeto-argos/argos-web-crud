@@ -11,20 +11,19 @@ import java.util.UUID;
 
 public class HerdDAO {
 
-    // INSERT
+    // CREATE
     public void insert(Herd herd) throws SQLException {
-        String sql = "INSERT INTO rebanho (nome, raca, finalidade, id_propriedade, quantidade_original_cabecas, ativo, atualizado_em) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO herds (property_id, name, breed, description, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, herd.getName());
-            stmt.setString(2, herd.getBreed());
-            stmt.setString(3, herd.getPurpose());
-            stmt.setObject(4, herd.getPropertyId());
-            stmt.setInt(5, herd.getOriginalHeadCount());
-            stmt.setBoolean(6, herd.isActive());
+            stmt.setObject(1, herd.getPropertyId());
+            stmt.setString(2, herd.getName());
+            stmt.setString(3, herd.getBreed());
+            stmt.setString(4, herd.getDescription());
+            stmt.setBoolean(5, herd.isActive());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -33,9 +32,9 @@ public class HerdDAO {
         }
     }
 
-    // FIND BY ID
+    // READ
     public Herd findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM rebanho WHERE id_rebanho = ?";
+        String sql = "SELECT * FROM herds WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -51,9 +50,8 @@ public class HerdDAO {
         return null;
     }
 
-    // FIND ALL
     public List<Herd> findAll() throws SQLException {
-        String sql = "SELECT * FROM rebanho ORDER BY nome";
+        String sql = "SELECT * FROM herds ORDER BY name";
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -65,7 +63,6 @@ public class HerdDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing herds: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -74,18 +71,18 @@ public class HerdDAO {
 
     // UPDATE
     public void update(Herd herd) throws SQLException {
-        String sql = "UPDATE rebanho SET nome = ?, raca = ?, finalidade = ?, quantidade_original_cabecas = ?, ativo = ?, atualizado_em = now() " +
-                "WHERE id_rebanho = ?";
+        String sql = "UPDATE herds SET property_id = ?, name = ?, breed = ?, description = ?, active = ?, updated_at = now() " +
+                "WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, herd.getName());
-            stmt.setString(2, herd.getBreed());
-            stmt.setString(3, herd.getPurpose());
-            stmt.setInt(4, herd.getOriginalHeadCount());
+            stmt.setObject(1, herd.getPropertyId());
+            stmt.setString(2, herd.getName());
+            stmt.setString(3, herd.getBreed());
+            stmt.setString(4, herd.getDescription());
             stmt.setBoolean(5, herd.isActive());
-            stmt.setObject(6, herd.getId());
+            stmt.setObject(6, herd.getIdHerd());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -96,7 +93,7 @@ public class HerdDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM rebanho WHERE id_rebanho = ?";
+        String sql = "DELETE FROM herds WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -109,22 +106,21 @@ public class HerdDAO {
         }
     }
 
-    // MAP RESULT SET
+    // MAPPER
     private Herd mapHerd(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_rebanho", UUID.class);
-        String name = rs.getString("nome");
-        String breed = rs.getString("raca");
-        String purpose = rs.getString("finalidade");
-        UUID propertyId = rs.getObject("id_propriedade", UUID.class);
-        boolean active = rs.getBoolean("ativo");
-        int originalHeadCount = rs.getInt("quantidade_original_cabecas");
+        UUID id = rs.getObject("id_herd", UUID.class);
+        UUID propertyId = rs.getObject("property_id", UUID.class);
+        String name = rs.getString("name");
+        String breed = rs.getString("breed");
+        String description = rs.getString("description");
+        boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Herd(id, breed, purpose, name, updatedAt, propertyId, active, originalHeadCount);
+        return new Herd(id, propertyId, name, breed, description, updatedAt, active);
     }
 }
