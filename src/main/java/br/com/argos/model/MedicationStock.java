@@ -16,8 +16,27 @@ public class MedicationStock {
     private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
-
     public MedicationStock() {
+    }
+
+    public MedicationStock(UUID idMedicationStock, UUID medicationBatchId, Integer availableQuantity, Integer minimumStock, Integer maximumStock, String storageLocation, LocalDateTime updatedAt, boolean active) {
+        this.idMedicationStock = idMedicationStock;
+        this.medicationBatchId = medicationBatchId;
+        this.availableQuantity = availableQuantity;
+        this.minimumStock = minimumStock;
+        this.maximumStock = maximumStock;
+        this.storageLocation = storageLocation;
+        this.updatedAt = updatedAt;
+        this.active = active;
+    }
+
+    public MedicationStock(UUID medicationBatchId, Integer availableQuantity, Integer minimumStock, Integer maximumStock, String storageLocation, boolean active) {
+        this.medicationBatchId = medicationBatchId;
+        this.availableQuantity = availableQuantity;
+        this.minimumStock = minimumStock;
+        this.maximumStock = maximumStock;
+        this.storageLocation = storageLocation;
+        this.active = active;
     }
 
     // MÉTODOS GETTERS
