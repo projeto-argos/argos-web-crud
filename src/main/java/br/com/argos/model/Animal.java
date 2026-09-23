@@ -139,7 +139,7 @@ public class Animal {
         this.birthDate = birthDate;
     }
 
-    public void setUpdateAt(LocalDateTime updateAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -164,7 +164,7 @@ public class Animal {
                 ", exceptionStartDate=" + exceptionStartDate +
                 ", exceptionEndDate=" + exceptionEndDate +
                 ", birthDate=" + birthDate +
-                ", updateAt=" + updatedAt +
+                ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 ", clearedForSlaughter=" + clearedForSlaughter +
                 '}';
