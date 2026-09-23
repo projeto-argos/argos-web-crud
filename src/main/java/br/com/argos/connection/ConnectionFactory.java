@@ -1,47 +1,33 @@
 package br.com.argos.connection;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionFactory {
+public class ConnectionFactory{
 
-    private static final Properties ENV = new Properties();
+    // CRIA LUGAR PRO .ENV
+    private static final Properties env = new Properties();
 
+    // ENCONTRA E ARMAZENA O .ENV
     static {
-        try (InputStream input = ConnectionFactory.class
-                .getClassLoader()
-                .getResourceAsStream(".env")) {
-
-            if (input == null) {
-                throw new RuntimeException("The .env file was not found in resources.");
+        try (InputStream input = ConnectionFactory.class.getClassLoader().getResourceAsStream(".env")) {
+            if (input != null) {
+                env.load(input);
             }
-
-            ENV.load(input);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load .env file.", e);
-        }
-
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("PostgreSQL driver not found.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading the .env file", e);
         }
     }
 
+    // FAZ A CONEXÃO COM O BANCO DE DADOS
     public static Connection getConnection() throws SQLException {
-        String url = ENV.getProperty("DB_URL");
-        String user = ENV.getProperty("DB_USER");
-        String password = ENV.getProperty("DB_PASSWORD");
-
-        if (url == null || user == null || password == null) {
-            throw new RuntimeException("Missing DB_URL, DB_USER, or DB_PASSWORD in .env file.");
-        }
-
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(
+                env.getProperty("DB_URL"),
+                env.getProperty("DB_USER"),
+                env.getProperty("DB_PASSWORD")
+        );
     }
 }

@@ -10,7 +10,6 @@ public class TestConnection {
             System.out.println("✅ Database connection successful!");
         } catch (Exception e) {
             System.err.println("❌ Database connection failed: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
