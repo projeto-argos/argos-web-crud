@@ -13,23 +13,25 @@ public class AddressDAO {
 
     // CREATE
     public void insert(Address address) throws SQLException {
-        String sql = "INSERT INTO addresses (zip_code, street, number, complement, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO addresses (number, complement, street, city, state, updated_at, active) " +
+                "VALUES (?, ?, ?, ?, ?, now(), ?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, address.getZipCode());
-            stmt.setString(2, address.getStreet());
-
             if (address.getNumber() != null) {
-                stmt.setInt(3, address.getNumber());
+                stmt.setInt(1, address.getNumber());
             } else {
-                stmt.setNull(3, Types.INTEGER);
+                stmt.setNull(1, Types.INTEGER);
             }
+            stmt.setString(2, address.getComplement());
 
-            stmt.setString(4, address.getComplement());
-            stmt.setBoolean(5, address.isActive());
+
+            stmt.setString(3, address.getStreet());
+            stmt.setString(4, address.getCity());
+            stmt.setString(5, address.getState());
+            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setBoolean(7, address.isActive());
 
             stmt.executeUpdate();
 
@@ -78,24 +80,25 @@ public class AddressDAO {
 
     // UPDATE
     public void update(Address address) throws SQLException {
-        String sql = "UPDATE addresses SET zip_code = ?, street = ?, number = ?, complement = ?, " +
-                "active = ?, updated_at = now() WHERE id_address = ?";
+        String sql = "UPDATE addresses SET number = ?, complement = ?, street = ?, city = ?, " +
+                "state = ?, updated_at = now(), active = ? WHERE id_address = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, address.getZipCode());
-            stmt.setString(2, address.getStreet());
-
             if (address.getNumber() != null) {
-                stmt.setInt(3, address.getNumber());
+                stmt.setInt(1, address.getNumber());
             } else {
-                stmt.setNull(3, Types.INTEGER);
+                stmt.setNull(1, Types.INTEGER);
             }
+            stmt.setString(2, address.getComplement());
 
-            stmt.setString(4, address.getComplement());
-            stmt.setBoolean(5, address.isActive());
-            stmt.setObject(6, address.getIdAddress());
+
+            stmt.setString(3, address.getStreet());
+            stmt.setString(4, address.getCity());
+            stmt.setObject(5, address.getState());
+            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setBoolean(7, address.isActive());
 
             stmt.executeUpdate();
 
@@ -124,25 +127,24 @@ public class AddressDAO {
     // MAPPER
     private Address mapAddress(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_address", UUID.class);
-        String zipCode = rs.getString("zip_code");
-        String street = rs.getString("street");
-
         // Tratamento seguro para Integer que pode ser nulo no banco
         Integer number = null;
         int dbNumber = rs.getInt("number");
         if (!rs.wasNull()) {
             number = dbNumber;
         }
-
         String complement = rs.getString("complement");
-        boolean active = rs.getBoolean("active");
-
+        String street = rs.getString("street");
+        String city = rs.getString("city");
+        String state = rs.getString("state");
         LocalDateTime updatedAt = null;
         Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Address(id, zipCode, street, number, complement, updatedAt, active);
+        boolean active = rs.getBoolean("active");
+
+        return new Address(id, number, complement, street, city, state, updatedAt, active);
     }
 }
