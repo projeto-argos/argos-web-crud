@@ -3,6 +3,7 @@ package br.com.argos.dao;
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.model.Application;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,31 +14,31 @@ public class ApplicationDAO {
 
     // INSERT
     public void insert(Application application) throws SQLException {
-        String sql = "INSERT INTO aplicacao (dose, unidade_medida, membro_aplicado, local_aplicado, via_administracao, " +
-                "objetivo, observacoes, data_hora, ativo, id_usuario, id_lote_medicamento, id_lote, atualizado_em) " +
+        String sql = "INSERT INTO applications (user_id, medication_batch_id, batch_id, dosage, unit_of_measure, " +
+                "applied_limb, applied_site, administration_route, objective, notes, date_time, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setDouble(1, application.getDose());
-            stmt.setString(2, application.getUnitOfMeasure());
-            stmt.setString(3, application.getAppliedLimb());
-            stmt.setString(4, application.getAppliedLocation());
-            stmt.setString(5, application.getAdministrationRoute());
-            stmt.setString(6, application.getObjective());
-            stmt.setString(7, application.getNotes());
+            stmt.setObject(1, application.getIdUser());
+            stmt.setObject(2, application.getIdMedicationBatch());
+            stmt.setObject(3, application.getIdBatch());
+            stmt.setBigDecimal(4, application.getDosage());
+            stmt.setString(5, application.getUnitOfMeasure());
+            stmt.setString(6, application.getAppliedLimb());
+            stmt.setString(7, application.getAppliedSite());
+            stmt.setString(8, application.getAdministrationRoute());
+            stmt.setString(9, application.getObjective());
+            stmt.setString(10, application.getNotes());
 
             if (application.getDateTime() != null) {
-                stmt.setTimestamp(8, Timestamp.valueOf(application.getDateTime()));
+                stmt.setTimestamp(11, Timestamp.valueOf(application.getDateTime()));
             } else {
-                stmt.setNull(8, Types.TIMESTAMP);
+                stmt.setNull(11, Types.TIMESTAMP);
             }
 
-            stmt.setBoolean(9, application.isActive());
-            stmt.setObject(10, application.getUserId());
-            stmt.setObject(11, application.getMedicationBatchId());
-            stmt.setObject(12, application.getBatchId());
+            stmt.setBoolean(12, application.isActive());
 
             stmt.executeUpdate();
 
@@ -49,7 +50,7 @@ public class ApplicationDAO {
 
     // FIND BY ID
     public Application findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM aplicacao WHERE id_aplicacao = ?";
+        String sql = "SELECT * FROM applications WHERE id_application = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -67,7 +68,7 @@ public class ApplicationDAO {
 
     // FIND ALL
     public List<Application> findAll() throws SQLException {
-        String sql = "SELECT * FROM aplicacao ORDER BY data_hora";
+        String sql = "SELECT * FROM applications ORDER BY date_time DESC";
         List<Application> applications = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -79,7 +80,6 @@ public class ApplicationDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing applications: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -88,32 +88,32 @@ public class ApplicationDAO {
 
     // UPDATE
     public void update(Application application) throws SQLException {
-        String sql = "UPDATE aplicacao SET dose = ?, unidade_medida = ?, membro_aplicado = ?, local_aplicado = ?, " +
-                "via_administracao = ?, objetivo = ?, observacoes = ?, data_hora = ?, ativo = ?, id_usuario = ?, " +
-                "id_lote_medicamento = ?, id_lote = ?, atualizado_em = now() WHERE id_aplicacao = ?";
+        String sql = "UPDATE applications SET user_id = ?, medication_batch_id = ?, batch_id = ?, dosage = ?, " +
+                "unit_of_measure = ?, applied_limb = ?, applied_site = ?, administration_route = ?, " +
+                "objective = ?, notes = ?, date_time = ?, active = ?, updated_at = now() WHERE id_application = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setDouble(1, application.getDose());
-            stmt.setString(2, application.getUnitOfMeasure());
-            stmt.setString(3, application.getAppliedLimb());
-            stmt.setString(4, application.getAppliedLocation());
-            stmt.setString(5, application.getAdministrationRoute());
-            stmt.setString(6, application.getObjective());
-            stmt.setString(7, application.getNotes());
+            stmt.setObject(1, application.getIdUser());
+            stmt.setObject(2, application.getIdMedicationBatch());
+            stmt.setObject(3, application.getIdBatch());
+            stmt.setBigDecimal(4, application.getDosage());
+            stmt.setString(5, application.getUnitOfMeasure());
+            stmt.setString(6, application.getAppliedLimb());
+            stmt.setString(7, application.getAppliedSite());
+            stmt.setString(8, application.getAdministrationRoute());
+            stmt.setString(9, application.getObjective());
+            stmt.setString(10, application.getNotes());
 
             if (application.getDateTime() != null) {
-                stmt.setTimestamp(8, Timestamp.valueOf(application.getDateTime()));
+                stmt.setTimestamp(11, Timestamp.valueOf(application.getDateTime()));
             } else {
-                stmt.setNull(8, Types.TIMESTAMP);
+                stmt.setNull(11, Types.TIMESTAMP);
             }
 
-            stmt.setBoolean(9, application.isActive());
-            stmt.setObject(10, application.getUserId());
-            stmt.setObject(11, application.getMedicationBatchId());
-            stmt.setObject(12, application.getBatchId());
-            stmt.setObject(13, application.getId());
+            stmt.setBoolean(12, application.isActive());
+            stmt.setObject(13, application.getIdApplication());
 
             stmt.executeUpdate();
 
@@ -125,7 +125,7 @@ public class ApplicationDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM aplicacao WHERE id_aplicacao = ?";
+        String sql = "DELETE FROM applications WHERE id_application = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -141,34 +141,34 @@ public class ApplicationDAO {
 
     // MAP RESULT SET
     private Application mapApplication(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_aplicacao", UUID.class);
-        double dose = rs.getDouble("dose");
-        String unitOfMeasure = rs.getString("unidade_medida");
-        String appliedLimb = rs.getString("membro_aplicado");
-        String appliedLocation = rs.getString("local_aplicado");
-        String administrationRoute = rs.getString("via_administracao");
-        String objective = rs.getString("objetivo");
-        String notes = rs.getString("observacoes");
-        boolean active = rs.getBoolean("ativo");
-
-        UUID userId = rs.getObject("id_usuario", UUID.class);
-        UUID medicationBatchId = rs.getObject("id_lote_medicamento", UUID.class);
-        UUID batchId = rs.getObject("id_lote", UUID.class);
+        UUID idApplication = rs.getObject("id_application", UUID.class);
+        UUID idUser = rs.getObject("user_id", UUID.class);
+        UUID idMedicationBatch = rs.getObject("medication_batch_id", UUID.class);
+        UUID idBatch = rs.getObject("batch_id", UUID.class);
+        BigDecimal dosage = rs.getBigDecimal("dosage");
+        String unitOfMeasure = rs.getString("unit_of_measure");
+        String appliedLimb = rs.getString("applied_limb");
+        String appliedSite = rs.getString("applied_site");
+        String administrationRoute = rs.getString("administration_route");
+        String objective = rs.getString("objective");
+        String notes = rs.getString("notes");
 
         LocalDateTime dateTime = null;
-        Timestamp tsDateTime = rs.getTimestamp("data_hora");
+        Timestamp tsDateTime = rs.getTimestamp("date_time");
         if (tsDateTime != null) {
             dateTime = tsDateTime.toLocalDateTime();
         }
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Application(id, dose, unitOfMeasure, appliedLimb, appliedLocation,
-                administrationRoute, objective, notes, dateTime, updatedAt, active,
-                userId, medicationBatchId, batchId);
+        boolean active = rs.getBoolean("active");
+
+        return new Application(idApplication, idUser, idMedicationBatch, idBatch, dosage,
+                unitOfMeasure, appliedLimb, appliedSite, administrationRoute, objective,
+                notes, dateTime, updatedAt, active);
     }
 }

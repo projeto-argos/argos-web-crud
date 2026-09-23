@@ -14,22 +14,24 @@ public class BatchDAO {
 
     // CREATE
     public void insert(Batch batch) throws SQLException {
-        String sql = "INSERT INTO batches (herd_id, category, opening_date, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, now())";
+        String sql = "INSERT INTO batches (herd_id, original_head_count, category, batch_code, opening_date, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, batch.getHerdId());
-            stmt.setString(2, batch.getCategory());
+            stmt.setObject(2, batch.getOriginalHeadCount());
+            stmt.setString(3, batch.getCategory());
+            stmt.setString(4, batch.getBatchCode());
 
             if (batch.getOpeningDate() != null) {
-                stmt.setDate(3, Date.valueOf(batch.getOpeningDate()));
+                stmt.setDate(5, Date.valueOf(batch.getOpeningDate()));
             } else {
-                stmt.setNull(3, Types.DATE);
+                stmt.setNull(5, Types.DATE);
             }
 
-            stmt.setBoolean(4, batch.isActive());
+            stmt.setBoolean(6, batch.isActive());
 
             stmt.executeUpdate();
 
@@ -78,23 +80,26 @@ public class BatchDAO {
 
     // UPDATE
     public void update(Batch batch) throws SQLException {
-        String sql = "UPDATE batches SET herd_id = ?, category = ?, opening_date = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE batches SET herd_id = ?, original_head_count = ?, category = ?, " +
+                "batch_code = ?, opening_date = ?, active = ?, updated_at = now() " +
                 "WHERE id_batch = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, batch.getHerdId());
-            stmt.setString(2, batch.getCategory());
+            stmt.setObject(2, batch.getOriginalHeadCount());
+            stmt.setString(3, batch.getCategory());
+            stmt.setString(4, batch.getBatchCode());
 
             if (batch.getOpeningDate() != null) {
-                stmt.setDate(3, Date.valueOf(batch.getOpeningDate()));
+                stmt.setDate(5, Date.valueOf(batch.getOpeningDate()));
             } else {
-                stmt.setNull(3, Types.DATE);
+                stmt.setNull(5, Types.DATE);
             }
 
-            stmt.setBoolean(4, batch.isActive());
-            stmt.setObject(5, batch.getIdBatch());
+            stmt.setBoolean(6, batch.isActive());
+            stmt.setObject(7, batch.getIdBatch());
 
             stmt.executeUpdate();
 
@@ -124,7 +129,9 @@ public class BatchDAO {
     private Batch mapBatch(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_batch", UUID.class);
         UUID herdId = rs.getObject("herd_id", UUID.class);
+        Integer originalHeadCount = rs.getObject("original_head_count", Integer.class);
         String category = rs.getString("category");
+        String batchCode = rs.getString("batch_code");
 
         LocalDate openingDate = null;
         Date sqlDate = rs.getDate("opening_date");
@@ -140,6 +147,6 @@ public class BatchDAO {
 
         boolean active = rs.getBoolean("active");
 
-        return new Batch(id, herdId, category, openingDate, updatedAt, active);
+        return new Batch(id, herdId, originalHeadCount, category, batchCode, openingDate, updatedAt, active);
     }
 }
