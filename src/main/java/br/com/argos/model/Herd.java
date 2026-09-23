@@ -11,7 +11,6 @@ public class Herd {
     private Integer originalHeadCount; // QUANTIDADE ORIGINAL DE CABEÇAS DO REBANHO
     private String name; // NOME DO REBANHO
     private String breed; // RAÇA DO REBANHO
-    private String  purpose; // FINALIDADE DO REBANHO
     private LocalDateTime updatedAt; // ATUALIZADO EM
     private boolean active; // ATIVO
 
@@ -19,23 +18,21 @@ public class Herd {
     public Herd() {
     }
 
-    public Herd(UUID idHerd, UUID propertyId, Integer originalHeadCount, String name, String breed, String purpose, LocalDateTime updatedAt, boolean active) {
+    public Herd(UUID idHerd, UUID propertyId, Integer originalHeadCount, String name, String breed, LocalDateTime updatedAt, boolean active) {
         this.idHerd = idHerd;
         this.propertyId = propertyId;
         this.originalHeadCount = originalHeadCount;
         this.name = name;
         this.breed = breed;
-        this.purpose = purpose;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public Herd(UUID propertyId, Integer originalHeadCount, String name, String breed, String purpose, boolean active) {
+    public Herd(UUID propertyId, Integer originalHeadCount, String name, String breed, boolean active) {
         this.propertyId = propertyId;
         this.originalHeadCount = originalHeadCount;
         this.name = name;
         this.breed = breed;
-        this.purpose = purpose;
         this.active = active;
     }
 
@@ -58,10 +55,6 @@ public class Herd {
 
     public String getBreed() {
         return breed;
-    }
-
-    public String getPurpose() {
-        return purpose;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -93,10 +86,6 @@ public class Herd {
         this.breed = breed;
     }
 
-    public void setPurpose(String purpose) {
-        this.purpose = purpose;
-    }
-
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -114,7 +103,6 @@ public class Herd {
                 ", originalHeadCount=" + originalHeadCount +
                 ", name='" + name + '\'' +
                 ", breed='" + breed + '\'' +
-                ", purpose='" + purpose + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
