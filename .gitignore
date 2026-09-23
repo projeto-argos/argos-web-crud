@@ -1,50 +1,18 @@
+# Pasta de compilação e build do Maven
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.kotlin
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-*.iml
-*.ipr
-.idea/*
-
-# Environment variables
+# Arquivos de variáveis de ambiente e credenciais sensíveis
 .env
-**/.env
+*.env
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
-
-/out/
-/target/
+# Configurações do IntelliJ IDEA
 .idea/
 *.iml
-*.war
+*.iws
+*.ipr
+out/
+
+# Arquivos de log e temporários do sistema
+*.log
+.DS_Store
+Thumbs.db
