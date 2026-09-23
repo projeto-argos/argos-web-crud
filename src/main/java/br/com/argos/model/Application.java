@@ -25,6 +25,38 @@ public class Application {
     public Application() {
     }
 
+    public Application(UUID idApplication, UUID idUser, UUID idMedicationBatch, UUID idBatch, BigDecimal dosage, String unitOfMeasure, String appliedLimb, String appliedSite, String administrationRoute, String objective, String notes, LocalDateTime dateTime, LocalDateTime updatedAt, boolean active) {
+        this.idApplication = idApplication;
+        this.idUser = idUser;
+        this.idMedicationBatch = idMedicationBatch;
+        this.idBatch = idBatch;
+        this.dosage = dosage;
+        this.unitOfMeasure = unitOfMeasure;
+        this.appliedLimb = appliedLimb;
+        this.appliedSite = appliedSite;
+        this.administrationRoute = administrationRoute;
+        this.objective = objective;
+        this.notes = notes;
+        this.dateTime = dateTime;
+        this.updatedAt = updatedAt;
+        this.active = active;
+    }
+
+    public Application(UUID idUser, UUID idMedicationBatch, UUID idBatch, BigDecimal dosage, String unitOfMeasure, String appliedLimb, String appliedSite, String administrationRoute, String objective, String notes, LocalDateTime dateTime, boolean active) {
+        this.idUser = idUser;
+        this.idMedicationBatch = idMedicationBatch;
+        this.idBatch = idBatch;
+        this.dosage = dosage;
+        this.unitOfMeasure = unitOfMeasure;
+        this.appliedLimb = appliedLimb;
+        this.appliedSite = appliedSite;
+        this.administrationRoute = administrationRoute;
+        this.objective = objective;
+        this.notes = notes;
+        this.dateTime = dateTime;
+        this.active = active;
+    }
+
     // MÉTODOS GETTERS
     public UUID getIdApplication() {
         return idApplication;
