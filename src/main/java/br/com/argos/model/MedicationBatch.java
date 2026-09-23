@@ -11,7 +11,7 @@ public class MedicationBatch {
     private UUID medicationId; // ID DO MEDICAMENTO DO LOTE DO MEDICAMENTO
     private BigDecimal initialQuantity; // QUANTIDADE INICIAL DO LOTE DO MEDICAMENTO
     private String manufacturingBatchCode; // CODIGO DO LOTE DE FABRICAÇÃO DO LOTE DO MEDICAMENTO
-    private LocalDate manuFacturingDate; // DATA DE FABRICAÇÃO DOMLOTE DO MEDICAMENTO
+    private LocalDate manufacturingDate; // DATA DE FABRICAÇÃO DOMLOTE DO MEDICAMENTO
     private LocalDate expirationDate; // DATA DE VALIDADO DO LOTE DO MEDICAMENTO
     private LocalDate entryDate; // DATA DE ENTRADA DO LOTE DO MEDICAMENTO
     private LocalDateTime updatedAt; // ATUALIZADO EM
@@ -21,23 +21,23 @@ public class MedicationBatch {
     public MedicationBatch() {
     }
 
-    public MedicationBatch(UUID idMedicationBatch, UUID medicationId, BigDecimal initialQuantity, String manufacturingBatchCode, LocalDate manuFacturingDate, LocalDate expirationDate, LocalDate entryDate, LocalDateTime updatedAt, boolean active) {
+    public MedicationBatch(UUID idMedicationBatch, UUID medicationId, BigDecimal initialQuantity, String manufacturingBatchCode, LocalDate manufacturingDate, LocalDate expirationDate, LocalDate entryDate, LocalDateTime updatedAt, boolean active) {
         this.idMedicationBatch = idMedicationBatch;
         this.medicationId = medicationId;
         this.initialQuantity = initialQuantity;
         this.manufacturingBatchCode = manufacturingBatchCode;
-        this.manuFacturingDate = manuFacturingDate;
+        this.manufacturingDate = manufacturingDate;
         this.expirationDate = expirationDate;
         this.entryDate = entryDate;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public MedicationBatch(UUID medicationId, BigDecimal initialQuantity, String manufacturingBatchCode, LocalDate manuFacturingDate, LocalDate expirationDate, LocalDate entryDate, boolean active) {
+    public MedicationBatch(UUID medicationId, BigDecimal initialQuantity, String manufacturingBatchCode, LocalDate manufacturingDate, LocalDate expirationDate, LocalDate entryDate, boolean active) {
         this.medicationId = medicationId;
         this.initialQuantity = initialQuantity;
         this.manufacturingBatchCode = manufacturingBatchCode;
-        this.manuFacturingDate = manuFacturingDate;
+        this.manufacturingDate = manufacturingDate;
         this.expirationDate = expirationDate;
         this.entryDate = entryDate;
         this.active = active;
@@ -60,8 +60,8 @@ public class MedicationBatch {
         return manufacturingBatchCode;
     }
 
-    public LocalDate getManuFacturingDate() {
-        return manuFacturingDate;
+    public LocalDate getManufacturingDate() {
+        return manufacturingDate;
     }
 
     public LocalDate getExpirationDate() {
@@ -97,8 +97,8 @@ public class MedicationBatch {
         this.manufacturingBatchCode = manufacturingBatchCode;
     }
 
-    public void setManuFacturingDate(LocalDate manuFacturingDate) {
-        this.manuFacturingDate = manuFacturingDate;
+    public void setManufacturingDate(LocalDate manufacturingDate) {
+        this.manufacturingDate = manufacturingDate;
     }
 
     public void setExpirationDate(LocalDate expirationDate) {
@@ -125,7 +125,7 @@ public class MedicationBatch {
                 ", medicationId=" + medicationId +
                 ", initialQuantity=" + initialQuantity +
                 ", manufacturingBatchCode='" + manufacturingBatchCode + '\'' +
-                ", manuFacturingDate=" + manuFacturingDate +
+                ", manufacturingDate=" + manufacturingDate +
                 ", expirationDate=" + expirationDate +
                 ", entryDate=" + entryDate +
                 ", updatedAt=" + updatedAt +
