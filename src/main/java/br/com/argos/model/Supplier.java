@@ -6,14 +6,14 @@ import java.util.UUID;
 public class Supplier {
 
     // ATRIBUTOS
-    private UUID idSupplier;
-    private UUID addressId;
-    private String fullName;
-    private String cnpj;
-    private String phone;
-    private String email;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idSupplier; // ID DO FORNECEDOR
+    private UUID addressId; // ID DO ENDEREÇO DO FORNECEDOR
+    private String fullName; // NOME COMPLETO DO FORNECEDOR
+    private String cnpj; // CNPJ DO FORNECEDOR
+    private String phone; // TELEFONE DO FORNECEDOR
+    private String email; // EMAIL DO FORNECEDOR
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
     // MÉTODOS CONSTRUTORES
     public Supplier() {
