@@ -9,41 +9,46 @@ public class Medication {
     // ATRIBUTOS
     private UUID idMedication;
     private UUID supplierId;
+    private BigDecimal dosage;
+    private Integer indicatedGracePeriodDays;
     private String tradeName;
     private String activeIngredient;
     private String therapeuticCategory;
     private String unitOfMeasure;
+    private String indication;
     private LocalDateTime updatedAt;
     private boolean active;
-    private int withdrawalPeriodDays;
-    private BigDecimal dose;
+
+
 
     // MÉTODOS CONSTRUTORES
     public Medication() {
     }
 
-    public Medication(UUID idMedication, UUID supplierId, String tradeName, String activeIngredient, String therapeuticCategory, String unitOfMeasure, LocalDateTime updatedAt, boolean active, int withdrawalPeriodDays, BigDecimal dose) {
+    public Medication(UUID idMedication, UUID supplierId, BigDecimal dosage, Integer indicatedGracePeriodDays, String tradeName, String activeIngredient, String therapeuticCategory, String unitOfMeasure, String indication, LocalDateTime updatedAt, boolean active) {
         this.idMedication = idMedication;
         this.supplierId = supplierId;
+        this.dosage = dosage;
+        this.indicatedGracePeriodDays = indicatedGracePeriodDays;
         this.tradeName = tradeName;
         this.activeIngredient = activeIngredient;
         this.therapeuticCategory = therapeuticCategory;
         this.unitOfMeasure = unitOfMeasure;
+        this.indication = indication;
         this.updatedAt = updatedAt;
         this.active = active;
-        this.withdrawalPeriodDays = withdrawalPeriodDays;
-        this.dose = dose;
     }
 
-    public Medication(UUID supplierId, String tradeName, String activeIngredient, String therapeuticCategory, String unitOfMeasure, boolean active, int withdrawalPeriodDays, BigDecimal dose) {
+    public Medication(UUID supplierId, BigDecimal dosage, Integer indicatedGracePeriodDays, String tradeName, String activeIngredient, String therapeuticCategory, String unitOfMeasure, String indication, boolean active) {
         this.supplierId = supplierId;
+        this.dosage = dosage;
+        this.indicatedGracePeriodDays = indicatedGracePeriodDays;
         this.tradeName = tradeName;
         this.activeIngredient = activeIngredient;
         this.therapeuticCategory = therapeuticCategory;
         this.unitOfMeasure = unitOfMeasure;
+        this.indication = indication;
         this.active = active;
-        this.withdrawalPeriodDays = withdrawalPeriodDays;
-        this.dose = dose;
     }
 
     // MÉTODOS GETTERS
@@ -53,6 +58,14 @@ public class Medication {
 
     public UUID getSupplierId() {
         return supplierId;
+    }
+
+    public BigDecimal getDosage() {
+        return dosage;
+    }
+
+    public Integer getIndicatedGracePeriodDays() {
+        return indicatedGracePeriodDays;
     }
 
     public String getTradeName() {
@@ -71,20 +84,16 @@ public class Medication {
         return unitOfMeasure;
     }
 
+    public String getIndication() {
+        return indication;
+    }
+
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
     public boolean isActive() {
         return active;
-    }
-
-    public int getWithdrawalPeriodDays() {
-        return withdrawalPeriodDays;
-    }
-
-    public BigDecimal getDose() {
-        return dose;
     }
 
     // MÉTODOS SETTERS
@@ -94,6 +103,14 @@ public class Medication {
 
     public void setSupplierId(UUID supplierId) {
         this.supplierId = supplierId;
+    }
+
+    public void setDosage(BigDecimal dosage) {
+        this.dosage = dosage;
+    }
+
+    public void setIndicatedGracePeriodDays(Integer indicatedGracePeriodDays) {
+        this.indicatedGracePeriodDays = indicatedGracePeriodDays;
     }
 
     public void setTradeName(String tradeName) {
@@ -112,6 +129,10 @@ public class Medication {
         this.unitOfMeasure = unitOfMeasure;
     }
 
+    public void setIndication(String indication) {
+        this.indication = indication;
+    }
+
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -120,28 +141,21 @@ public class Medication {
         this.active = active;
     }
 
-    public void setWithdrawalPeriodDays(int withdrawalPeriodDays) {
-        this.withdrawalPeriodDays = withdrawalPeriodDays;
-    }
-
-    public void setDose(BigDecimal dose) {
-        this.dose = dose;
-    }
-
     // MÉTODO TOSTRING
     @Override
     public String toString() {
         return "Medication{" +
                 "idMedication=" + idMedication +
                 ", supplierId=" + supplierId +
+                ", dosage=" + dosage +
+                ", indicatedGracePeriodDays=" + indicatedGracePeriodDays +
                 ", tradeName='" + tradeName + '\'' +
                 ", activeIngredient='" + activeIngredient + '\'' +
                 ", therapeuticCategory='" + therapeuticCategory + '\'' +
                 ", unitOfMeasure='" + unitOfMeasure + '\'' +
+                ", indication='" + indication + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
-                ", withdrawalPeriodDays=" + withdrawalPeriodDays +
-                ", dose=" + dose +
                 '}';
     }
 }
