@@ -7,17 +7,17 @@ import java.util.UUID;
 public class Medication {
 
     // ATRIBUTOS
-    private UUID idMedication;
-    private UUID supplierId;
-    private BigDecimal dosage;
-    private Integer indicatedGracePeriodDays;
-    private String tradeName;
-    private String activeIngredient;
-    private String therapeuticCategory;
-    private String unitOfMeasure;
-    private String indication;
-    private LocalDateTime updatedAt;
-    private boolean active;
+    private UUID idMedication; // ID DO MEDICAMENTO
+    private UUID supplierId; // ID DO FORNECEDOR DO MEDICAMENTO
+    private BigDecimal dosage; // DOSE DO MEDICAMENTO
+    private Integer indicatedGracePeriodDays; // DIAS DO PERIODO DE CARENCIA INDICADA DO MEDICAMENTO
+    private String tradeName; // NOME COMERCIAL DO MEDICAMENTO
+    private String activeIngredient; // PRINCIPIO ATIVO DO MEDICAMENTO
+    private String therapeuticCategory; // CATEGORIA TERAPEUTICA DO MEDICAMENTO
+    private String unitOfMeasure; // UNIDADE DE MEDIDADO DO MEDICAMENTO
+    private String indication; // INDICACAO DO MEDICAMENTO
+    private LocalDateTime updatedAt; // ATUALIZADO EM
+    private boolean active; // ATIVO
 
 
 
