@@ -14,26 +14,27 @@ public class GracePeriodDAO {
 
     // INSERT
     public void insert(GracePeriod gracePeriod) throws SQLException {
-        String sql = "INSERT INTO periodo_carencia (data_inicio_carencia, data_fim_carencia, observacoes, id_animal, ativo, atualizado_em) " +
+        String sql = "INSERT INTO grace_periods (animal_id, notes, start_date, end_date, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setObject(1, gracePeriod.getAnimalId());
+            stmt.setString(2, gracePeriod.getNotes());
+
             if (gracePeriod.getStartDate() != null) {
-                stmt.setDate(1, Date.valueOf(gracePeriod.getStartDate()));
+                stmt.setDate(3, Date.valueOf(gracePeriod.getStartDate()));
             } else {
-                stmt.setNull(1, Types.DATE);
+                stmt.setNull(3, Types.DATE);
             }
 
             if (gracePeriod.getEndDate() != null) {
-                stmt.setDate(2, Date.valueOf(gracePeriod.getEndDate()));
+                stmt.setDate(4, Date.valueOf(gracePeriod.getEndDate()));
             } else {
-                stmt.setNull(2, Types.DATE);
+                stmt.setNull(4, Types.DATE);
             }
 
-            stmt.setString(3, gracePeriod.getNotes());
-            stmt.setObject(4, gracePeriod.getAnimalId());
             stmt.setBoolean(5, gracePeriod.isActive());
 
             stmt.executeUpdate();
@@ -46,7 +47,7 @@ public class GracePeriodDAO {
 
     // FIND BY ID
     public GracePeriod findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM periodo_carencia WHERE id_carencia = ?";
+        String sql = "SELECT * FROM grace_periods WHERE id_grace_period = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -64,7 +65,7 @@ public class GracePeriodDAO {
 
     // FIND ALL
     public List<GracePeriod> findAll() throws SQLException {
-        String sql = "SELECT * FROM periodo_carencia ORDER BY data_fim_carencia DESC";
+        String sql = "SELECT * FROM grace_periods ORDER BY end_date DESC";
         List<GracePeriod> gracePeriods = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -76,7 +77,6 @@ public class GracePeriodDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error listing grace periods: " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -85,29 +85,29 @@ public class GracePeriodDAO {
 
     // UPDATE
     public void update(GracePeriod gracePeriod) throws SQLException {
-        String sql = "UPDATE periodo_carencia SET data_inicio_carencia = ?, data_fim_carencia = ?, " +
-                "observacoes = ?, id_animal = ?, ativo = ?, atualizado_em = now() " +
-                "WHERE id_carencia = ?";
+        String sql = "UPDATE grace_periods SET animal_id = ?, notes = ?, start_date = ?, " +
+                "end_date = ?, active = ?, updated_at = now() WHERE id_grace_period = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setObject(1, gracePeriod.getAnimalId());
+            stmt.setString(2, gracePeriod.getNotes());
+
             if (gracePeriod.getStartDate() != null) {
-                stmt.setDate(1, Date.valueOf(gracePeriod.getStartDate()));
+                stmt.setDate(3, Date.valueOf(gracePeriod.getStartDate()));
             } else {
-                stmt.setNull(1, Types.DATE);
+                stmt.setNull(3, Types.DATE);
             }
 
             if (gracePeriod.getEndDate() != null) {
-                stmt.setDate(2, Date.valueOf(gracePeriod.getEndDate()));
+                stmt.setDate(4, Date.valueOf(gracePeriod.getEndDate()));
             } else {
-                stmt.setNull(2, Types.DATE);
+                stmt.setNull(4, Types.DATE);
             }
 
-            stmt.setString(3, gracePeriod.getNotes());
-            stmt.setObject(4, gracePeriod.getAnimalId());
             stmt.setBoolean(5, gracePeriod.isActive());
-            stmt.setObject(6, gracePeriod.getId());
+            stmt.setObject(6, gracePeriod.getIdGracePeriod());
 
             stmt.executeUpdate();
 
@@ -119,7 +119,7 @@ public class GracePeriodDAO {
 
     // DELETE
     public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM periodo_carencia WHERE id_carencia = ?";
+        String sql = "DELETE FROM grace_periods WHERE id_grace_period = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -135,30 +135,30 @@ public class GracePeriodDAO {
 
     // MAP RESULT SET
     private GracePeriod mapGracePeriod(ResultSet rs) throws SQLException {
-        UUID id = rs.getObject("id_carencia", UUID.class);
+        UUID idGracePeriod = rs.getObject("id_grace_period", UUID.class);
+        UUID animalId = rs.getObject("animal_id", UUID.class);
+        String notes = rs.getString("notes");
 
         LocalDate startDate = null;
-        Date sqlStartDate = rs.getDate("data_inicio_carencia");
+        Date sqlStartDate = rs.getDate("start_date");
         if (sqlStartDate != null) {
             startDate = sqlStartDate.toLocalDate();
         }
 
         LocalDate endDate = null;
-        Date sqlEndDate = rs.getDate("data_fim_carencia");
+        Date sqlEndDate = rs.getDate("end_date");
         if (sqlEndDate != null) {
             endDate = sqlEndDate.toLocalDate();
         }
 
-        String notes = rs.getString("observacoes");
-        UUID animalId = rs.getObject("id_animal", UUID.class);
-        boolean active = rs.getBoolean("ativo");
-
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("atualizado_em");
+        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new GracePeriod(id, startDate, endDate, notes, animalId, updatedAt, active);
+        boolean active = rs.getBoolean("active");
+
+        return new GracePeriod(idGracePeriod, animalId, notes, startDate, endDate, updatedAt, active);
     }
 }
