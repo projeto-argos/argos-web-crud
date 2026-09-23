@@ -9,15 +9,15 @@ import java.sql.SQLException;
 public class MedicationStockDAO {
 
     // INSERT
-    public boolean insert(MedicationStock medicationStock) throws SQLException {
+    public void insert(MedicationStock medicationStock) throws SQLException {
 
-        String sql = "INSERT INTO medicationStock(medication_stock_id, available_quantity, storage_location, active, up)"
-
-        try (ConnectionFactory conn = ConnectionFactory.getConnection();
-        PreparedStatement stmt = conn.preparedStatement(sql)){
-
-        }
-    }
+        String sql = "INSERT INTO medicationStock(medication_stock_id, available_quantity, storage_location, active, up)";
+//
+//        try (ConnectionFactory conn = ConnectionFactory.getConnection();
+//        PreparedStatement stmt = conn.preparedStatement(sql)){
+//
+//        }
+  }
 
     // FIND BY ID
 

@@ -14,21 +14,22 @@ public class MedicationDAO {
 
     // CREATE
     public void insert(Medication medication) throws SQLException {
-        String sql = "INSERT INTO medications (supplier_id, trade_name, active_ingredient, " +
-                "therapeutic_category, unit_of_measure, active, withdrawal_period_days, dose, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO medications (supplier_id, dosage, indicated_grace_period_days, trade_name, " +
+                "active_ingredient, therapeutic_category, unit_of_measure, indication, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, medication.getSupplierId());
-            stmt.setString(2, medication.getTradeName());
-            stmt.setString(3, medication.getActiveIngredient());
-            stmt.setString(4, medication.getTherapeuticCategory());
-            stmt.setString(5, medication.getUnitOfMeasure());
-            stmt.setBoolean(6, medication.isActive());
-            stmt.setInt(7, medication.getWithdrawalPeriodDays());
-            stmt.setBigDecimal(8, medication.getDose());
+            stmt.setBigDecimal(2, medication.getDosage());
+            stmt.setObject(3, medication.getIndicatedGracePeriodDays());
+            stmt.setString(4, medication.getTradeName());
+            stmt.setString(5, medication.getActiveIngredient());
+            stmt.setString(6, medication.getTherapeuticCategory());
+            stmt.setString(7, medication.getUnitOfMeasure());
+            stmt.setString(8, medication.getIndication());
+            stmt.setBoolean(9, medication.isActive());
 
             stmt.executeUpdate();
 
@@ -77,22 +78,23 @@ public class MedicationDAO {
 
     // UPDATE
     public void update(Medication medication) throws SQLException {
-        String sql = "UPDATE medications SET supplier_id = ?, trade_name = ?, active_ingredient = ?, " +
-                "therapeutic_category = ?, unit_of_measure = ?, active = ?, " +
-                "withdrawal_period_days = ?, dose = ?, updated_at = now() WHERE id_medication = ?";
+        String sql = "UPDATE medications SET supplier_id = ?, dosage = ?, indicated_grace_period_days = ?, " +
+                "trade_name = ?, active_ingredient = ?, therapeutic_category = ?, unit_of_measure = ?, " +
+                "indication = ?, active = ?, updated_at = now() WHERE id_medication = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, medication.getSupplierId());
-            stmt.setString(2, medication.getTradeName());
-            stmt.setString(3, medication.getActiveIngredient());
-            stmt.setString(4, medication.getTherapeuticCategory());
-            stmt.setString(5, medication.getUnitOfMeasure());
-            stmt.setBoolean(6, medication.isActive());
-            stmt.setInt(7, medication.getWithdrawalPeriodDays());
-            stmt.setBigDecimal(8, medication.getDose());
-            stmt.setObject(9, medication.getIdMedication());
+            stmt.setBigDecimal(2, medication.getDosage());
+            stmt.setObject(3, medication.getIndicatedGracePeriodDays());
+            stmt.setString(4, medication.getTradeName());
+            stmt.setString(5, medication.getActiveIngredient());
+            stmt.setString(6, medication.getTherapeuticCategory());
+            stmt.setString(7, medication.getUnitOfMeasure());
+            stmt.setString(8, medication.getIndication());
+            stmt.setBoolean(9, medication.isActive());
+            stmt.setObject(10, medication.getIdMedication());
 
             stmt.executeUpdate();
 
@@ -122,10 +124,13 @@ public class MedicationDAO {
     private Medication mapMedication(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_medication", UUID.class);
         UUID supplierId = rs.getObject("supplier_id", UUID.class);
+        BigDecimal dosage = rs.getBigDecimal("dosage");
+        Integer indicatedGracePeriodDays = rs.getObject("indicated_grace_period_days", Integer.class);
         String tradeName = rs.getString("trade_name");
         String activeIngredient = rs.getString("active_ingredient");
         String therapeuticCategory = rs.getString("therapeutic_category");
         String unitOfMeasure = rs.getString("unit_of_measure");
+        String indication = rs.getString("indication");
 
         LocalDateTime updatedAt = null;
         Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
@@ -134,10 +139,8 @@ public class MedicationDAO {
         }
 
         boolean active = rs.getBoolean("active");
-        int withdrawalPeriodDays = rs.getInt("withdrawal_period_days");
-        BigDecimal dose = rs.getBigDecimal("dose");
 
-        return new Medication(id, supplierId, tradeName, activeIngredient, therapeuticCategory,
-                unitOfMeasure, updatedAt, active, withdrawalPeriodDays, dose);
+        return new Medication(id, supplierId, dosage, indicatedGracePeriodDays, tradeName,
+                activeIngredient, therapeuticCategory, unitOfMeasure, indication, updatedAt, active);
     }
 }

@@ -22,7 +22,7 @@ public class HerdDAO {
             stmt.setObject(1, herd.getPropertyId());
             stmt.setString(2, herd.getName());
             stmt.setString(3, herd.getBreed());
-            stmt.setString(4, herd.getDescription());
+//            stmt.setString(4, herd.get());
             stmt.setBoolean(5, herd.isActive());
 
             stmt.executeUpdate();

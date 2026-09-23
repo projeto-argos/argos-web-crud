@@ -5,21 +5,22 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Application {
+
     // ATRIBUTOS
-    private UUID idApplication; // ID DA APLICACAO
-    private UUID idUser; // ID DO USER DA APLICACAO
-    private UUID idMedicationBatch; // ID DO LOTE DO MEDICAMENTO DA APLICACAO
-    private UUID idBatch; // ID DO LOTE DA APLICACAO
-    private BigDecimal dosage; // DOSAGEM DA APLICACAO
-    private String unitOfMeasure; // UNIDADE DE MEDIDA DA APLICACAO
-    private String appliedLimb; // MEMBRO APLICADO DA APLICACAO
-    private String appliedSite; // LOCAL APLICADO DA APLICACAO
-    private String administrationRoute; // VIA ADMINISTRACAO DA APLICACAO
-    private String objective; // OBJETIVO DA APLICACAO
-    private String notes; // OBSERVACOES DA APLICACAO
-    private LocalDateTime dateTime; // DATA E HORA DA APLICACAO
-    private LocalDateTime updatedAt; // ATUALIZADO EM
-    private boolean active; // ATIVO
+    private UUID idApplication;
+    private UUID idUser;
+    private UUID idMedicationBatch;
+    private UUID idBatch;
+    private BigDecimal dosage;
+    private String unitOfMeasure;
+    private String appliedLimb;
+    private String appliedSite;
+    private String administrationRoute;
+    private String objective;
+    private String notes;
+    private LocalDateTime dateTime;
+    private LocalDateTime updatedAt;
+    private boolean active;
 
     // MÉTODOS CONSTRUTORES
     public Application() {
