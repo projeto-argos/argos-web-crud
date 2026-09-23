@@ -29,7 +29,7 @@
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
-            <version>3.1.0</version>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- Jakarta RESTful Web Services -->
@@ -73,12 +73,6 @@
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>3.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>...</version>
-        </dependency>
-
     </dependencies>
 
     <build>
