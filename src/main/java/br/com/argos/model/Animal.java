@@ -8,18 +8,18 @@ import java.util.UUID;
 public class Animal {
 
     // ATRIBUTOS
-    private UUID idAnimal; // ID DO ANIMAL
-    private UUID batchId; // ID DO LOTE DO ANIMAL
-    private BigDecimal weight; // PESO DO ANIMAL
-    private String earTag; // BRINCO DO ANIMAL
-    private String notes; // OBSERVAÇÕES DO ANIMAL
-    private String exceptionReason; // MOTIVO DA EXCEÇÃO DO ANIMAL
-    private LocalDate exceptionStartDate; // DATA DE INICIO DA EXCEÇÃO DO ANIMAL
-    private LocalDate exceptionEndDate; // DATA DO FIM DA EXCEÇÃO DO ANIMAL
-    private LocalDate birthDate; // DATA DE NASCIMENTO DO ANIMAL
-    private LocalDateTime updatedAt; // ATUALIZADO EM
-    private boolean active; // ATIVO
-    private boolean clearedForSlaughter; // LIBERADO PARA ABATE
+    private UUID idAnimal;
+    private UUID batchId;
+    private BigDecimal weight;
+    private String earTag;
+    private String notes;
+    private String exceptionReason;
+    private LocalDate exceptionStartDate;
+    private LocalDate exceptionEndDate;
+    private LocalDate birthDate;
+    private LocalDateTime updatedAt;
+    private boolean active;
+    private boolean clearedForSlaughter;
 
     // MÉTODOS CONSTRUTORES
     public Animal() {
