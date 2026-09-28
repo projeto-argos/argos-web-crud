@@ -10,9 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * 
+ */
 public class HerdDAO implements GenericDAO<Herd, UUID> {
 
     // CREATE
+    @Override
     public void insert(Herd herd) throws SQLException {
         String sql = "INSERT INTO herds (property_id, name, breed, original_head_count, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, now())";
@@ -34,6 +39,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     }
 
     // READ
+    @Override
     public Herd findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM herds WHERE id_herd = ?";
 
@@ -51,6 +57,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
         return null;
     }
 
+    @Override
     public List<Herd> findAll() throws SQLException {
         String sql = "SELECT * FROM herds ORDER BY name";
         List<Herd> herds = new ArrayList<>();
@@ -71,6 +78,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     }
 
     // UPDATE
+    @Override
     public void update(Herd herd) throws SQLException {
         String sql = "UPDATE herds SET property_id = ?, name = ?, breed = ?, original_head_count = ?, active = ?, updated_at = now() " +
                 "WHERE id_herd = ?";
@@ -93,6 +101,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM herds WHERE id_herd = ?";
 
@@ -108,6 +117,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     }
 
     // MAPPER
+    @Override
     private Herd mapHerd(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_herd", UUID.class);
         UUID propertyId = rs.getObject("property_id", UUID.class);
