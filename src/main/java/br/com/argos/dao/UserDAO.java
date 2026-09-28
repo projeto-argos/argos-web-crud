@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.User;
 
 import java.sql.*;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class UserDAO {
+public class UserDAO implements GenericDAO<User,UUID> {
 
     // CREATE
     public void insert(User user) throws SQLException {
