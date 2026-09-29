@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Batch;
 
 import java.sql.*;
@@ -10,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BatchDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Batch (Lote).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class BatchDAO implements GenericDAO<Batch, UUID> {
 
     // CREATE
+    @Override
     public void insert(Batch batch) throws SQLException {
         String sql = "INSERT INTO batches (herd_id, original_head_count, category, batch_code, opening_date, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
@@ -42,6 +49,7 @@ public class BatchDAO {
     }
 
     // READ
+    @Override
     public Batch findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM batches WHERE id_batch = ?";
 
@@ -59,6 +67,7 @@ public class BatchDAO {
         return null;
     }
 
+    @Override
     public List<Batch> findAll() throws SQLException {
         String sql = "SELECT * FROM batches ORDER BY category ASC";
         List<Batch> batches = new ArrayList<>();
@@ -79,6 +88,7 @@ public class BatchDAO {
     }
 
     // UPDATE
+    @Override
     public void update(Batch batch) throws SQLException {
         String sql = "UPDATE batches SET herd_id = ?, original_head_count = ?, category = ?, " +
                 "batch_code = ?, opening_date = ?, active = ?, updated_at = now() " +
@@ -110,6 +120,7 @@ public class BatchDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM batches WHERE id_batch = ?";
 

@@ -12,7 +12,9 @@ import java.util.UUID;
 
 
 /**
- * 
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Herd (Rebanho).
+ * Implementa as operações de CRUD e métodos personalizados.
  */
 public class HerdDAO implements GenericDAO<Herd, UUID> {
 
@@ -117,7 +119,6 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     }
 
     // MAPPER
-    @Override
     private Herd mapHerd(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_herd", UUID.class);
         UUID propertyId = rs.getObject("property_id", UUID.class);
