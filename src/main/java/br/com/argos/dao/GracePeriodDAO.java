@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.GracePeriod;
 
 import java.sql.*;
@@ -10,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GracePeriodDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela GracePeriod (Periodo Carencia).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class GracePeriodDAO implements GenericDAO<GracePeriod, UUID> {
 
     // INSERT
+    @Override
     public void insert(GracePeriod gracePeriod) throws SQLException {
         String sql = "INSERT INTO grace_periods (animal_id, notes, start_date, end_date, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, now())";
@@ -46,6 +53,7 @@ public class GracePeriodDAO {
     }
 
     // FIND BY ID
+    @Override
     public GracePeriod findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM grace_periods WHERE id_grace_period = ?";
 
@@ -64,6 +72,7 @@ public class GracePeriodDAO {
     }
 
     // FIND ALL
+    @Override
     public List<GracePeriod> findAll() throws SQLException {
         String sql = "SELECT * FROM grace_periods ORDER BY end_date DESC";
         List<GracePeriod> gracePeriods = new ArrayList<>();
@@ -84,6 +93,7 @@ public class GracePeriodDAO {
     }
 
     // UPDATE
+    @Override
     public void update(GracePeriod gracePeriod) throws SQLException {
         String sql = "UPDATE grace_periods SET animal_id = ?, notes = ?, start_date = ?, " +
                 "end_date = ?, active = ?, updated_at = now() WHERE id_grace_period = ?";
@@ -118,6 +128,7 @@ public class GracePeriodDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM grace_periods WHERE id_grace_period = ?";
 

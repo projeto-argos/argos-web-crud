@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Property;
 
 import java.sql.*;
@@ -9,9 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PropertyDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Property (Propriedade).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     // CREATE
+    @Override
     public void insert(Property property) throws SQLException {
         String sql = "INSERT INTO properties (name, phone, cnpj, email, active, user_id, address_id, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, now())";
@@ -34,7 +41,8 @@ public class PropertyDAO {
         }
     }
 
-    // READ
+//    Find columns by ID
+    @Override
     public Property findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM properties WHERE id_property = ?";
 
@@ -52,6 +60,8 @@ public class PropertyDAO {
         return null;
     }
 
+//    Find all
+    @Override
     public List<Property> findAll() throws SQLException {
         String sql = "SELECT * FROM properties ORDER BY name";
         List<Property> properties = new ArrayList<>();
@@ -72,6 +82,7 @@ public class PropertyDAO {
     }
 
     // UPDATE
+    @Override
     public void update(Property property) throws SQLException {
         String sql = "UPDATE properties SET name = ?, phone = ?, cnpj = ?, email = ?, active = ?, user_id = ?, address_id = ?, updated_at = now() " +
                 "WHERE id_property = ?";
@@ -96,6 +107,7 @@ public class PropertyDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM properties WHERE id_property = ?";
 

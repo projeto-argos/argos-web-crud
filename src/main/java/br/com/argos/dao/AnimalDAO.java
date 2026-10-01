@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Animal;
 
 import java.math.BigDecimal;
@@ -11,9 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AnimalDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Animal.
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class AnimalDAO implements GenericDAO<Animal,UUID> {
 
     // INSERT
+    @Override
     public void insert(Animal animal) throws SQLException {
         String sql = "INSERT INTO animals (batch_id, weight, ear_tag, notes, exception_reason, " +
                 "exception_start_date, exception_end_date, birth_date, active, cleared_for_slaughter, updated_at) " +
@@ -57,6 +64,7 @@ public class AnimalDAO {
     }
 
     // FIND BY ID
+    @Override
     public Animal findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM animals WHERE id_animal = ?";
 
@@ -75,6 +83,7 @@ public class AnimalDAO {
     }
 
     // FIND ALL
+    @Override
     public List<Animal> findAll() throws SQLException {
         String sql = "SELECT * FROM animals ORDER BY ear_tag";
         List<Animal> animals = new ArrayList<>();
@@ -95,6 +104,7 @@ public class AnimalDAO {
     }
 
     // UPDATE
+    @Override
     public void update(Animal animal) throws SQLException {
         String sql = "UPDATE animals SET batch_id = ?, weight = ?, ear_tag = ?, notes = ?, " +
                 "exception_reason = ?, exception_start_date = ?, exception_end_date = ?, " +
@@ -140,6 +150,7 @@ public class AnimalDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM animals WHERE id_animal = ?";
 

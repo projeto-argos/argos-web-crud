@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Application;
 
 import java.math.BigDecimal;
@@ -10,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ApplicationDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Application (Aplicacao).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class ApplicationDAO implements GenericDAO<Application, UUID> {
 
     // INSERT
+    @Override
     public void insert(Application application) throws SQLException {
         String sql = "INSERT INTO applications (user_id, medication_batch_id, batch_id, dosage, unit_of_measure, " +
                 "applied_limb, applied_site, administration_route, objective, notes, date_time, active, updated_at) " +
@@ -49,6 +56,7 @@ public class ApplicationDAO {
     }
 
     // FIND BY ID
+    @Override
     public Application findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM applications WHERE id_application = ?";
 
@@ -67,6 +75,7 @@ public class ApplicationDAO {
     }
 
     // FIND ALL
+    @Override
     public List<Application> findAll() throws SQLException {
         String sql = "SELECT * FROM applications ORDER BY date_time DESC";
         List<Application> applications = new ArrayList<>();
@@ -87,6 +96,7 @@ public class ApplicationDAO {
     }
 
     // UPDATE
+    @Override
     public void update(Application application) throws SQLException {
         String sql = "UPDATE applications SET user_id = ?, medication_batch_id = ?, batch_id = ?, dosage = ?, " +
                 "unit_of_measure = ?, applied_limb = ?, applied_site = ?, administration_route = ?, " +
@@ -124,6 +134,7 @@ public class ApplicationDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM applications WHERE id_application = ?";
 
