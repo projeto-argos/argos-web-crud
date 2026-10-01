@@ -3,8 +3,8 @@ package br.com.argos.service;
 import br.com.argos.dao.AdminDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.util.Validador;
-import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
+import br.com.argos.exceptions.RequiredFieldException;
 
 public class AdminService {
 
@@ -30,7 +30,8 @@ public class AdminService {
             throw new RequiredFieldException("O nome completo é obrigatório.");
         }
         if (admin.getFullName().length() > 120){
-            throw new IllegalArgumentException("O nome não pode passar de 120 caracteres."        }
+            throw new IllegalArgumentException("O nome não pode passar de 120 caracteres.");
+        }
 
         if (admin.getCpf() == null || !Validador.cpfValido(admin.getCpf())){
             throw new ValidationException("Invalid cpf.");
