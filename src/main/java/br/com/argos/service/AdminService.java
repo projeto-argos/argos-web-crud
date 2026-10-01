@@ -17,8 +17,8 @@ public class AdminService {
     }
 
     public void atualizar(Admin admin) {
-        if (admin.getIdAdmin() != null) {
-            throw new RequiredFieldException("O id do Admin é obrigatório para atualização.")
+        if (admin.getIdAdmin() == null) {
+            throw new RequiredFieldException("O id do Admin é obrigatório para atualização.");
         }
         validarAdmin(admin, false);
         adminDAO.update(admin);
@@ -26,9 +26,11 @@ public class AdminService {
 
     private void validarAdmin(Admin admin, boolean novoAdmin) {
 
-        if (admin.getFullName() == null || admin.getFullName().isBlank()){
+        if (admin.getFullName() != null || admin.getFullName().isBlank()){
             throw new RequiredFieldException("O nome completo é obrigatório.");
         }
+        if (admin.getFullName().length() > 120){
+            throw new IllegalArgumentException("O nome não pode passar de 120 caracteres."        }
 
         if (admin.getCpf() == null || !Validador.cpfValido(admin.getCpf())){
             throw new ValidationException("Invalid cpf.");

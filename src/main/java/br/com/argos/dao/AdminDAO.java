@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AdminDAO {
+public class AdminDAO implements GenericDAO<Admin, UUID> {
 
     // CREATE
     public void insert(Admin admin) throws SQLException {
