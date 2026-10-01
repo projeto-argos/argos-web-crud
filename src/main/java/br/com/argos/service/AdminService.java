@@ -6,31 +6,49 @@ import br.com.argos.util.Validador;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.exceptions.RequiredFieldException;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 public class AdminService {
 
     private final AdminDAO adminDAO = new AdminDAO();
 
 
-    public void cadastrar(Admin admin) {
+    public void create(Admin admin) {
         validarAdmin(admin, true);
         adminDAO.insert(admin);
     }
 
-    public void atualizar(Admin admin) {
-        if (admin.getIdAdmin() == null) {
-            throw new RequiredFieldException("O id do Admin é obrigatório para atualização.");
-        }
+    public Admin findById(UUID id) {
+        Objects.requireNonNull(id, "O identificador do admin é obrigatório.");
+        return adminDAO.findById(id);
+    }
+
+    public List<Admin> findAll() {
+        return adminDAO.findAll();
+    }
+
+    public void update(Admin admin) {
         validarAdmin(admin, false);
+        if (admin.getIdAdmin() == null) {
+            throw new RequiredFieldException("id");
+        }
         adminDAO.update(admin);
+    }
+
+    public void delete(UUID id) {
+        Objects.requireNonNull(id, "O identificador do admin é obrigatório");
+        adminDAO.delete(id);
     }
 
     private void validarAdmin(Admin admin, boolean novoAdmin) {
 
-        if (admin.getFullName() != null || admin.getFullName().isBlank()){
-            throw new RequiredFieldException("O nome completo é obrigatório.");
+        if (admin.getFullName() == null || admin.getFullName().isBlank()){
+            throw new RequiredFieldException("fullname");
         }
         if (admin.getFullName().length() > 120){
-            throw new IllegalArgumentException("O nome não pode passar de 120 caracteres.");
+            throw new ValidationException("The name cannot exceed 120 characters.");
         }
 
         if (admin.getCpf() == null || !Validador.cpfValido(admin.getCpf())){
@@ -46,7 +64,7 @@ public class AdminService {
         }
 
         if (novoAdmin && (admin.getPassword() == null || admin.getPassword().isBlank())){
-            throw new RequiredFieldException("O senha é obrigatória.");
+            throw new RequiredFieldException("password");
         }
     }
 

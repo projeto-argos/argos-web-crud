@@ -1,6 +1,6 @@
 package br.com.argos.interfaces;
 
-import java.sql.SQLException;
+import br.com.argos.exceptions.DataAccessException;
 import java.util.List;
 
     /**
@@ -16,42 +16,42 @@ public interface GenericDAO <T, ID> {
      * Insere uma nova entidade no banco de dados.
      *
      * @param entity entidade que será inserida
-     * @throws SQLException caso ocorra um erro durante a operação no banco
+     * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
-     void insert(T entity) throws SQLException;
+     void insert(T entity);
 
     /**
      * Atualiza uma entidade já existente no banco de dados.
      *
      * @param entity entidade que será atualizada.
-     * @throws SQLException caso ocorra um erro durante a operação no banco
+     * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
-    void update(T entity) throws SQLException;
+    void update(T entity);
 
     /**
      * Deleta uma entidade pelo seu identificador.
      *
      * @param id identificador da entidade
      * @return entity deletada ou null caso não exista
-     * @throws SQLException caso ocorra um erro durante a operação no banco
+     * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
-    void delete(ID id) throws SQLException;
+    void delete(ID id);
 
     /**
      * Busca todas as entidades cadastradas.
      *
      * @return lista contendo todas as entidades encontradas.
-     * @throws SQLException caso ocorra um erro durante a consulta no banco de dados.
+     * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
-    List<T> findAll() throws SQLException;
+    List<T> findAll();
 
     /**
      * Busca uma entidade pelo seu identificador.
      *
      * @param id identificador da entidade
      * @return entity encontrada ou null caso não exista
-     * @throws SQLException caso ocorra um erro durante a consulta
+     * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
-    T findById(ID id) throws SQLException;
+    T findById(ID id);
 
 }
