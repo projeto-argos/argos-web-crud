@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Medication;
 
 import java.math.BigDecimal;
@@ -10,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MedicationDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela Medication (Medicacao).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class MedicationDAO implements GenericDAO<Medication, UUID> {
 
     // CREATE
+    @Override
     public void insert(Medication medication) throws SQLException {
         String sql = "INSERT INTO medications (supplier_id, dosage, indicated_grace_period_days, trade_name, " +
                 "active_ingredient, therapeutic_category, unit_of_measure, indication, active, updated_at) " +
@@ -40,6 +47,7 @@ public class MedicationDAO {
     }
 
     // READ
+    @Override
     public Medication findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM medications WHERE id_medication = ?";
 
@@ -57,6 +65,7 @@ public class MedicationDAO {
         return null;
     }
 
+    @Override
     public List<Medication> findAll() throws SQLException {
         String sql = "SELECT * FROM medications ORDER BY trade_name";
         List<Medication> medications = new ArrayList<>();
@@ -77,6 +86,7 @@ public class MedicationDAO {
     }
 
     // UPDATE
+    @Override
     public void update(Medication medication) throws SQLException {
         String sql = "UPDATE medications SET supplier_id = ?, dosage = ?, indicated_grace_period_days = ?, " +
                 "trade_name = ?, active_ingredient = ?, therapeutic_category = ?, unit_of_measure = ?, " +
@@ -105,6 +115,7 @@ public class MedicationDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM medications WHERE id_medication = ?";
 

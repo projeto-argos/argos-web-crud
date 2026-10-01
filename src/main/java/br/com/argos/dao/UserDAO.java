@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.User;
 
 import java.sql.*;
@@ -10,9 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class UserDAO {
+/**
+ * Classe de acesso a dados (DAO).
+ * Acesso ao banco para a tabela User (Usuário).
+ * Implementa as operações de CRUD e métodos personalizados.
+ */
+public class UserDAO implements GenericDAO<User,UUID> {
 
     // CREATE
+    @Override
     public void insert(User user) throws SQLException {
         String sql = "INSERT INTO users (full_name, phone, email, cpf, role, birth_date, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
@@ -43,6 +50,7 @@ public class UserDAO {
     }
 
     // READ
+    @Override
     public User findById(UUID id) throws SQLException {
         String sql = "SELECT * FROM users WHERE id_user = ?";
 
@@ -60,6 +68,7 @@ public class UserDAO {
         return null;
     }
 
+    @Override
     public List<User> findAll() throws SQLException {
         String sql = "SELECT * FROM users ORDER BY full_name";
         List<User> users = new ArrayList<>();
@@ -80,6 +89,7 @@ public class UserDAO {
     }
 
     // UPDATE
+    @Override
     public void update(User user) throws SQLException {
         String sql = "UPDATE users SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, password = ?, active = ?, updated_at = now() " +
                 "WHERE id_user = ?";
@@ -111,6 +121,7 @@ public class UserDAO {
     }
 
     // DELETE
+    @Override
     public void delete(UUID id) throws SQLException {
         String sql = "DELETE FROM users WHERE id_user = ?";
 
