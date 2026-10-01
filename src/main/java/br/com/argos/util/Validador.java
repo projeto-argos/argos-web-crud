@@ -9,6 +9,7 @@ public class Validador {
     private static final Pattern PADRAO_EMAIL = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
     private static final Pattern PADRAO_CNPJ = Pattern.compile("^\\d{14}$");
     private static final Pattern PADRAO_USUARIO = Pattern.compile("^[\\w.]{5,20}$");
+    private static final Pattern PADRAO_SENHA = Pattern.compile("^.{8,64}$");
 
     // ================== PESOS CNPJ ==================
     private static final int[] PESOS_CNPJ_PRIMEIRO =
@@ -39,6 +40,14 @@ public class Validador {
             return false;
         }
         return PADRAO_USUARIO.matcher(usuario).matches();
+    }
+
+    public static boolean senhaValida(String senha) {
+        if (senha == null) {
+            return false;
+        }
+
+        return PADRAO_SENHA.matcher(senha).matches();
     }
 
     // ================== CPF (FORMATO + DÍGITO VERIFICADOR) ==================
