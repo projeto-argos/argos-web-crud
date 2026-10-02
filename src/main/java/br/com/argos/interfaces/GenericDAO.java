@@ -10,7 +10,7 @@ import java.util.List;
      * @param <T> tipo da entidade que será manipulada
      * @param <ID> tipo do identificador da entidade
      */
-public interface GenericDAO <T, ID> {
+public interface GenericDAO<T, ID> {
 
     /**
      * Insere uma nova entidade no banco de dados.
@@ -32,7 +32,6 @@ public interface GenericDAO <T, ID> {
      * Deleta uma entidade pelo seu identificador.
      *
      * @param id identificador da entidade
-     * @return entity deletada ou null caso não exista
      * @throws DataAccessException se ocorrer algum erro ao acessar o banco de dados.
      */
     void delete(ID id);
