@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Animal;
 
@@ -21,7 +22,7 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
 
     // INSERT
     @Override
-    public void insert(Animal animal) throws SQLException {
+    public void insert(Animal animal) {
         String sql = "INSERT INTO animals (batch_id, weight, ear_tag, notes, exception_reason, " +
                 "exception_start_date, exception_end_date, birth_date, active, cleared_for_slaughter, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
@@ -57,15 +58,15 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
             stmt.setBoolean(10, animal.isClearedForSlaughter());
 
             stmt.executeUpdate();
+
         } catch (SQLException e) {
-            System.err.println("Error inserting animal: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting animal: " + e);
         }
     }
 
     // FIND BY ID
     @Override
-    public Animal findById(UUID id) throws SQLException {
+    public Animal findById(UUID id) {
         String sql = "SELECT * FROM animals WHERE id_animal = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -78,13 +79,16 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
                     return mapAnimal(rs);
                 }
             }
+            return null;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching animal: " + id, e);
         }
-        return null;
+
     }
 
     // FIND ALL
     @Override
-    public List<Animal> findAll() throws SQLException {
+    public List<Animal> findAll() {
         String sql = "SELECT * FROM animals ORDER BY ear_tag";
         List<Animal> animals = new ArrayList<>();
 
@@ -96,8 +100,7 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
                 animals.add(mapAnimal(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing animals: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing animals: " + e);
         }
 
         return animals;
@@ -105,7 +108,7 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
 
     // UPDATE
     @Override
-    public void update(Animal animal) throws SQLException {
+    public void update(Animal animal) {
         String sql = "UPDATE animals SET batch_id = ?, weight = ?, ear_tag = ?, notes = ?, " +
                 "exception_reason = ?, exception_start_date = ?, exception_end_date = ?, " +
                 "birth_date = ?, active = ?, cleared_for_slaughter = ?, updated_at = now() " +
@@ -144,14 +147,13 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating animal: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating animal: " + e);
         }
     }
 
     // DELETE
     @Override
-    public void delete(UUID id) throws SQLException {
+    public void delete(UUID id) {
         String sql = "DELETE FROM animals WHERE id_animal = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -160,8 +162,7 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error deleting animal: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting animal: " + id, e);
         }
     }
 

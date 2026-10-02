@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Admin;
 
@@ -13,7 +14,8 @@ import java.util.UUID;
 public class AdminDAO implements GenericDAO<Admin, UUID> {
 
     // CREATE
-    public void insert(Admin admin) throws SQLException {
+    @Override
+    public void insert(Admin admin)  {
         String sql = "INSERT INTO admins (full_name, cpf, phone, email, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
@@ -29,13 +31,13 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error inserting admin: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting admin: " + e);
         }
     }
 
     // READ
-    public Admin findById(UUID id) throws SQLException {
+    @Override
+    public Admin findById(UUID id) {
         String sql = "SELECT * FROM admins WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -48,11 +50,15 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
                     return mapAdmin(rs);
                 }
             }
+            return null;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for admin " + id, e);
         }
-        return null;
+
     }
 
-    public List<Admin> findAll() throws SQLException {
+    @Override
+    public List<Admin> findAll() {
         String sql = "SELECT * FROM admins ORDER BY full_name";
         List<Admin> admins = new ArrayList<>();
 
@@ -64,15 +70,15 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
                 admins.add(mapAdmin(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing admins: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing admins: " + e);
         }
 
         return admins;
     }
 
     // UPDATE
-    public void update(Admin admin) throws SQLException {
+    @Override
+    public void update(Admin admin) {
         String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, password = ?, active = ?, updated_at = now() " +
                 "WHERE id_admin = ?";
 
@@ -89,13 +95,14 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating admin: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating admin: " + e);
+
         }
     }
 
     // DELETE
-    public void delete(UUID id) throws SQLException {
+    @Override
+    public void delete(UUID id) {
         String sql = "DELETE FROM admins WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -104,8 +111,8 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error deleting admin: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting admin: " + id, e);
+
         }
     }
 

@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Herd;
 
@@ -20,7 +21,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
 
     // CREATE
     @Override
-    public void insert(Herd herd) throws SQLException {
+    public void insert(Herd herd) {
         String sql = "INSERT INTO herds (property_id, name, breed, original_head_count, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, now())";
 
@@ -35,14 +36,13 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error inserting herd: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting herd: " + e);
         }
     }
 
     // READ
     @Override
-    public Herd findById(UUID id) throws SQLException {
+    public Herd findById(UUID id) {
         String sql = "SELECT * FROM herds WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -55,12 +55,16 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
                     return mapHerd(rs);
                 }
             }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for herd: " + id, e);
         }
-        return null;
+
     }
 
     @Override
-    public List<Herd> findAll() throws SQLException {
+    public List<Herd> findAll() {
         String sql = "SELECT * FROM herds ORDER BY name";
         List<Herd> herds = new ArrayList<>();
 
@@ -72,8 +76,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
                 herds.add(mapHerd(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing herds: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing herds: " + e);
         }
 
         return herds;
@@ -81,7 +84,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
 
     // UPDATE
     @Override
-    public void update(Herd herd) throws SQLException {
+    public void update(Herd herd) {
         String sql = "UPDATE herds SET property_id = ?, name = ?, breed = ?, original_head_count = ?, active = ?, updated_at = now() " +
                 "WHERE id_herd = ?";
 
@@ -97,14 +100,13 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating herd: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating herd: " + e);
         }
     }
 
     // DELETE
     @Override
-    public void delete(UUID id) throws SQLException {
+    public void delete(UUID id) {
         String sql = "DELETE FROM herds WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -113,8 +115,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error deleting herd: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting herd: " + id, e);
         }
     }
 
