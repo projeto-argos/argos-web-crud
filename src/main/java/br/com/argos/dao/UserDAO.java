@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.User;
 
@@ -20,7 +21,7 @@ public class UserDAO implements GenericDAO<User,UUID> {
 
     // CREATE
     @Override
-    public void insert(User user) throws SQLException {
+    public void insert(User user) {
         String sql = "INSERT INTO users (full_name, phone, email, cpf, role, birth_date, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
 
@@ -43,15 +44,15 @@ public class UserDAO implements GenericDAO<User,UUID> {
             stmt.setBoolean(8, user.isActive());
 
             stmt.executeUpdate();
+
         } catch (SQLException e) {
-            System.err.println("Error inserting user: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting user: " + e);
         }
     }
 
     // READ
     @Override
-    public User findById(UUID id) throws SQLException {
+    public User findById(UUID id) {
         String sql = "SELECT * FROM users WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -64,12 +65,16 @@ public class UserDAO implements GenericDAO<User,UUID> {
                     return mapUser(rs);
                 }
             }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for user: " + id, e);
         }
-        return null;
+
     }
 
     @Override
-    public List<User> findAll() throws SQLException {
+    public List<User> findAll() {
         String sql = "SELECT * FROM users ORDER BY full_name";
         List<User> users = new ArrayList<>();
 
@@ -81,8 +86,7 @@ public class UserDAO implements GenericDAO<User,UUID> {
                 users.add(mapUser(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing users: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing users: " + e);
         }
 
         return users;
@@ -90,7 +94,7 @@ public class UserDAO implements GenericDAO<User,UUID> {
 
     // UPDATE
     @Override
-    public void update(User user) throws SQLException {
+    public void update(User user)  {
         String sql = "UPDATE users SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, password = ?, active = ?, updated_at = now() " +
                 "WHERE id_user = ?";
 
@@ -115,14 +119,13 @@ public class UserDAO implements GenericDAO<User,UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating user: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating user: " + e);
         }
     }
 
     // DELETE
     @Override
-    public void delete(UUID id) throws SQLException {
+    public void delete(UUID id){
         String sql = "DELETE FROM users WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -131,8 +134,7 @@ public class UserDAO implements GenericDAO<User,UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error deleting user: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting user: " + id, e);
         }
     }
 

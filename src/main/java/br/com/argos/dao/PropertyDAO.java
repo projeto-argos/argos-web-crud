@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Property;
 
@@ -19,7 +20,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     // CREATE
     @Override
-    public void insert(Property property) throws SQLException {
+    public void insert(Property property) {
         String sql = "INSERT INTO properties (name, phone, cnpj, email, active, user_id, address_id, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, now())";
 
@@ -36,14 +37,13 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error inserting property: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting property: " + e);
         }
     }
 
 //    Find columns by ID
     @Override
-    public Property findById(UUID id) throws SQLException {
+    public Property findById(UUID id) {
         String sql = "SELECT * FROM properties WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -56,13 +56,17 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
                     return mapProperty(rs);
                 }
             }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for property: " + id, e);
         }
-        return null;
+
     }
 
 //    Find all
     @Override
-    public List<Property> findAll() throws SQLException {
+    public List<Property> findAll() {
         String sql = "SELECT * FROM properties ORDER BY name";
         List<Property> properties = new ArrayList<>();
 
@@ -74,8 +78,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
                 properties.add(mapProperty(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing properties: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing properties: " + e);
         }
 
         return properties;
@@ -83,7 +86,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     // UPDATE
     @Override
-    public void update(Property property) throws SQLException {
+    public void update(Property property) {
         String sql = "UPDATE properties SET name = ?, phone = ?, cnpj = ?, email = ?, active = ?, user_id = ?, address_id = ?, updated_at = now() " +
                 "WHERE id_property = ?";
 
@@ -101,14 +104,14 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating property: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating property: " + e);
+
         }
     }
 
     // DELETE
     @Override
-    public void delete(UUID id) throws SQLException {
+    public void delete(UUID id) {
         String sql = "DELETE FROM properties WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -117,8 +120,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error deleting property: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting property: " + id, e);
         }
     }
 

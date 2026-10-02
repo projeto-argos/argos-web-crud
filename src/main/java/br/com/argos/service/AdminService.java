@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/** Regras de negócio e validações relacionadas a admins. */
 public class AdminService {
 
     private final AdminDAO adminDAO = new AdminDAO();

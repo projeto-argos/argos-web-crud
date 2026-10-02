@@ -1,6 +1,8 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Supplier;
 
 import java.sql.*;
@@ -9,10 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SupplierDAO {
+public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     // CREATE
-    public void insert(Supplier supplier) throws SQLException {
+    @Override
+    public void insert(Supplier supplier) {
         String sql = "INSERT INTO suppliers (address_id, full_name, cnpj, phone, email, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
@@ -28,13 +31,13 @@ public class SupplierDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error inserting supplier: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting supplier: " + e.getMessage());
         }
     }
 
     // READ
-    public Supplier findById(UUID id) throws SQLException {
+    @Override
+    public Supplier findById(UUID id) {
         String sql = "SELECT * FROM suppliers WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -47,11 +50,17 @@ public class SupplierDAO {
                     return mapSupplier(rs);
                 }
             }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Erro seaching supplier: " + id, e);
         }
-        return null;
+
+
     }
 
-    public List<Supplier> findAll() throws SQLException {
+    @Override
+    public List<Supplier> findAll() {
         String sql = "SELECT * FROM suppliers ORDER BY full_name";
         List<Supplier> suppliers = new ArrayList<>();
 
@@ -63,15 +72,15 @@ public class SupplierDAO {
                 suppliers.add(mapSupplier(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error listing suppliers: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing suppliers: " + e);
         }
 
         return suppliers;
     }
 
     // UPDATE
-    public void update(Supplier supplier) throws SQLException {
+    @Override
+    public void update(Supplier supplier) {
         String sql = "UPDATE suppliers SET address_id = ?, full_name = ?, cnpj = ?, phone = ?, email = ?, active = ?, updated_at = now() " +
                 "WHERE id_supplier = ?";
 
@@ -88,13 +97,13 @@ public class SupplierDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("Error updating supplier: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error updating supplier: " + e);
         }
     }
 
     // DELETE
-    public void delete(UUID id) throws SQLException {
+    @Override
+    public void delete(UUID id) {
         String sql = "DELETE FROM suppliers WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -102,9 +111,9 @@ public class SupplierDAO {
 
             stmt.setObject(1, id);
             stmt.executeUpdate();
+
         } catch (SQLException e) {
-            System.err.println("Error deleting supplier: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error deleting supplier: " + id, e);
         }
     }
 

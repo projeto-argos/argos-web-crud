@@ -70,7 +70,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
                 admins.add(mapAdmin(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing admins: " + e.getMessage());
+            throw new DataAccessException("Error listing admins: " + e);
         }
 
         return admins;
@@ -95,7 +95,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating admin: " + e.getMessage());
+            throw new DataAccessException("Error updating admin: " + e);
 
         }
     }
@@ -111,7 +111,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting admin: " + e.getMessage());
+            throw new DataAccessException("Error deleting admin: " + id, e);
 
         }
     }
