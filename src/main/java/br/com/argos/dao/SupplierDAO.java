@@ -16,22 +16,21 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
     // CREATE
     @Override
     public void insert(Supplier supplier) {
-        String sql = "INSERT INTO suppliers (address_id, full_name, cnpj, phone, email, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO suppliers (full_name, cnpj, phone, active, id_address, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, supplier.getAddressId());
-            stmt.setString(2, supplier.getFullName());
-            stmt.setString(3, supplier.getCnpj());
-            stmt.setString(4, supplier.getPhone());
-            stmt.setString(5, supplier.getEmail());
-            stmt.setBoolean(6, supplier.isActive());
+            stmt.setString(1, supplier.getFullName());
+            stmt.setString(2, supplier.getCnpj());
+            stmt.setString(3, supplier.getPhone());
+            stmt.setBoolean(4, supplier.isActive());
+            stmt.setObject(5, supplier.getAddressId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting supplier: " + e.getMessage());
+            throw new DataAccessException("Error inserting supplier: " + e.getMessage(), e);
         }
     }
 
@@ -53,10 +52,8 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Erro seaching supplier: " + id, e);
+            throw new DataAccessException("Error searching for supplier: " + id, e);
         }
-
-
     }
 
     @Override
@@ -72,7 +69,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
                 suppliers.add(mapSupplier(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing suppliers: " + e);
+            throw new DataAccessException("Error listing suppliers: " + e.getMessage(), e);
         }
 
         return suppliers;
@@ -81,23 +78,22 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
     // UPDATE
     @Override
     public void update(Supplier supplier) {
-        String sql = "UPDATE suppliers SET address_id = ?, full_name = ?, cnpj = ?, phone = ?, email = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE suppliers SET full_name = ?, cnpj = ?, phone = ?, active = ?, id_address = ?, updated_at = now() " +
                 "WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, supplier.getAddressId());
-            stmt.setString(2, supplier.getFullName());
-            stmt.setString(3, supplier.getCnpj());
-            stmt.setString(4, supplier.getPhone());
-            stmt.setString(5, supplier.getEmail());
-            stmt.setBoolean(6, supplier.isActive());
-            stmt.setObject(7, supplier.getIdSupplier());
+            stmt.setString(1, supplier.getFullName());
+            stmt.setString(2, supplier.getCnpj());
+            stmt.setString(3, supplier.getPhone());
+            stmt.setBoolean(4, supplier.isActive());
+            stmt.setObject(5, supplier.getAddressId());
+            stmt.setObject(6, supplier.getIdSupplier());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating supplier: " + e);
+            throw new DataAccessException("Error updating supplier: " + e.getMessage(), e);
         }
     }
 
@@ -120,11 +116,11 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
     // MAPPER
     private Supplier mapSupplier(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_supplier", UUID.class);
-        UUID addressId = rs.getObject("address_id", UUID.class);
-        String fullName = rs.getString("full_name");
+        UUID addressId = rs.getObject("id_address", UUID.class);
+        String fullname = rs.getString("full_name");
         String cnpj = rs.getString("cnpj");
         String phone = rs.getString("phone");
-        String email = rs.getString("email");
+        boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
         Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
@@ -132,8 +128,6 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        boolean active = rs.getBoolean("active");
-
-        return new Supplier(id, addressId, fullName, cnpj, phone, email, updatedAt, active);
+        return new Supplier(id, addressId, fullname, cnpj, phone, updatedAt, active);
     }
 }

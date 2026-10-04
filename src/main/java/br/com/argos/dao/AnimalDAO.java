@@ -14,48 +14,51 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Classe de acesso a dados (DAO).
- * Acesso ao banco para a tabela Animal.
- * Implementa as operações de CRUD e métodos personalizados.
+ * Classe de acesso a dados (DAO) para a tabela Animal.
+ * Implementa as operações de CRUD integrando o modelo lógico e regras de abate.
  */
-public class AnimalDAO implements GenericDAO<Animal,UUID> {
+public class AnimalDAO implements GenericDAO<Animal, UUID> {
 
     // INSERT
     @Override
     public void insert(Animal animal) {
-        String sql = "INSERT INTO animals (batch_id, weight, ear_tag, notes, exception_reason, " +
-                "exception_start_date, exception_end_date, birth_date, active, cleared_for_slaughter, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO animals (ear_tag, gender, breed, weight, notes, exception_reason, " +
+                "exception_start_date, exception_end_date, birth_date, active, cleared_for_slaughter, " +
+                "id_herd, id_batch, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, animal.getBatchId());
-            stmt.setBigDecimal(2, animal.getWeight());
-            stmt.setString(3, animal.getEarTag());
-            stmt.setString(4, animal.getNotes());
-            stmt.setString(5, animal.getExceptionReason());
+            stmt.setString(1, animal.getEarTag());
+            stmt.setString(2, animal.getGender());
+            stmt.setString(3, animal.getBreed());
+            stmt.setBigDecimal(4, animal.getWeight());
+            stmt.setString(5, animal.getNotes());
+            stmt.setString(6, animal.getExceptionReason());
 
             if (animal.getExceptionStartDate() != null) {
-                stmt.setDate(6, Date.valueOf(animal.getExceptionStartDate()));
-            } else {
-                stmt.setNull(6, Types.DATE);
-            }
-
-            if (animal.getExceptionEndDate() != null) {
-                stmt.setDate(7, Date.valueOf(animal.getExceptionEndDate()));
+                stmt.setDate(7, Date.valueOf(animal.getExceptionStartDate()));
             } else {
                 stmt.setNull(7, Types.DATE);
             }
 
-            if (animal.getBirthDate() != null) {
-                stmt.setDate(8, Date.valueOf(animal.getBirthDate()));
+            if (animal.getExceptionEndDate() != null) {
+                stmt.setDate(8, Date.valueOf(animal.getExceptionEndDate()));
             } else {
                 stmt.setNull(8, Types.DATE);
             }
 
-            stmt.setBoolean(9, animal.isActive());
-            stmt.setBoolean(10, animal.isClearedForSlaughter());
+            if (animal.getBirthDate() != null) {
+                stmt.setDate(9, Date.valueOf(animal.getBirthDate()));
+            } else {
+                stmt.setNull(9, Types.DATE);
+            }
+
+            stmt.setBoolean(10, animal.isActive());
+            stmt.setBoolean(11, animal.isClearedForSlaughter());
+            stmt.setObject(12, animal.getHerdId());
+            stmt.setObject(13, animal.getBatchId());
 
             stmt.executeUpdate();
 
@@ -81,9 +84,8 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
             }
             return null;
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching animal: " + id, e);
+            throw new DataAccessException("Error searching for animal: " + id, e);
         }
-
     }
 
     // FIND ALL
@@ -109,41 +111,44 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
     // UPDATE
     @Override
     public void update(Animal animal) {
-        String sql = "UPDATE animals SET batch_id = ?, weight = ?, ear_tag = ?, notes = ?, " +
+        String sql = "UPDATE animals SET ear_tag = ?, gender = ?, breed = ?, weight = ?, notes = ?, " +
                 "exception_reason = ?, exception_start_date = ?, exception_end_date = ?, " +
-                "birth_date = ?, active = ?, cleared_for_slaughter = ?, updated_at = now() " +
+                "birth_date = ?, active = ?, cleared_for_slaughter = ?, id_herd = ?, id_batch = ?, updated_at = now() " +
                 "WHERE id_animal = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, animal.getBatchId());
-            stmt.setBigDecimal(2, animal.getWeight());
-            stmt.setString(3, animal.getEarTag());
-            stmt.setString(4, animal.getNotes());
-            stmt.setString(5, animal.getExceptionReason());
+            stmt.setString(1, animal.getEarTag());
+            stmt.setString(2, animal.getGender());
+            stmt.setString(3, animal.getBreed());
+            stmt.setBigDecimal(4, animal.getWeight());
+            stmt.setString(5, animal.getNotes());
+            stmt.setString(6, animal.getExceptionReason());
 
             if (animal.getExceptionStartDate() != null) {
-                stmt.setDate(6, Date.valueOf(animal.getExceptionStartDate()));
-            } else {
-                stmt.setNull(6, Types.DATE);
-            }
-
-            if (animal.getExceptionEndDate() != null) {
-                stmt.setDate(7, Date.valueOf(animal.getExceptionEndDate()));
+                stmt.setDate(7, Date.valueOf(animal.getExceptionStartDate()));
             } else {
                 stmt.setNull(7, Types.DATE);
             }
 
-            if (animal.getBirthDate() != null) {
-                stmt.setDate(8, Date.valueOf(animal.getBirthDate()));
+            if (animal.getExceptionEndDate() != null) {
+                stmt.setDate(8, Date.valueOf(animal.getExceptionEndDate()));
             } else {
                 stmt.setNull(8, Types.DATE);
             }
 
-            stmt.setBoolean(9, animal.isActive());
-            stmt.setBoolean(10, animal.isClearedForSlaughter());
-            stmt.setObject(11, animal.getIdAnimal());
+            if (animal.getBirthDate() != null) {
+                stmt.setDate(9, Date.valueOf(animal.getBirthDate()));
+            } else {
+                stmt.setNull(9, Types.DATE);
+            }
+
+            stmt.setBoolean(10, animal.isActive());
+            stmt.setBoolean(11, animal.isClearedForSlaughter());
+            stmt.setObject(12, animal.getHerdId());
+            stmt.setObject(13, animal.getBatchId());
+            stmt.setObject(14, animal.getIdAnimal());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -169,9 +174,12 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
     // MAP RESULT SET
     private Animal mapAnimal(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_animal", UUID.class);
-        UUID batchId = rs.getObject("batch_id", UUID.class);
-        BigDecimal weight = rs.getBigDecimal("weight");
+        UUID herdId = rs.getObject("id_herd", UUID.class);
+        UUID batchId = rs.getObject("id_batch", UUID.class);
         String earTag = rs.getString("ear_tag");
+        String gender = rs.getString("gender");
+        String breed = rs.getString("breed");
+        BigDecimal weight = rs.getBigDecimal("weight");
         String notes = rs.getString("notes");
         String exceptionReason = rs.getString("exception_reason");
 
@@ -202,7 +210,7 @@ public class AnimalDAO implements GenericDAO<Animal,UUID> {
         boolean active = rs.getBoolean("active");
         boolean clearedForSlaughter = rs.getBoolean("cleared_for_slaughter");
 
-        return new Animal(id, batchId, weight, earTag, notes, exceptionReason,
-                exceptionStartDate, exceptionEndDate, birthDate, updatedAt, active, clearedForSlaughter);
+        return new Animal(id, herdId, batchId, earTag, gender, breed, weight, notes,
+                exceptionReason, exceptionStartDate, exceptionEndDate, birthDate, updatedAt, active, clearedForSlaughter);
     }
 }

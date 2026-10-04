@@ -12,28 +12,26 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Classe de acesso a dados (DAO).
- * Acesso ao banco para a tabela Property (Propriedade).
- * Implementa as operações de CRUD e métodos personalizados.
+ * Classe de acesso a dados (DAO) para a tabela Property (Propriedade).
+ * Implementa as operações de CRUD.
  */
 public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     // CREATE
     @Override
     public void insert(Property property) {
-        String sql = "INSERT INTO properties (name, phone, cnpj, email, active, user_id, address_id, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO properties (name, cnpj, phone, active, id_user, id_address, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, property.getName());
-            stmt.setString(2, property.getPhone());
-            stmt.setString(3, property.getCnpj());
-            stmt.setString(4, property.getEmail());
-            stmt.setBoolean(5, property.isActive());
-            stmt.setObject(6, property.getUserId());
-            stmt.setObject(7, property.getAddressId());
+            stmt.setString(2, property.getCnpj());
+            stmt.setString(3, property.getPhone());
+            stmt.setBoolean(4, property.isActive());
+            stmt.setObject(5, property.getUserId());
+            stmt.setObject(6, property.getAddressId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -41,7 +39,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         }
     }
 
-//    Find columns by ID
+    // READ BY ID
     @Override
     public Property findById(UUID id) {
         String sql = "SELECT * FROM properties WHERE id_property = ?";
@@ -61,10 +59,9 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for property: " + id, e);
         }
-
     }
 
-//    Find all
+    // READ ALL
     @Override
     public List<Property> findAll() {
         String sql = "SELECT * FROM properties ORDER BY name";
@@ -87,25 +84,23 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
     // UPDATE
     @Override
     public void update(Property property) {
-        String sql = "UPDATE properties SET name = ?, phone = ?, cnpj = ?, email = ?, active = ?, user_id = ?, address_id = ?, updated_at = now() " +
+        String sql = "UPDATE properties SET name = ?, cnpj = ?, phone = ?, active = ?, id_user = ?, id_address = ?, updated_at = now() " +
                 "WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, property.getName());
-            stmt.setString(2, property.getPhone());
-            stmt.setString(3, property.getCnpj());
-            stmt.setString(4, property.getEmail());
-            stmt.setBoolean(5, property.isActive());
-            stmt.setObject(6, property.getUserId());
-            stmt.setObject(7, property.getAddressId());
-            stmt.setObject(8, property.getIdProperty());
+            stmt.setString(2, property.getCnpj());
+            stmt.setString(3, property.getPhone());
+            stmt.setBoolean(4, property.isActive());
+            stmt.setObject(5, property.getUserId());
+            stmt.setObject(6, property.getAddressId());
+            stmt.setObject(7, property.getIdProperty());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error updating property: " + e);
-
         }
     }
 
@@ -127,12 +122,11 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
     // MAPPER
     private Property mapProperty(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_property", UUID.class);
-        UUID userId = rs.getObject("user_id", UUID.class);
-        UUID addressId = rs.getObject("address_id", UUID.class);
+        UUID userId = rs.getObject("id_user", UUID.class);
+        UUID addressId = rs.getObject("id_address", UUID.class);
         String name = rs.getString("name");
-        String phone = rs.getString("phone");
         String cnpj = rs.getString("cnpj");
-        String email = rs.getString("email");
+        String phone = rs.getString("phone");
         boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
@@ -141,6 +135,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Property(id, userId, addressId, name, phone, cnpj, email, updatedAt, active);
+        return new Property(id, userId, addressId, name, cnpj, phone, updatedAt, active);
     }
 }

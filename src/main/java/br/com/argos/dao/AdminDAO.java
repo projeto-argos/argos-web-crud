@@ -11,12 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Classe de acesso a dados (DAO) para a tabela Admin (Admin).
+ * Implementa as operações de CRUD.
+ */
 public class AdminDAO implements GenericDAO<Admin, UUID> {
 
     // CREATE
     @Override
     public void insert(Admin admin)  {
-        String sql = "INSERT INTO admins (full_name, cpf, phone, email, password, active, updated_at) " +
+        String sql = "INSERT INTO admins (full_name, cpf, email, phone, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -24,8 +28,8 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.setString(1, admin.getFullName());
             stmt.setString(2, admin.getCpf());
-            stmt.setString(3, admin.getPhone());
-            stmt.setString(4, admin.getEmail());
+            stmt.setString(3, admin.getEmail());
+            stmt.setString(4, admin.getPhone());
             stmt.setString(5, admin.getPassword());
             stmt.setBoolean(6, admin.isActive());
 
@@ -54,7 +58,6 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for admin " + id, e);
         }
-
     }
 
     @Override
@@ -79,7 +82,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
     // UPDATE
     @Override
     public void update(Admin admin) {
-        String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, password = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE admins SET full_name = ?, cpf = ?, email = ?, phone = ?, password = ?, active = ?, updated_at = now() " +
                 "WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -87,8 +90,8 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.setString(1, admin.getFullName());
             stmt.setString(2, admin.getCpf());
-            stmt.setString(3, admin.getPhone());
-            stmt.setString(4, admin.getEmail());
+            stmt.setString(3, admin.getEmail());
+            stmt.setString(4, admin.getPhone());
             stmt.setString(5, admin.getPassword());
             stmt.setBoolean(6, admin.isActive());
             stmt.setObject(7, admin.getIdAdmin());
@@ -96,7 +99,6 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error updating admin: " + e);
-
         }
     }
 
@@ -111,8 +113,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.setObject(1, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting admin: " + id, e);
-
+            throw new DataAccessException("Error deleting admin " + id, e);
         }
     }
 
