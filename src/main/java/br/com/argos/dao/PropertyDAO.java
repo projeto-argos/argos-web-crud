@@ -11,13 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Classe de acesso a dados (DAO) para a tabela Property (Propriedade).
- * Implementa as operações de CRUD.
- */
 public class PropertyDAO implements GenericDAO<Property, UUID> {
 
-    // CREATE
     @Override
     public void insert(Property property) {
         String sql = "INSERT INTO properties (name, cnpj, phone, active, id_user, id_address, updated_at) " +
@@ -39,7 +34,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         }
     }
 
-    // READ BY ID
     @Override
     public Property findById(UUID id) {
         String sql = "SELECT * FROM properties WHERE id_property = ?";
@@ -55,13 +49,11 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
                 }
             }
             return null;
-
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for property: " + id, e);
         }
     }
 
-    // READ ALL
     @Override
     public List<Property> findAll() {
         String sql = "SELECT * FROM properties ORDER BY name";
@@ -81,7 +73,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         return properties;
     }
 
-    // UPDATE
     @Override
     public void update(Property property) {
         String sql = "UPDATE properties SET name = ?, cnpj = ?, phone = ?, active = ?, id_user = ?, id_address = ?, updated_at = now() " +
@@ -104,7 +95,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         }
     }
 
-    // DELETE
     @Override
     public void delete(UUID id) {
         String sql = "DELETE FROM properties WHERE id_property = ?";
@@ -119,7 +109,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
         }
     }
 
-    // MAPPER
     private Property mapProperty(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_property", UUID.class);
         UUID userId = rs.getObject("id_user", UUID.class);
