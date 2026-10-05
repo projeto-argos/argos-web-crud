@@ -31,7 +31,9 @@ public class UserService {
     }
 
     public User findById(UUID id) {
-        Objects.requireNonNull(id, "O identificador do usuário é obrigatório");
+        if (id == null){
+            throw new RequiredFieldException("id");
+        }
         return userDAO.findById(id);
     }
 
@@ -42,18 +44,28 @@ public class UserService {
     public void update(User user) {
         validarUsuario(user, false);
         if (user.getIdUser() == null) {
-            throw new IllegalArgumentException("O identificador do usuário é obrigatório para atualização");
+            throw new RequiredFieldException("O identificador do usuário é obrigatório para atualização");
         }
         userDAO.update(user);
     }
 
     public void delete(UUID id) {
-        Objects.requireNonNull(id, "O identificador do usuário é obrigatório");
+        if (id == null){
+            throw new RequiredFieldException("id");
+        }
         userDAO.delete(id);
+    }
+
+    public void deactivate(UUID id){
+
     }
 
     private void validarUsuario(User user, boolean novoUsuario) {
         Objects.requireNonNull(user, "O usuário é obrigatório");
+
+        if (user == null){
+            throw new ValidationException("Fill in the required fields.");
+        }
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {
             throw new RequiredFieldException("O nome completo é obrigatório");
