@@ -3,8 +3,10 @@ package br.com.argos.service;
 import br.com.argos.dao.UserDAO;
 import br.com.argos.model.User;
 import br.com.argos.util.Validador;
+import br.com.argos.exceptions.RequiredFieldException;
+import br.com.argos.exceptions.ValidationException;
 
-import java.sql.SQLException;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -20,24 +22,24 @@ public class UserService {
     }
 
     public UserService(UserDAO userDAO) {
-        this.userDAO = Objects.requireNonNull(userDAO, "userDAO não pode ser nulo");
+        this.userDAO = Objects.requireNonNull(userDAO, "userDAO cannot be null");
     }
 
-    public void create(User user) throws SQLException {
+    public void create(User user) {
         validarUsuario(user, true);
         userDAO.insert(user);
     }
 
-    public User findById(UUID id) throws SQLException {
+    public User findById(UUID id) {
         Objects.requireNonNull(id, "O identificador do usuário é obrigatório");
         return userDAO.findById(id);
     }
 
-    public List<User> findAll() throws SQLException {
+    public List<User> findAll()  {
         return userDAO.findAll();
     }
 
-    public void update(User user) throws SQLException {
+    public void update(User user) {
         validarUsuario(user, false);
         if (user.getIdUser() == null) {
             throw new IllegalArgumentException("O identificador do usuário é obrigatório para atualização");
@@ -45,7 +47,7 @@ public class UserService {
         userDAO.update(user);
     }
 
-    public void delete(UUID id) throws SQLException {
+    public void delete(UUID id) {
         Objects.requireNonNull(id, "O identificador do usuário é obrigatório");
         userDAO.delete(id);
     }
@@ -54,23 +56,23 @@ public class UserService {
         Objects.requireNonNull(user, "O usuário é obrigatório");
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {
-            throw new IllegalArgumentException("O nome completo é obrigatório");
+            throw new RequiredFieldException("O nome completo é obrigatório");
         }
         if (user.getCpf() == null || !Validador.cpfValido(user.getCpf())) {
-            throw new IllegalArgumentException("O CPF informado é inválido");
+            throw new ValidationException("O CPF informado é inválido");
         }
         if (user.getEmail() == null || !Validador.emailValido(user.getEmail())) {
-            throw new IllegalArgumentException("O e-mail informado é inválido");
+            throw new ValidationException("O e-mail informado é inválido");
         }
         if (user.getPhone() != null && !user.getPhone().isBlank()
                 && !Validador.telefoneValido(user.getPhone())) {
-            throw new IllegalArgumentException("O telefone informado é inválido");
+            throw new ValidationException("O telefone informado é inválido");
         }
         if (novoUsuario && (user.getPassword() == null || user.getPassword().isBlank())) {
-            throw new IllegalArgumentException("A senha é obrigatória para cadastrar um usuário");
+            throw new RequiredFieldException("A senha é obrigatória para cadastrar um usuário");
         }
         if (user.getBirthDate() != null && user.getBirthDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("A data de nascimento não pode estar no futuro");
+            throw new ValidationException("A data de nascimento não pode estar no futuro");
         }
     }
 }

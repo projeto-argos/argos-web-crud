@@ -1,6 +1,7 @@
 package br.com.argos.service;
 
 import br.com.argos.dao.AdminDAO;
+import br.com.argos.dao.UserDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.util.Validador;
 import br.com.argos.exceptions.ValidationException;
@@ -13,8 +14,15 @@ import java.util.UUID;
 /** Regras de negócio e validações relacionadas a admins. */
 public class AdminService {
 
-    private final AdminDAO adminDAO = new AdminDAO();
+    private final AdminDAO adminDAO;
 
+    public AdminService() {
+        this(new AdminDAO());
+    }
+
+    public AdminService(AdminDAO adminDAO) {
+        this.adminDAO = Objects.requireNonNull(adminDAO, "adminDAO cannot be null");
+    }
 
     public void create(Admin admin) {
         validarAdmin(admin, true);
@@ -22,7 +30,9 @@ public class AdminService {
     }
 
     public Admin findById(UUID id) {
-        Objects.requireNonNull(id, "O identificador do admin é obrigatório.");
+        if (id == null) {
+            throw new RequiredFieldException("id");
+        }
         return adminDAO.findById(id);
     }
 
@@ -31,29 +41,38 @@ public class AdminService {
     }
 
     public void update(Admin admin) {
-        validarAdmin(admin, false);
         if (admin.getIdAdmin() == null) {
             throw new RequiredFieldException("id");
         }
+        validarAdmin(admin, false);
         adminDAO.update(admin);
     }
 
     public void delete(UUID id) {
-        Objects.requireNonNull(id, "O identificador do admin é obrigatório");
+        if (id == null) {
+            throw new RequiredFieldException("id");
+        }
         adminDAO.delete(id);
     }
 
     private void validarAdmin(Admin admin, boolean novoAdmin) {
 
+        if (admin == null) {
+            throw new ValidationException("Preencha os campos obrigatórios");
+        }
+
         if (admin.getFullName() == null || admin.getFullName().isBlank()){
-            throw new RequiredFieldException("fullname");
+            throw new RequiredFieldException("full_name");
         }
         if (admin.getFullName().length() > 120){
             throw new ValidationException("The name cannot exceed 120 characters.");
         }
 
-        if (admin.getCpf() == null || !Validador.cpfValido(admin.getCpf())){
+        if (!Validador.cpfValido(admin.getCpf())){
             throw new ValidationException("Invalid cpf.");
+        }
+        if (admin.getCpf().isBlank()){
+            throw new RequiredFieldException("cpf");
         }
 
         if (admin.getEmail() == null || !Validador.emailValido(admin.getEmail())){
@@ -64,7 +83,7 @@ public class AdminService {
             throw new ValidationException("Invalid phone");
         }
 
-        if (novoAdmin && (admin.getPassword() == null || admin.getPassword().isBlank())){
+        if (novoAdmin && (admin.getPassword() == null || !Validador.senhaValida(admin.getPassword()))) {
             throw new RequiredFieldException("password");
         }
     }

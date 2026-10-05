@@ -79,7 +79,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
     // UPDATE
     @Override
     public void update(Admin admin) {
-        String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, password = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, active = ?, updated_at = now() " +
                 "WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -89,14 +89,28 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.setString(2, admin.getCpf());
             stmt.setString(3, admin.getPhone());
             stmt.setString(4, admin.getEmail());
-            stmt.setString(5, admin.getPassword());
-            stmt.setBoolean(6, admin.isActive());
-            stmt.setObject(7, admin.getIdAdmin());
+            stmt.setBoolean(5, admin.isActive());
+            stmt.setObject(6, admin.getIdAdmin());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error updating admin: " + e);
 
+        }
+    }
+
+    public void updatePassword(UUID id, String password) {
+        String sql = "UPDATE admins SET password = ?, updated_at = now() WHERE id_admin = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, password);
+            stmt.setObject(2, id);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            throw new DataAccessException("Error updating admin: " + sqle);
         }
     }
 
