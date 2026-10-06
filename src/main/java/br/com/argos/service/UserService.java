@@ -5,6 +5,7 @@ import br.com.argos.model.User;
 import br.com.argos.util.Validador;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 import java.time.LocalDate;
@@ -27,7 +28,10 @@ public class UserService {
 
     public void create(User user) {
         validarUsuario(user, true);
-        userDAO.insert(user);
+        String hash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        User comHash = new User(user.getIdUser(), user.getFullName(), user.getCpf(), user.getEmail(),
+                user.getPhone(), user.getRole(), hash, user.getBirthDate(), null, true);
+        userDAO.insert(comHash);
     }
 
     public User findById(UUID id) {
@@ -44,7 +48,7 @@ public class UserService {
     public void update(User user) {
         validarUsuario(user, false);
         if (user.getIdUser() == null) {
-            throw new RequiredFieldException("O identificador do usuário é obrigatório para atualização");
+            throw new RequiredFieldException("id");
         }
         userDAO.update(user);
     }
@@ -56,35 +60,64 @@ public class UserService {
         userDAO.delete(id);
     }
 
-    public void deactivate(UUID id){
+    public User authenticate(String email, String password) {
+        if (email == null || email.isBlank()){
+            throw new RequiredFieldException("email");
+        }
+        if (password == null  || password.isBlank()){
+            throw new RequiredFieldException("password");
+        }
 
+        User user = userDAO.findByEmail(email);
+
+        if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
+            throw new ValidationException("Invalid credentials");
+        }
+
+        return user;
     }
 
-    private void validarUsuario(User user, boolean novoUsuario) {
-        Objects.requireNonNull(user, "O usuário é obrigatório");
+    private void validarUsuario(User user, boolean newUser) {
 
         if (user == null){
             throw new ValidationException("Fill in the required fields.");
         }
 
-        if (user.getFullName() == null || user.getFullName().isBlank()) {
-            throw new RequiredFieldException("O nome completo é obrigatório");
+        if (newUser && (user.getPassword() == null || user.getPassword().isBlank())) {
+            throw new RequiredFieldException("password");
         }
+        if (newUser && (!Validador.senhaValida(user.getPassword()))) {
+            throw new ValidationException("Password must be 8 to 64 characters");
+        }
+
+        if (user.getFullName() == null || user.getFullName().isBlank()) {
+            throw new RequiredFieldException("full_name");
+        }
+        if (user.getFullName().length() > 120){
+            throw new ValidationException("The name cannot exceed 120 characters");
+        }
+
+        if (user.getRole().length() > 50){
+            throw new ValidationException("The role cannot exceed 50 characters");
+        }
+
         if (user.getCpf() == null || !Validador.cpfValido(user.getCpf())) {
-            throw new ValidationException("O CPF informado é inválido");
+            throw new ValidationException("Invalid CPF");
         }
         if (user.getEmail() == null || !Validador.emailValido(user.getEmail())) {
-            throw new ValidationException("O e-mail informado é inválido");
+            throw new ValidationException("Invalid email");
         }
-        if (user.getPhone() != null && !user.getPhone().isBlank()
-                && !Validador.telefoneValido(user.getPhone())) {
-            throw new ValidationException("O telefone informado é inválido");
+
+        if (user.getEmail().length() > 120){
+            throw new ValidationException("The email cannot  exceed 120 characters");
         }
-        if (novoUsuario && (user.getPassword() == null || user.getPassword().isBlank())) {
-            throw new RequiredFieldException("A senha é obrigatória para cadastrar um usuário");
+
+        if (user.getPhone() != null && !user.getPhone().isBlank() && !Validador.telefoneValido(user.getPhone())) {
+            throw new ValidationException("Invalid phone number");
         }
+
         if (user.getBirthDate() != null && user.getBirthDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("A data de nascimento não pode estar no futuro");
+            throw new ValidationException("Birth date cannot be in the future");
         }
     }
 }

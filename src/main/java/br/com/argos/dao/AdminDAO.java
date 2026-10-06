@@ -31,7 +31,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting admin: " + e);
+            throw new DataAccessException("Error inserting admin: ", e);
         }
     }
 
@@ -59,6 +59,8 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
 
     }
 
+//    FIND ADMIN BY EMAIL
+    @Override
     public Admin findByEmail(String email) {
         String sql = "SELECT * FROM admins WHERE email = ?";
 
@@ -92,7 +94,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
                 admins.add(mapAdmin(rs, false));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing admins: " + e);
+            throw new DataAccessException("Error listing admins: ", e);
         }
 
         return admins;
@@ -120,11 +122,13 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
            }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating admin: " + e);
+            throw new DataAccessException("Error updating admin: ", e);
 
         }
     }
 
+    //    UPDATE PASSWORD
+    @Override
     public void updatePassword(UUID id, String password) {
         String sql = "UPDATE admins SET password = ?, updated_at = now() WHERE id_admin = ?";
 
@@ -133,10 +137,14 @@ public class AdminDAO implements GenericDAO<Admin, UUID> {
             stmt.setString(1, password);
             stmt.setObject(2, id);
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found " + id);
+            }
 
         } catch (SQLException sqle) {
-            throw new DataAccessException("Error updating admin: " + sqle);
+            throw new DataAccessException("Error updating admin password: ", sqle);
         }
     }
 

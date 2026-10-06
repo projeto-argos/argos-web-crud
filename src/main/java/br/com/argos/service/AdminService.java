@@ -75,13 +75,13 @@ public class AdminService {
         return admin;
     }
 
-    private void validarAdmin(Admin admin, boolean novoAdmin) {
+    private void validarAdmin(Admin admin, boolean newAdmin) {
 
         if (admin == null) {
             throw new ValidationException("Fill in the required fields.");
         }
 
-        if (novoAdmin){
+        if (newAdmin){
             String password = admin.getPassword();
             if (password == null || password.isBlank()){throw new RequiredFieldException("password");}
             if (!Validador.senhaValida(password)) {throw new ValidationException("Password must be 8 to 64 characters");}
@@ -98,7 +98,7 @@ public class AdminService {
             throw new RequiredFieldException("cpf");
         }
         if (!Validador.cpfValido(admin.getCpf())){
-            throw new ValidationException("Invalid cpf.");
+            throw new ValidationException("Invalid CPF.");
         }
 
         if (admin.getEmail() == null || admin.getEmail().isBlank()) {
@@ -113,5 +113,4 @@ public class AdminService {
             throw new ValidationException("Invalid phone");
         }
     }
-
 }
