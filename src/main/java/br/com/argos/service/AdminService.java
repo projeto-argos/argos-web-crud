@@ -158,7 +158,7 @@ public class AdminService {
             throw new ValidationException("The email cannot exceed 120 characters.");
         }
 
-        // Telefone é opcional: só valida se foi preenchido
+        // Telefone é opcional
         if (admin.getPhone() != null && !admin.getPhone().isBlank()
                 && !Validador.telefoneValido(admin.getPhone())) {
             throw new ValidationException("Invalid phone.");

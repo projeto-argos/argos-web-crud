@@ -28,7 +28,6 @@ public class UserService {
 
     /**
      * Cadastra um usuário: padroniza os dados, valida e grava a senha já em hash.
-     * O usuário nasce sempre ativo.
      */
     public void create(User user) {
         User limpo = normalizarUsuario(user);
@@ -52,7 +51,7 @@ public class UserService {
         return userDAO.findAll();
     }
 
-    /** Atualiza os dados cadastrais. A senha não é alterada aqui: use changePassword. */
+    /** Atualiza os dados cadastrais */
     public void update(User user) {
         User limpo = normalizarUsuario(user);
         validarUsuario(limpo, false);
@@ -70,7 +69,7 @@ public class UserService {
         userDAO.delete(id);
     }
 
-    /** Troca a senha: valida a nova senha, gera o hash e só então chama o DAO. */
+    /** Troca a senha */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -81,7 +80,7 @@ public class UserService {
 
     /**
      * Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-     * A mensagem é sempre a mesma, para não revelar se o e-mail existe.
+     * mensagem sempre a mesma, para não revelar se o e-mail existe.
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -100,14 +99,14 @@ public class UserService {
         return user;
     }
 
-    /** Padroniza os dados de entrada (CPF e telefone só com dígitos, e-mail em minúsculas). */
+    /** Padroniza os dados de entrada */
     private User normalizarUsuario(User user) {
         if (user == null) {
             return null;
         }
-        // A senha não é normalizada: espaços podem fazer parte dela
+        // A senha não é normalizada
         return new User(user.getIdUser(),
-                Normalizer.(user.getFullName()),
+                Normalizer.text(user.getFullName()),
                 Normalizer.onlyDigits(user.getCpf()),
                 Normalizer.email(user.getEmail()),
                 Normalizer.onlyDigits(user.getPhone()),
@@ -125,7 +124,7 @@ public class UserService {
         }
     }
 
-    /** Valida os campos do usuário. A senha só é exigida no cadastro (newUser = true). */
+    /** Valida os campos do usuário. Senha apenas exigida no cadastro */
     private void validarUsuario(User user, boolean newUser) {
 
         if (user == null) {
