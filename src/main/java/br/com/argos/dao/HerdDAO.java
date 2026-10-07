@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * Classe de acesso a dados (DAO).
  * Acesso ao banco para a tabela Herd (Rebanho).
@@ -22,17 +21,18 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     // CREATE
     @Override
     public void insert(Herd herd) {
-        String sql = "INSERT INTO herds (property_id, name, breed, original_head_count, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO herds (name, breed, purpose, head_count, active, id_property, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, herd.getPropertyId());
-            stmt.setString(2, herd.getName());
-            stmt.setString(3, herd.getBreed());
-            stmt.setObject(4, herd.getOriginalHeadCount());
+            stmt.setString(1, herd.getName());
+            stmt.setString(2, herd.getBreed());
+            stmt.setString(3, herd.getPurpose());
+            stmt.setObject(4, herd.getHeadCount());
             stmt.setBoolean(5, herd.isActive());
+            stmt.setObject(6, herd.getPropertyId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -60,7 +60,6 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for herd: " + id, e);
         }
-
     }
 
     @Override
@@ -85,18 +84,19 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     // UPDATE
     @Override
     public void update(Herd herd) {
-        String sql = "UPDATE herds SET property_id = ?, name = ?, breed = ?, original_head_count = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE herds SET name = ?, breed = ?, purpose = ?, head_count = ?, active = ?, id_property = ?, updated_at = now() " +
                 "WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, herd.getPropertyId());
-            stmt.setString(2, herd.getName());
-            stmt.setString(3, herd.getBreed());
-            stmt.setObject(4, herd.getOriginalHeadCount());
+            stmt.setString(1, herd.getName());
+            stmt.setString(2, herd.getBreed());
+            stmt.setString(3, herd.getPurpose());
+            stmt.setObject(4, herd.getHeadCount());
             stmt.setBoolean(5, herd.isActive());
-            stmt.setObject(6, herd.getIdHerd());
+            stmt.setObject(6, herd.getPropertyId());
+            stmt.setObject(7, herd.getIdHerd());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -122,10 +122,11 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     // MAPPER
     private Herd mapHerd(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_herd", UUID.class);
-        UUID propertyId = rs.getObject("property_id", UUID.class);
+        UUID propertyId = rs.getObject("id_property", UUID.class);
         String name = rs.getString("name");
         String breed = rs.getString("breed");
-        Integer originalHeadCount = rs.getObject("original_head_count", Integer.class);
+        String purpose = rs.getString("purpose");
+        Integer headCount = rs.getObject("head_count", Integer.class);
         boolean active = rs.getBoolean("active");
 
         LocalDateTime updatedAt = null;
@@ -134,6 +135,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Herd(id, propertyId, originalHeadCount, name, breed, updatedAt, active);
+        // Importante: Adapte o construtor do seu Model Herd para refletir essas mudanças
+        return new Herd(id, propertyId, name, breed, purpose, headCount, updatedAt, active);
     }
 }

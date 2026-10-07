@@ -17,12 +17,12 @@ import java.util.UUID;
  * Acesso ao banco para a tabela User (Usuário).
  * Implementa as operações de CRUD e métodos personalizados.
  */
-public class UserDAO implements GenericDAO<User,UUID> {
+public class UserDAO implements GenericDAO<User, UUID> {
 
     // CREATE
     @Override
     public void insert(User user) {
-        String sql = "INSERT INTO users (full_name, phone, email, cpf, role, birth_date, password, active, updated_at) " +
+        String sql = "INSERT INTO users (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -30,17 +30,17 @@ public class UserDAO implements GenericDAO<User,UUID> {
 
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getPhone());
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getCpf());
+            stmt.setString(3, user.getCpf());
+            stmt.setString(4, user.getEmail());
             stmt.setString(5, user.getRole());
+            stmt.setString(6, user.getPassword());
 
             if (user.getBirthDate() != null) {
-                stmt.setDate(6, Date.valueOf(user.getBirthDate()));
+                stmt.setDate(7, Date.valueOf(user.getBirthDate()));
             } else {
-                stmt.setNull(6, Types.DATE);
+                stmt.setNull(7, Types.DATE);
             }
 
-            stmt.setString(7, user.getPassword());
             stmt.setBoolean(8, user.isActive());
 
             stmt.executeUpdate();
@@ -70,7 +70,6 @@ public class UserDAO implements GenericDAO<User,UUID> {
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for user: " + id, e);
         }
-
     }
 
     @Override
@@ -95,7 +94,7 @@ public class UserDAO implements GenericDAO<User,UUID> {
     // UPDATE
     @Override
     public void update(User user)  {
-        String sql = "UPDATE users SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, password = ?, active = ?, updated_at = now() " +
+        String sql = "UPDATE users SET full_name = ?, phone = ?, cpf = ?, email = ?, role = ?, password = ?, birth_date = ?, active = ?, updated_at = now() " +
                 "WHERE id_user = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -103,17 +102,17 @@ public class UserDAO implements GenericDAO<User,UUID> {
 
             stmt.setString(1, user.getFullName());
             stmt.setString(2, user.getPhone());
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getCpf());
+            stmt.setString(3, user.getCpf());
+            stmt.setString(4, user.getEmail());
             stmt.setString(5, user.getRole());
+            stmt.setString(6, user.getPassword());
 
             if (user.getBirthDate() != null) {
-                stmt.setDate(6, Date.valueOf(user.getBirthDate()));
+                stmt.setDate(7, Date.valueOf(user.getBirthDate()));
             } else {
-                stmt.setNull(6, Types.DATE);
+                stmt.setNull(7, Types.DATE);
             }
 
-            stmt.setString(7, user.getPassword());
             stmt.setBoolean(8, user.isActive());
             stmt.setObject(9, user.getIdUser());
 
@@ -142,9 +141,9 @@ public class UserDAO implements GenericDAO<User,UUID> {
     private User mapUser(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_user", UUID.class);
         String fullName = rs.getString("full_name");
+        String phone = rs.getString("phone");
         String cpf = rs.getString("cpf");
         String email = rs.getString("email");
-        String phone = rs.getString("phone");
         String role = rs.getString("role");
         String password = rs.getString("password");
 
@@ -154,13 +153,13 @@ public class UserDAO implements GenericDAO<User,UUID> {
             birthDate = sqlDate.toLocalDate();
         }
 
+        boolean active = rs.getBoolean("active");
+
         LocalDateTime updatedAt = null;
         Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
-
-        boolean active = rs.getBoolean("active");
 
         return new User(id, fullName, cpf, email, phone, role, password, birthDate, updatedAt, active);
     }
