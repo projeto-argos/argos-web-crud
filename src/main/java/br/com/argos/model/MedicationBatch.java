@@ -1,4 +1,4 @@
-package br.com.argos.model;
+/*package br.com.argos.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -132,4 +132,4 @@ public class MedicationBatch {
                 ", active=" + active +
                 '}';
     }
-}
+}*/
