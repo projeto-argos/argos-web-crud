@@ -1,4 +1,4 @@
-package br.com.argos.model;
+/*package br.com.argos.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -121,4 +121,4 @@ public class Batch {
                 ", active=" + active +
                 '}';
     }
-}
+}*/
