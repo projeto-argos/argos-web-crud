@@ -2,11 +2,11 @@ package br.com.argos.service;
 
 import br.com.argos.dao.UserDAO;
 import br.com.argos.model.User;
+import br.com.argos.util.Normalizer;
 import br.com.argos.util.Validador;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import org.mindrot.jbcrypt.BCrypt;
-
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,49 +26,72 @@ public class UserService {
         this.userDAO = Objects.requireNonNull(userDAO, "userDAO cannot be null");
     }
 
+    /**
+     * Cadastra um usuário: padroniza os dados, valida e grava a senha já em hash.
+     * O usuário nasce sempre ativo.
+     */
     public void create(User user) {
-        validarUsuario(user, true);
-        String hash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        User comHash = new User(user.getIdUser(), user.getFullName(), user.getCpf(), user.getEmail(),
-                user.getPhone(), user.getRole(), hash, user.getBirthDate(), null, true);
+        User limpo = normalizarUsuario(user);
+        validarUsuario(limpo, true);
+
+        // A senha nunca vai em texto puro para o banco
+        String hash = BCrypt.hashpw(limpo.getPassword(), BCrypt.gensalt());
+        User comHash = new User(limpo.getIdUser(), limpo.getFullName(), limpo.getCpf(), limpo.getEmail(),
+                limpo.getPhone(), limpo.getRole(), hash, limpo.getBirthDate(), null, true);
         userDAO.insert(comHash);
     }
 
     public User findById(UUID id) {
-        if (id == null){
+        if (id == null) {
             throw new RequiredFieldException("id");
         }
         return userDAO.findById(id);
     }
 
-    public List<User> findAll()  {
+    public List<User> findAll() {
         return userDAO.findAll();
     }
 
+    /** Atualiza os dados cadastrais. A senha não é alterada aqui: use changePassword. */
     public void update(User user) {
-        validarUsuario(user, false);
-        if (user.getIdUser() == null) {
+        User limpo = normalizarUsuario(user);
+        validarUsuario(limpo, false);
+        if (limpo.getIdUser() == null) {
             throw new RequiredFieldException("id");
         }
-        userDAO.update(user);
+        userDAO.update(limpo);
     }
 
+    /** Desativa o usuário (soft delete) */
     public void delete(UUID id) {
-        if (id == null){
+        if (id == null) {
             throw new RequiredFieldException("id");
         }
         userDAO.delete(id);
     }
 
+    /** Troca a senha: valida a nova senha, gera o hash e só então chama o DAO. */
+    public void changePassword(UUID id, String newPassword) {
+        if (id == null) {
+            throw new RequiredFieldException("id");
+        }
+        validarSenha(newPassword);
+        userDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+    }
+
+    /**
+     * Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
+     * A mensagem é sempre a mesma, para não revelar se o e-mail existe.
+     */
     public User authenticate(String email, String password) {
-        if (email == null || email.isBlank()){
+        if (email == null || email.isBlank()) {
             throw new RequiredFieldException("email");
         }
-        if (password == null  || password.isBlank()){
+        if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
         }
 
-        User user = userDAO.findByEmail(email);
+        User user = userDAO.findByEmail(Normalizer.email(email));
 
         if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
             throw new ValidationException("Invalid credentials");
@@ -77,42 +100,74 @@ public class UserService {
         return user;
     }
 
+    /** Padroniza os dados de entrada (CPF e telefone só com dígitos, e-mail em minúsculas). */
+    private User normalizarUsuario(User user) {
+        if (user == null) {
+            return null;
+        }
+        // A senha não é normalizada: espaços podem fazer parte dela
+        return new User(user.getIdUser(),
+                Normalizer.(user.getFullName()),
+                Normalizer.onlyDigits(user.getCpf()),
+                Normalizer.email(user.getEmail()),
+                Normalizer.onlyDigits(user.getPhone()),
+                Normalizer.text(user.getRole()),
+                user.getPassword(), user.getBirthDate(), null, user.isActive());
+    }
+
+    /** Regras da senha em texto puro (antes do hash). */
+    private void validarSenha(String password) {
+        if (password == null || password.isBlank()) {
+            throw new RequiredFieldException("password");
+        }
+        if (!Validador.senhaValida(password)) {
+            throw new ValidationException("Password must be 8 to 64 characters");
+        }
+    }
+
+    /** Valida os campos do usuário. A senha só é exigida no cadastro (newUser = true). */
     private void validarUsuario(User user, boolean newUser) {
 
-        if (user == null){
+        if (user == null) {
             throw new ValidationException("Fill in the required fields.");
         }
 
-        if (newUser && (user.getPassword() == null || user.getPassword().isBlank())) {
-            throw new RequiredFieldException("password");
-        }
-        if (newUser && (!Validador.senhaValida(user.getPassword()))) {
-            throw new ValidationException("Password must be 8 to 64 characters");
+        if (newUser) {
+            validarSenha(user.getPassword());
         }
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {
             throw new RequiredFieldException("full_name");
         }
-        if (user.getFullName().length() > 120){
+        if (user.getFullName().length() > 120) {
             throw new ValidationException("The name cannot exceed 120 characters");
         }
 
-        if (user.getRole().length() > 50){
+//      Optional role
+        if (user.getRole() != null && user.getRole().length() > 50) {
             throw new ValidationException("The role cannot exceed 50 characters");
         }
 
-        if (user.getCpf() == null || !Validador.cpfValido(user.getCpf())) {
+        if (user.getCpf() == null || user.getCpf().isBlank()) {
+            throw new RequiredFieldException("cpf");
+        }
+        if (!Validador.cpfValido(user.getCpf())) {
             throw new ValidationException("Invalid CPF");
         }
-        if (user.getEmail() == null || !Validador.emailValido(user.getEmail())) {
+
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new RequiredFieldException("email");
+        }
+        if (!Validador.emailValido(user.getEmail())) {
             throw new ValidationException("Invalid email");
         }
-
-        if (user.getEmail().length() > 120){
-            throw new ValidationException("The email cannot  exceed 120 characters");
+        if (user.getEmail().length() > 120) {
+            throw new ValidationException("The email cannot exceed 120 characters");
         }
 
-        if (user.getPhone() != null && !user.getPhone().isBlank() && !Validador.telefoneValido(user.getPhone())) {
+        // Optional phone
+        if (user.getPhone() != null && !user.getPhone().isBlank()
+                && !Validador.telefoneValido(user.getPhone())) {
             throw new ValidationException("Invalid phone number");
         }
 
