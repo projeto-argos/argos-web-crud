@@ -6,13 +6,13 @@ import java.util.UUID;
 public class Herd {
 
     // ATRIBUTOS
-    private UUID idHerd; // ID DO REBANHO
-    private UUID propertyId; // ID DA PROPRIEDADE DO REBANHO
-    private Integer originalHeadCount; // QUANTIDADE ORIGINAL DE CABEÇAS DO REBANHO
-    private String name; // NOME DO REBANHO
-    private String breed; // RAÇA DO REBANHO
-    private LocalDateTime updatedAt; // ATUALIZADO EM
-    private boolean active; // ATIVO
+    private UUID idHerd;
+    private UUID propertyId;
+    private Integer originalHeadCount;
+    private String name;
+    private String breed;
+    private LocalDateTime updatedAt;
+    private boolean active;
 
     // MÉTODOS CONSTRUTORES
     public Herd() {
