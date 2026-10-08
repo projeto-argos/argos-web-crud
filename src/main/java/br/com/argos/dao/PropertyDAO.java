@@ -15,7 +15,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public void insert(Property property) {
-        String sql = "INSERT INTO properties (name, cnpj, phone, active, id_user, id_address, updated_at) " +
+        String sql = "INSERT INTO property (name, cnpj, phone, active, id_user, id_address, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -30,13 +30,13 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting property: " + e);
+            throw new DataAccessException("Error inserting property: ", e);
         }
     }
 
     @Override
     public Property findById(UUID id) {
-        String sql = "SELECT * FROM properties WHERE id_property = ?";
+        String sql = "SELECT * FROM property WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public List<Property> findAll() {
-        String sql = "SELECT * FROM properties ORDER BY name";
+        String sql = "SELECT * FROM property ORDER BY name";
         List<Property> properties = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -75,7 +75,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public void update(Property property) {
-        String sql = "UPDATE properties SET name = ?, cnpj = ?, phone = ?, active = ?, id_user = ?, id_address = ?, updated_at = now() " +
+        String sql = "UPDATE property SET name = ?, cnpj = ?, phone = ?, active = ?, id_user = ?, id_address = ?, updated_at = now() " +
                 "WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -97,7 +97,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public void delete(UUID id) {
-        String sql = "DELETE FROM properties WHERE id_property = ?";
+        String sql = "DELETE FROM property WHERE id_property = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
