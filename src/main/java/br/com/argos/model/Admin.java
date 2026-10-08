@@ -115,7 +115,6 @@ public class Admin {
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
-                ", password='" + password + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
