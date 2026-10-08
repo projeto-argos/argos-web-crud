@@ -4,6 +4,7 @@ import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.User;
+import br.com.argos.interfaces.IUserDAO;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ import java.util.UUID;
  * Acesso ao banco para a tabela User (Usuário).
  * Implementa as operações de CRUD e métodos personalizados.
  */
-public class UserDAO implements GenericDAO<User, UUID> {
+public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
     // CREATE
     @Override

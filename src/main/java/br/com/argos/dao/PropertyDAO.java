@@ -3,6 +3,7 @@ package br.com.argos.dao;
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
+import br.com.argos.interfaces.IPropertyDAO;
 import br.com.argos.model.Property;
 
 import java.sql.*;
@@ -11,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class PropertyDAO implements GenericDAO<Property, UUID> {
+public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
     @Override
     public void insert(Property property) {
-        String sql = "INSERT INTO property (name, cnpj, phone, active, id_user, id_address, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO PROPERTY (name, cnpj, phone, id_user, id_address, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -24,11 +25,16 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
             stmt.setString(1, property.getName());
             stmt.setString(2, property.getCnpj());
             stmt.setString(3, property.getPhone());
-            stmt.setBoolean(4, property.isActive());
-            stmt.setObject(5, property.getUserId());
-            stmt.setObject(6, property.getAddressId());
+            stmt.setObject(4, property.getUserId());
+
+            if (property.getAddressId() != null) {
+                stmt.setObject(5, property.getAddressId());
+            } else {
+                stmt.setNull(5, Types.OTHER);
+            }
 
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new DataAccessException("Error inserting property: ", e);
         }
@@ -36,7 +42,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public Property findById(UUID id) {
-        String sql = "SELECT * FROM property WHERE id_property = ?";
+        String sql = "SELECT * FROM PROPERTY WHERE id_property = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -49,6 +55,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
                 }
             }
             return null;
+
         } catch (SQLException e) {
             throw new DataAccessException("Error searching for property: " + id, e);
         }
@@ -56,7 +63,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
 
     @Override
     public List<Property> findAll() {
-        String sql = "SELECT * FROM property ORDER BY name";
+        String sql = "SELECT * FROM PROPERTY WHERE active = true ORDER BY name";
         List<Property> properties = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -67,16 +74,60 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
                 properties.add(mapProperty(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing properties: " + e);
+            throw new DataAccessException("Error listing properties: ", e);
         }
 
         return properties;
     }
 
     @Override
+    public List<Property> findByName(String name) {
+        String sql = "SELECT * FROM PROPERTY WHERE name ILIKE ? AND active = true ORDER BY name";
+        List<Property> properties = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + name + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    properties.add(mapProperty(rs));
+                }
+            }
+            return properties;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for property by name: " + name, e);
+        }
+    }
+
+    @Override
+    public List<Property> findByUser(UUID userId) {
+        String sql = "SELECT * FROM PROPERTY WHERE id_user = ? AND active = true ORDER BY name";
+        List<Property> properties = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    properties.add(mapProperty(rs));
+                }
+            }
+            return properties;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for properties by user: " + userId, e);
+        }
+    }
+
+    @Override
     public void update(Property property) {
-        String sql = "UPDATE property SET name = ?, cnpj = ?, phone = ?, active = ?, id_user = ?, id_address = ?, updated_at = now() " +
-                "WHERE id_property = ?";
+        String sql = "UPDATE PROPERTY SET name = ?, cnpj = ?, phone = ?, id_user = ?, id_address = ?, " +
+                "updated_at = now() WHERE id_property = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -84,28 +135,63 @@ public class PropertyDAO implements GenericDAO<Property, UUID> {
             stmt.setString(1, property.getName());
             stmt.setString(2, property.getCnpj());
             stmt.setString(3, property.getPhone());
-            stmt.setBoolean(4, property.isActive());
-            stmt.setObject(5, property.getUserId());
-            stmt.setObject(6, property.getAddressId());
-            stmt.setObject(7, property.getIdProperty());
+            stmt.setObject(4, property.getUserId());
 
-            stmt.executeUpdate();
+            if (property.getAddressId() != null) {
+                stmt.setObject(5, property.getAddressId());
+            } else {
+                stmt.setNull(5, Types.OTHER);
+            }
+
+            stmt.setObject(6, property.getIdProperty());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Property not found " + property.getIdProperty());
+            }
+
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating property: " + e);
+            throw new DataAccessException("Error updating property: ", e);
         }
     }
 
+    // SOFT DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "DELETE FROM property WHERE id_property = ?";
+        String sql = "UPDATE PROPERTY SET active = FALSE, updated_at = now() " +
+                "WHERE id_property = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, id);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Property not found " + id);
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting property: " + id, e);
+        }
+    }
+
+    // SOFT DELETE de todas as propriedades de um usuário
+    @Override
+    public int deleteByUser(UUID userId) {
+        String sql = "UPDATE PROPERTY SET active = FALSE, updated_at = now() " +
+                "WHERE id_user = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, userId);
+            return stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting properties by user: " + userId, e);
         }
     }
 
