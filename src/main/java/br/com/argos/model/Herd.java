@@ -8,7 +8,8 @@ public class Herd {
     // ATRIBUTOS
     private UUID idHerd;
     private UUID propertyId;
-    private Integer originalHeadCount;
+    private Integer headCount;
+    private String purpose;
     private String name;
     private String breed;
     private LocalDateTime updatedAt;
@@ -18,19 +19,21 @@ public class Herd {
     public Herd() {
     }
 
-    public Herd(UUID idHerd, UUID propertyId, Integer originalHeadCount, String name, String breed, LocalDateTime updatedAt, boolean active) {
+    public Herd(UUID idHerd, UUID propertyId, Integer headCount, String purpose, String name, String breed, LocalDateTime updatedAt, boolean active) {
         this.idHerd = idHerd;
         this.propertyId = propertyId;
-        this.originalHeadCount = originalHeadCount;
+        this.headCount = headCount;
+        this.purpose = purpose;
         this.name = name;
         this.breed = breed;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public Herd(UUID propertyId, Integer originalHeadCount, String name, String breed, boolean active) {
+    public Herd(UUID propertyId, Integer headCount, String purpose, String name, String breed, boolean active) {
         this.propertyId = propertyId;
-        this.originalHeadCount = originalHeadCount;
+        this.headCount = headCount;
+        this.purpose = purpose;
         this.name = name;
         this.breed = breed;
         this.active = active;
@@ -45,8 +48,12 @@ public class Herd {
         return propertyId;
     }
 
-    public Integer getOriginalHeadCount() {
-        return originalHeadCount;
+    public Integer getHeadCount() {
+        return headCount;
+    }
+
+    public String getPurpose() {
+        return purpose;
     }
 
     public String getName() {
@@ -74,8 +81,12 @@ public class Herd {
         this.propertyId = propertyId;
     }
 
-    public void setOriginalHeadCount(Integer originalHeadCount) {
-        this.originalHeadCount = originalHeadCount;
+    public void setHeadCount(Integer headCount) {
+        this.headCount = headCount;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 
     public void setName(String name) {
@@ -95,12 +106,14 @@ public class Herd {
     }
 
     // MÉTODO TOSTRING
+
     @Override
     public String toString() {
         return "Herd{" +
                 "idHerd=" + idHerd +
                 ", propertyId=" + propertyId +
-                ", originalHeadCount=" + originalHeadCount +
+                ", headCount=" + headCount +
+                ", purpose='" + purpose + '\'' +
                 ", name='" + name + '\'' +
                 ", breed='" + breed + '\'' +
                 ", updatedAt=" + updatedAt +

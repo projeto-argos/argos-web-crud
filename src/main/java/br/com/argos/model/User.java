@@ -138,7 +138,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", role='" + role + '\'' +
-                ", password='" + password + '\'' +
                 ", birthDate=" + birthDate +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
