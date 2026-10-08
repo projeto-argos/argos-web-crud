@@ -127,6 +127,7 @@ public class UserService {
     /** Valida os campos do usuário. Senha apenas exigida no cadastro */
     private void validarUsuario(User user, boolean newUser) {
 
+//        OBRIGATÓRIOS
         if (user == null) {
             throw new ValidationException("Fill in the required fields.");
         }
@@ -140,11 +141,6 @@ public class UserService {
         }
         if (user.getFullName().length() > 120) {
             throw new ValidationException("The name cannot exceed 120 characters");
-        }
-
-//      Optional role
-        if (user.getRole() != null && user.getRole().length() > 50) {
-            throw new ValidationException("The role cannot exceed 50 characters");
         }
 
         if (user.getCpf() == null || user.getCpf().isBlank()) {
@@ -164,7 +160,7 @@ public class UserService {
             throw new ValidationException("The email cannot exceed 120 characters");
         }
 
-        // Optional phone
+        // OPCIONAIS
         if (user.getPhone() != null && !user.getPhone().isBlank()
                 && !Validador.telefoneValido(user.getPhone())) {
             throw new ValidationException("Invalid phone number");
@@ -172,6 +168,10 @@ public class UserService {
 
         if (user.getBirthDate() != null && user.getBirthDate().isAfter(LocalDate.now())) {
             throw new ValidationException("Birth date cannot be in the future");
+        }
+
+        if (user.getRole() != null && user.getRole().length() > 50) {
+            throw new ValidationException("The role cannot exceed 50 characters");
         }
     }
 }

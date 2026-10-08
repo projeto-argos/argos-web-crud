@@ -4,6 +4,7 @@ import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Animal;
+import br.com.argos.interfaces.IAnimalDAO;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AnimalDAO implements GenericDAO<Animal, UUID> {
+public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
     @Override
     public void insert(Animal animal) {

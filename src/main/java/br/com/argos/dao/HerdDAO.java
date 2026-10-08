@@ -21,7 +21,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     // CREATE
     @Override
     public void insert(Herd herd) {
-        String sql = "INSERT INTO herds (name, breed, purpose, head_count, active, id_property, updated_at) " +
+        String sql = "INSERT INTO herd (name, breed, purpose, head_count, active, id_property, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -30,20 +30,20 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
             stmt.setString(1, herd.getName());
             stmt.setString(2, herd.getBreed());
             stmt.setString(3, herd.getPurpose());
-            stmt.setObject(4, herd.getHeadCount());
+            stmt.setInt(4, herd.getHeadCount());
             stmt.setBoolean(5, herd.isActive());
             stmt.setObject(6, herd.getPropertyId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting herd: " + e);
+            throw new DataAccessException("Error inserting herd: ", e);
         }
     }
 
     // READ
     @Override
     public Herd findById(UUID id) {
-        String sql = "SELECT * FROM herds WHERE id_herd = ?";
+        String sql = "SELECT * FROM herd WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -64,7 +64,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
 
     @Override
     public List<Herd> findAll() {
-        String sql = "SELECT * FROM herds ORDER BY name";
+        String sql = "SELECT * FROM herd ORDER BY name";
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -75,7 +75,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
                 herds.add(mapHerd(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing herds: " + e);
+            throw new DataAccessException("Error listing herds: ", e);
         }
 
         return herds;
@@ -84,8 +84,8 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
     // UPDATE
     @Override
     public void update(Herd herd) {
-        String sql = "UPDATE herds SET name = ?, breed = ?, purpose = ?, head_count = ?, active = ?, id_property = ?, updated_at = now() " +
-                "WHERE id_herd = ?";
+        String sql = "UPDATE herd SET name = ?, breed = ?, purpose = ?, head_count = ?, active = ?, id_property = ?, updated_at = now() " +
+                "WHERE id_herd = ? and active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,21 +93,21 @@ public class HerdDAO implements GenericDAO<Herd, UUID> {
             stmt.setString(1, herd.getName());
             stmt.setString(2, herd.getBreed());
             stmt.setString(3, herd.getPurpose());
-            stmt.setObject(4, herd.getHeadCount());
+            stmt.setInt(4, herd.getHeadCount());
             stmt.setBoolean(5, herd.isActive());
             stmt.setObject(6, herd.getPropertyId());
             stmt.setObject(7, herd.getIdHerd());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating herd: " + e);
+            throw new DataAccessException("Error updating herd: ", e);
         }
     }
 
     // DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "DELETE FROM herds WHERE id_herd = ?";
+        String sql = "DELETE FROM herd WHERE id_herd = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
