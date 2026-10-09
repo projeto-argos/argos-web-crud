@@ -6,39 +6,36 @@ import java.util.UUID;
 public class Property {
 
     // ATRIBUTOS
-    private UUID idProperty; // ID DA PROPRIEDADE
-    private UUID userId; // ID DO USUARIO DA PROPRIEDADE
-    private UUID addressId; // ID DO ENDEREÇO DA PROPRIEDADE
-    private String name; // NOME DA PROPRIEDADE
-    private String phone; // TELEFONE DA PROPRIEDADE
-    private String cnpj; // CNPJ DA PROPRIEDADE
-    private String email; // EMAIL DA PROPRIEDADE
-    private LocalDateTime updatedAt; // ATUALIZADO EM
-    private boolean active; // ATIVO
+    private UUID idProperty;
+    private UUID userId;
+    private UUID addressId;
+    private String name;
+    private String phone;
+    private String cnpj;
+    private LocalDateTime updatedAt;
+    private boolean active;
 
     // MÉTODOS CONSTRUTORES
     public Property() {
     }
 
-    public Property(UUID idProperty, UUID userId, UUID addressId, String name, String phone, String cnpj, String email, LocalDateTime updatedAt, boolean active) {
+    public Property(UUID idProperty, UUID userId, UUID addressId, String name, String phone, String cnpj, LocalDateTime updatedAt, boolean active) {
         this.idProperty = idProperty;
         this.userId = userId;
         this.addressId = addressId;
         this.name = name;
         this.phone = phone;
         this.cnpj = cnpj;
-        this.email = email;
         this.updatedAt = updatedAt;
         this.active = active;
     }
 
-    public Property(UUID userId, UUID addressId, String name, String phone, String cnpj, String email, boolean active) {
+    public Property(UUID userId, UUID addressId, String name, String phone, String cnpj, boolean active) {
         this.userId = userId;
         this.addressId = addressId;
         this.name = name;
         this.phone = phone;
         this.cnpj = cnpj;
-        this.email = email;
         this.active = active;
     }
 
@@ -65,10 +62,6 @@ public class Property {
 
     public String getCnpj() {
         return cnpj;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -104,10 +97,6 @@ public class Property {
         this.cnpj = cnpj;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -126,7 +115,6 @@ public class Property {
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", cnpj='" + cnpj + '\'' +
-                ", email='" + email + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
