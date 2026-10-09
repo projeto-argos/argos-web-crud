@@ -21,7 +21,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // CREATE
     @Override
     public void insert(Admin admin)  {
-        String sql = "INSERT INTO admins (full_name, cpf, email, phone, password, active, updated_at) " +
+        String sql = "INSERT INTO admin (full_name, cpf, email, phone, password, active, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -43,7 +43,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // READ
     @Override
     public Admin findById(UUID id) {
-        String sql = "SELECT * FROM admins WHERE id_admin = ? and active = true";
+        String sql = "SELECT * FROM admin WHERE id_admin = ? and active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 //    FIND ADMIN BY EMAIL
     @Override
     public Admin findByEmail(String email) {
-        String sql = "SELECT * FROM admins WHERE email = ?";
+        String sql = "SELECT * FROM admin WHERE email = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -87,7 +87,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
     @Override
     public List<Admin> findAll() {
-        String sql = "SELECT * FROM admins WHERE active = true ORDER BY full_name";
+        String sql = "SELECT * FROM admin WHERE active = true ORDER BY full_name";
         List<Admin> admins = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -107,7 +107,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // UPDATE
     @Override
     public void update(Admin admin) {
-        String sql = "UPDATE admins SET full_name = ?, cpf = ?, phone = ?, email = ?, updated_at = now() " +
+        String sql = "UPDATE admin SET full_name = ?, cpf = ?, phone = ?, email = ?, updated_at = now() " +
                 "WHERE id_admin = ? and active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -134,7 +134,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     //    UPDATE PASSWORD
     @Override
     public void updatePassword(UUID id, String password) {
-        String sql = "UPDATE admins SET password = ?, updated_at = now() WHERE id_admin = ?";
+        String sql = "UPDATE admin SET password = ?, updated_at = now() WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -155,7 +155,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // SOFT DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "UPDATE admins SET active = FALSE, updated_at = now() WHERE id_admin = ?";
+        String sql = "UPDATE admin SET active = FALSE, updated_at = now() WHERE id_admin = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

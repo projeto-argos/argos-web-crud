@@ -23,8 +23,10 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // CREATE
     @Override
     public void insert(User user) {
-        String sql = "INSERT INTO user (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = """
+                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())
+                """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -54,7 +56,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // READ
     @Override
     public User findById(UUID id) {
-        String sql = "SELECT * FROM user WHERE id_user = ? AND active = true";
+        String sql = """
+        SELECT * FROM "USER" WHERE id_user = ? AND active = true
+        """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -76,7 +80,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     //    FIND USER BY EMAIL
     @Override
     public User findByEmail(String email) {
-        String sql = "SELECT * FROM user WHERE email = ?";
+        String sql = """
+        SELECT * FROM "USER" WHERE email = ?
+        """;
 
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -97,7 +103,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
     @Override
     public List<User> findAll() {
-        String sql = "SELECT * FROM user WHERE active = true ORDER BY full_name";
+        String sql = """
+        SELECT * FROM "USER" WHERE active = true ORDER BY full_name
+        """;
         List<User> users = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -117,8 +125,10 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // UPDATE
     @Override
     public void update(User user)  {
-        String sql = "UPDATE user SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, updated_at = now() " +
-                "WHERE id_user = ? AND active = true";
+        String sql = """
+                UPDATE "USER" SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, updated_at = now() " +
+                "WHERE id_user = ? AND active = true
+                """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -152,7 +162,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 //    UPDATE PASSWORD
     @Override
     public void updatePassword(UUID id, String password) {
-        String sql = "UPDATE user SET password = ?, updated_at = now() WHERE id_user = ? AND active = true";
+        String sql = """
+            UPDATE "USER" SET password = ?, updated_at = now() WHERE id_user = ? AND active = true
+            """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -173,7 +185,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // DELETE
     @Override
     public void delete(UUID id){
-        String sql = "UPDATE user SET active = FALSE, updated_at = now() WHERE id_user = ?";
+        String sql = """
+            UPDATE "USER" SET active = FALSE, updated_at = now() WHERE id_user = ?
+            """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
