@@ -58,6 +58,13 @@ public class AnimalService {
         animalDAO.delete(id);
     }
 
+    public void deleteByEarTag(String earTag) {
+        if (earTag == null || earTag.isBlank()) {
+            throw new RequiredFieldException("earTag");
+        }
+        animalDAO.deleteByEarTag(earTag.trim());
+    }
+
     private void validateAnimal(Animal animal, boolean newAnimal) {
         if (animal == null) {
             throw new ValidationException("Animal cannot be null");

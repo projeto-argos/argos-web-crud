@@ -24,8 +24,8 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void insert(User user) {
         String sql = """
-                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())
+                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, now())
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -43,8 +43,6 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             } else {
                 stmt.setNull(7, Types.DATE);
             }
-
-            stmt.setBoolean(8, user.isActive());
 
             stmt.executeUpdate();
 

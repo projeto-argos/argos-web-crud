@@ -19,9 +19,9 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     @Override
     public void insert(Animal animal) {
         String sql = "INSERT INTO animal (ear_tag, weight, birth_date, exception_reason, " +
-                "exception_start_date, exception_end_date, cleared_for_slaughter, notes, active, " +
+                "exception_start_date, exception_end_date, cleared_for_slaughter, notes, " +
                 "id_batch, id_origin_batch, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -56,13 +56,12 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
             stmt.setBoolean(7, animal.isClearedForSlaughter());
             stmt.setString(8, animal.getNotes());
-            stmt.setBoolean(9, animal.isActive());
-            stmt.setObject(10, animal.getBatchId());
+            stmt.setObject(9, animal.getBatchId());
 
             if (animal.getOriginBatchId() != null) {
-                stmt.setObject(11, animal.getOriginBatchId());
+                stmt.setObject(10, animal.getOriginBatchId());
             } else {
-                stmt.setNull(11, Types.OTHER);
+                stmt.setNull(10, Types.OTHER);
             }
 
             stmt.executeUpdate();
@@ -219,7 +218,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 //    SOFT DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "UPDATE animal SET active = FALSE, updated_at = now() WHERE id_animal = ?";
+        String sql = "UPDATE animal SET active = FALSE, updated_at = now() WHERE id_animal = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -234,6 +233,27 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting animal: " + id, e);
+        }
+    }
+
+    // SOFT DELETE por brinco
+    @Override
+    public void deleteByEarTag(String earTag) {
+        String sql = "UPDATE animal SET active = FALSE, updated_at = now() WHERE ear_tag = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, earTag);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Animal not found with ear tag " + earTag);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting animal by ear tag: " + earTag, e);
         }
     }
 

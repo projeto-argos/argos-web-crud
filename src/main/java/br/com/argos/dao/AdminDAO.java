@@ -21,8 +21,8 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // CREATE
     @Override
     public void insert(Admin admin)  {
-        String sql = "INSERT INTO admin (full_name, cpf, email, phone, password, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO admin (full_name, cpf, email, phone, password, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -32,7 +32,6 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             stmt.setString(3, admin.getEmail());
             stmt.setString(4, admin.getPhone());
             stmt.setString(5, admin.getPassword());
-            stmt.setBoolean(6, admin.isActive());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
