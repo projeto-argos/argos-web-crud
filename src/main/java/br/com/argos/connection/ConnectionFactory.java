@@ -8,6 +8,8 @@ import java.util.Properties;
 
 public class ConnectionFactory{
 
+
+
     // CRIA LUGAR PRO .ENV
     private static final Properties env = new Properties();
 
@@ -24,6 +26,15 @@ public class ConnectionFactory{
 
     // FAZ A CONEXÃO COM O BANCO DE DADOS
     public static Connection getConnection() throws SQLException {
+
+        // FORÇA O REGISTRO EXPLICITO DO DRIVE
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Driver do PostgreSQL não encontrado!", e);
+        }
+
+
         return DriverManager.getConnection(
                 env.getProperty("DB_URL"),
                 env.getProperty("DB_USER"),
