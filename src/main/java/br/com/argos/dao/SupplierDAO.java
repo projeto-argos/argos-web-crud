@@ -15,7 +15,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public void insert(Supplier supplier) {
-        String sql = "INSERT INTO suppliers (full_name, cnpj, phone, email, active, id_address, updated_at) " +
+        String sql = "INSERT INTO supplier (full_name, cnpj, phone, email, active, id_address, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -36,7 +36,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public Supplier findById(UUID id) {
-        String sql = "SELECT * FROM suppliers WHERE id_supplier = ?";
+        String sql = "SELECT * FROM supplier WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public List<Supplier> findAll() {
-        String sql = "SELECT * FROM suppliers ORDER BY full_name";
+        String sql = "SELECT * FROM supplier ORDER BY full_name";
         List<Supplier> suppliers = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -75,7 +75,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public void update(Supplier supplier) {
-        String sql = "UPDATE suppliers SET full_name = ?, cnpj = ?, phone = ?, email = ?, active = ?, id_address = ?, updated_at = now() " +
+        String sql = "UPDATE supplier SET full_name = ?, cnpj = ?, phone = ?, email = ?, active = ?, id_address = ?, updated_at = now() " +
                 "WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -97,7 +97,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public void delete(UUID id) {
-        String sql = "DELETE FROM suppliers WHERE id_supplier = ?";
+        String sql = "DELETE FROM supplier WHERE id_supplier = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
