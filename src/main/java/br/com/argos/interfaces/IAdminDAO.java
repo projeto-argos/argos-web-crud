@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface IAdminDAO extends GenericDAO<Admin, UUID> {
     Admin findByEmail(String email);
     void updatePassword(UUID id, String password);
+    void deleteByCpf(String cpf);
 }
