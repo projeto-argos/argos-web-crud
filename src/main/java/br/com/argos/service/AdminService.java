@@ -81,7 +81,7 @@ public class AdminService {
         adminDAO.deleteByCpf(digits);
     }
 
-    /** Troca a senha: valida a nova senha, gera o hash e depois chama o DAO. */
+    /** Valida a senha, gera o hash e depois chama o DAO */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -92,7 +92,7 @@ public class AdminService {
 
     /**
      * Confere e-mail e senha. Devolve o admin autenticado ou lança ValidationException.
-     * A mensagem é sempre a mesma, para não revelar se o e-mail existe.
+     * A mensagem é sempre a mesma.
      */
     public Admin authenticate(String email, String password) {
         if (email == null || email.isBlank()) {

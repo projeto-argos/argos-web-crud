@@ -29,7 +29,7 @@ public class UserService {
     }
 
     /**
-     * Cadastra um usuário: padroniza os dados, valida e grava a senha já em hash.
+     * padroniza os dados, valida e grava a senha já em hash.
      */
     public void create(User user) {
         User limpo = normalizarUsuario(user);
@@ -93,7 +93,7 @@ public class UserService {
 
     /**
      * Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-     * mensagem sempre a mesma, para não revelar se o e-mail existe.
+     * mensagem sempre a mesma.
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -127,7 +127,7 @@ public class UserService {
                 user.getPassword(), user.getBirthDate(), user.getUpdatedAt(), user.isActive());
     }
 
-    /** Regras da senha em texto puro (antes do hash). */
+    /** Regras da senha em texto puro  */
     private void validarSenha(String password) {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
