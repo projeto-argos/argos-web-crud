@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static br.com.argos.util.Normalizer.onlyDigits;
+
 /** Regras de negócio e validações relacionadas a usuários. */
 public class UserService {
 
@@ -67,6 +69,17 @@ public class UserService {
             throw new RequiredFieldException("id");
         }
         userDAO.delete(id);
+    }
+
+    public void deleteByCpf(String cpf) {
+        String digits = onlyDigits(cpf);
+        if (digits == null) {
+            throw new RequiredFieldException("cpf");
+        }
+        if (!Validador.cpfValido(digits)) {
+            throw new ValidationException("Invalid CPF");
+        }
+        userDAO.deleteByCpf(digits);
     }
 
     /** Troca a senha */

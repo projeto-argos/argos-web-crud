@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static br.com.argos.util.Normalizer.onlyDigits;
+
 /** Regras de negócio e validações relacionadas a admins. */
 public class AdminService {
 
@@ -66,6 +68,17 @@ public class AdminService {
             throw new RequiredFieldException("id");
         }
         adminDAO.delete(id);
+    }
+
+    public void deleteByCpf(String cpf) {
+        String digits = onlyDigits(cpf);
+        if (digits == null) {
+            throw new RequiredFieldException("cpf");
+        }
+        if (!Validador.cpfValido(digits)) {
+            throw new ValidationException("Invalid CPF");
+        }
+        adminDAO.deleteByCpf(digits);
     }
 
     /** Troca a senha: valida a nova senha, gera o hash e depois chama o DAO. */

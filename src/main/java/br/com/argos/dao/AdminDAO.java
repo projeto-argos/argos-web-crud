@@ -174,6 +174,28 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
         }
     }
 
+    @Override
+    public void deleteByCpf(String cpf) {
+        String sql = """
+            UPDATE admin SET active = false, updated_at = now() WHERE cpf = ? AND active = true
+        """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Admin not found with cpf " + cpf);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting admin: " + cpf, e);
+        }
+    }
+
     // MAPPER
     private Admin mapAdmin(ResultSet rs, boolean hasPassword) throws SQLException {
         UUID id = rs.getObject("id_admin", UUID.class);

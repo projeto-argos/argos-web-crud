@@ -182,7 +182,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
         }
     }
 
-    // DELETE
+    // SOFT DELETE
     @Override
     public void delete(UUID id){
         String sql = """
@@ -202,6 +202,28 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException("Error deactivating user: " + id, e);
+        }
+    }
+
+    @Override
+    public void deleteByCpf(String cpf) {
+        String sql = """
+            UPDATE "USER" SET active = false, updated_at = now() WHERE cpf = ? AND active = true
+        """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found with cpf " + cpf);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting user: " + cpf, e);
         }
     }
 
