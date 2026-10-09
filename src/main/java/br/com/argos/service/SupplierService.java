@@ -85,7 +85,9 @@ public class SupplierService {
                 text(supplier.getFullName()),
                 onlyDigits(supplier.getCnpj()),
                 onlyDigits(supplier.getPhone()),
-                email(supplier.getEmail())
+                email(supplier.getEmail()),
+                supplier.getUpdatedAt(),
+                supplier.isActive()
         );
     }
     private void validateSupplier(Supplier supplier){
