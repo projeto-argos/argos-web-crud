@@ -17,10 +17,10 @@ public class Normalizer {
         if (email == null) {
             return null;
         }
-        return email.trim().toLowerCase();
+        return email.strip().toLowerCase();
     }
     /** Tira espaços das pontas; null continua null. */
     public static String text(String text) {
-        return text == null ? null : text.trim();
+        return text == null ? null : text.strip();
     }
 }
