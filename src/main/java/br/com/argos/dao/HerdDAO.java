@@ -205,6 +205,6 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Herd(id, propertyId, name, breed, purpose, headCount, updatedAt, active);
+        return new Herd(id, propertyId,headCount, purpose, name, breed, updatedAt, active);
     }
 }

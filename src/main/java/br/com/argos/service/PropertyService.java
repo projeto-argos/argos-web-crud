@@ -91,8 +91,8 @@ public class PropertyService {
                 property.getUserId(),
                 property.getAddressId(),
                 text(property.getName()),
-                onlyDigits(property.getCnpj()),
                 onlyDigits(property.getPhone()),
+                onlyDigits(property.getCnpj()),
                 property.getUpdatedAt(),
                 property.isActive());
     }

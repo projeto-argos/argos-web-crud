@@ -92,10 +92,10 @@ public class HerdService {
         return new Herd(
                 herd.getIdHerd(),
                 herd.getPropertyId(),
+                headCount != null ? headCount : 0,
+                purpose != null ? purpose : DEFAULT_PURPOSE,
                 text(herd.getName()),
                 text(herd.getBreed()),
-                purpose != null ? purpose : DEFAULT_PURPOSE,
-                headCount != null ? headCount : 0,
                 herd.getUpdatedAt(),
                 herd.isActive()
         );

@@ -68,7 +68,7 @@ public class AdminService {
         adminDAO.delete(id);
     }
 
-    /** Troca a senha: valida a nova senha, gera o hash e só então chama o DAO. */
+    /** Troca a senha: valida a nova senha, gera o hash e depois chama o DAO. */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -91,7 +91,6 @@ public class AdminService {
 
         Admin admin = adminDAO.findByEmail(Normalizer.email(email));
 
-        // A ordem importa: o checkpw só roda se o admin existir e estiver ativo
         if (admin == null || !admin.isActive() || !BCrypt.checkpw(password, admin.getPassword())) {
             throw new ValidationException("Invalid credentials");
         }
@@ -99,7 +98,7 @@ public class AdminService {
         return admin;
     }
 
-    /** Padroniza os dados de entrada (CPF e telefone só com dígitos, e-mail em minúsculas). */
+    /** Padroniza os dados de entrada */
     private Admin normalizarAdmin(Admin admin) {
         if (admin == null) {
             return null;
@@ -110,10 +109,10 @@ public class AdminService {
                 Normalizer.onlyDigits(admin.getCpf()),
                 Normalizer.email(admin.getEmail()),
                 Normalizer.onlyDigits(admin.getPhone()),
-                admin.getPassword(), null, admin.isActive());
+                admin.getPassword(), admin.getUpdatedAt(), admin.isActive());
     }
 
-    /** Regras da senha em texto puro (antes do hash). */
+    /** Regras da senha em texto puro */
     private void validarSenha(String password) {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
@@ -126,6 +125,7 @@ public class AdminService {
     /** Valida os campos do admin. A senha só é exigida no cadastro (newAdmin = true). */
     private void validarAdmin(Admin admin, boolean newAdmin) {
 
+//        OBRIGATÓRIOS
         if (admin == null) {
             throw new ValidationException("Fill in the required fields.");
         }
@@ -158,7 +158,7 @@ public class AdminService {
             throw new ValidationException("The email cannot exceed 120 characters.");
         }
 
-        // Telefone é opcional
+        // OPCIONAIS
         if (admin.getPhone() != null && !admin.getPhone().isBlank()
                 && !Validador.telefoneValido(admin.getPhone())) {
             throw new ValidationException("Invalid phone.");

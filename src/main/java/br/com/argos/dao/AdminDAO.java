@@ -4,6 +4,7 @@ import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Admin;
+import br.com.argos.interfaces.IAdminDAO;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.util.UUID;
  * Classe de acesso a dados (DAO) para a tabela Admin (Admin).
  * Implementa as operações de CRUD.
  */
-public class AdminDAO implements GenericDAO<Admin, UUID> {
+public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
     // CREATE
     @Override

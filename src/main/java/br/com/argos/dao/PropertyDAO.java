@@ -210,6 +210,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Property(id, userId, addressId, name, cnpj, phone, updatedAt, active);
+        return new Property(id, userId, addressId, name, phone, cnpj, updatedAt, active);
     }
 }

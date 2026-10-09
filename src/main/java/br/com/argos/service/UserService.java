@@ -111,7 +111,7 @@ public class UserService {
                 Normalizer.email(user.getEmail()),
                 Normalizer.onlyDigits(user.getPhone()),
                 Normalizer.text(user.getRole()),
-                user.getPassword(), user.getBirthDate(), null, user.isActive());
+                user.getPassword(), user.getBirthDate(), user.getUpdatedAt(), user.isActive());
     }
 
     /** Regras da senha em texto puro (antes do hash). */
