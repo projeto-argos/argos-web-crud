@@ -62,8 +62,8 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
             stmt.setObject(9, animal.getBatchId());
 
-            if (animal.getIdOriginBatch() != null) {
-                stmt.setObject(10, animal.getIdOriginBatch());
+            if (animal.getOriginBatchId() != null) {
+                stmt.setObject(10, animal.getOriginBatchId());
             } else {
                 stmt.setNull(10, Types.OTHER);
             }
@@ -211,8 +211,8 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
             stmt.setObject(9, animal.getBatchId());
 
-            if (animal.getIdOriginBatch() != null) {
-                stmt.setObject(10, animal.getIdOriginBatch());
+            if (animal.getOriginBatchId() != null) {
+                stmt.setObject(10, animal.getOriginBatchId());
             } else {
                 stmt.setNull(10, Types.OTHER);
             }
