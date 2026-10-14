@@ -3,6 +3,7 @@ package br.com.argos.dao;
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
+import br.com.argos.interfaces.ISupplierDAO;
 import br.com.argos.model.Supplier;
 
 import java.sql.*;
@@ -11,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SupplierDAO implements GenericDAO<Supplier, UUID> {
+public class SupplierDAO implements GenericDAO<Supplier, UUID>, ISupplierDAO {
 
     @Override
     public void insert(Supplier supplier) {
-        String sql = "INSERT INTO suppliers (full_name, cnpj, phone, email, active, id_address, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+        String sql = "INSERT INTO SUPPLIER (full_name, cnpj, phone, email, id_address, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -25,18 +26,22 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
             stmt.setString(2, supplier.getCnpj());
             stmt.setString(3, supplier.getPhone());
             stmt.setString(4, supplier.getEmail());
-            stmt.setBoolean(5, supplier.isActive());
-            stmt.setObject(6, supplier.getAddressId());
+
+            if (supplier.getAddressId() != null) {
+                stmt.setObject(5, supplier.getAddressId());
+            } else {
+                stmt.setNull(5, Types.OTHER);
+            }
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting supplier: " + e.getMessage(), e);
+            throw new DataAccessException("Error inserting supplier: ", e);
         }
     }
 
     @Override
     public Supplier findById(UUID id) {
-        String sql = "SELECT * FROM suppliers WHERE id_supplier = ?";
+        String sql = "SELECT * FROM SUPPLIER WHERE id_supplier = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -56,7 +61,7 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
 
     @Override
     public List<Supplier> findAll() {
-        String sql = "SELECT * FROM suppliers ORDER BY full_name";
+        String sql = "SELECT * FROM SUPPLIER WHERE active = true ORDER BY full_name";
         List<Supplier> suppliers = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -67,16 +72,59 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
                 suppliers.add(mapSupplier(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing suppliers: " + e.getMessage(), e);
+            throw new DataAccessException("Error listing suppliers: ", e);
         }
 
         return suppliers;
     }
 
     @Override
+    public List<Supplier> findByName(String name) {
+        String sql = "SELECT * FROM SUPPLIER WHERE full_name ILIKE ? AND active = true ORDER BY full_name";
+        List<Supplier> suppliers = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + name + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    suppliers.add(mapSupplier(rs));
+                }
+            }
+            return suppliers;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for supplier by name: " + name, e);
+        }
+    }
+
+    @Override
+    public Supplier findByEmail(String email) {
+        String sql = "SELECT * FROM SUPPLIER WHERE email = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapSupplier(rs);
+                }
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for supplier by email: " + email, e);
+        }
+    }
+
+    @Override
     public void update(Supplier supplier) {
-        String sql = "UPDATE suppliers SET full_name = ?, cnpj = ?, phone = ?, email = ?, active = ?, id_address = ?, updated_at = now() " +
-                "WHERE id_supplier = ?";
+        String sql = "UPDATE SUPPLIER SET full_name = ?, cnpj = ?, phone = ?, email = ?, id_address = ?, " +
+                "updated_at = now() WHERE id_supplier = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -85,27 +133,65 @@ public class SupplierDAO implements GenericDAO<Supplier, UUID> {
             stmt.setString(2, supplier.getCnpj());
             stmt.setString(3, supplier.getPhone());
             stmt.setString(4, supplier.getEmail());
-            stmt.setBoolean(5, supplier.isActive());
-            stmt.setObject(6, supplier.getAddressId());
-            stmt.setObject(7, supplier.getIdSupplier());
 
-            stmt.executeUpdate();
+            if (supplier.getAddressId() != null) {
+                stmt.setObject(5, supplier.getAddressId());
+            } else {
+                stmt.setNull(5, Types.OTHER);
+            }
+
+            stmt.setObject(6, supplier.getIdSupplier());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Supplier not found " + supplier.getIdSupplier());
+            }
+
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating supplier: " + e.getMessage(), e);
+            throw new DataAccessException("Error updating supplier: ", e);
         }
     }
 
+    // SOFT DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "DELETE FROM suppliers WHERE id_supplier = ?";
+        String sql = "UPDATE SUPPLIER SET active = FALSE, updated_at = now() WHERE id_supplier = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, id);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Supplier not found " + id);
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting supplier: " + id, e);
+        }
+    }
+
+    // SOFT DELETE por CNPJ
+    @Override
+    public void deleteByCnpj(String cnpj) {
+        String sql = "UPDATE SUPPLIER SET active = FALSE, updated_at = now() WHERE cnpj = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cnpj);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Supplier not found with CNPJ " + cnpj);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting supplier by CNPJ: " + cnpj, e);
         }
     }
 

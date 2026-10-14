@@ -4,6 +4,7 @@ import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.User;
+import br.com.argos.interfaces.IUserDAO;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -17,13 +18,15 @@ import java.util.UUID;
  * Acesso ao banco para a tabela User (Usuário).
  * Implementa as operações de CRUD e métodos personalizados.
  */
-public class UserDAO implements GenericDAO<User, UUID> {
+public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
     // CREATE
     @Override
     public void insert(User user) {
-        String sql = "INSERT INTO users (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())";
+        String sql = """
+                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, now())
+                """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -41,19 +44,19 @@ public class UserDAO implements GenericDAO<User, UUID> {
                 stmt.setNull(7, Types.DATE);
             }
 
-            stmt.setBoolean(8, user.isActive());
-
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting user: " + e);
+            throw new DataAccessException("Error inserting user: ", e);
         }
     }
 
     // READ
     @Override
     public User findById(UUID id) {
-        String sql = "SELECT * FROM users WHERE id_user = ?";
+        String sql = """
+        SELECT * FROM "USER" WHERE id_user = ? AND active = true
+        """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -62,7 +65,7 @@ public class UserDAO implements GenericDAO<User, UUID> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapUser(rs);
+                    return mapUser(rs, false);
                 }
             }
             return null;
@@ -72,9 +75,35 @@ public class UserDAO implements GenericDAO<User, UUID> {
         }
     }
 
+    //    FIND USER BY EMAIL
+    @Override
+    public User findByEmail(String email) {
+        String sql = """
+        SELECT * FROM "USER" WHERE email = ?
+        """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs, true);
+                }
+            }
+            return null;
+
+        } catch (SQLException sqle){
+            throw new DataAccessException("Error searching for user by email: " + email, sqle);
+        }
+    }
+
     @Override
     public List<User> findAll() {
-        String sql = "SELECT * FROM users ORDER BY full_name";
+        String sql = """
+        SELECT * FROM "USER" WHERE active = true ORDER BY full_name
+        """;
         List<User> users = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -82,10 +111,10 @@ public class UserDAO implements GenericDAO<User, UUID> {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                users.add(mapUser(rs));
+                users.add(mapUser(rs, false));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing users: " + e);
+            throw new DataAccessException("Error listing users: ", e);
         }
 
         return users;
@@ -94,8 +123,10 @@ public class UserDAO implements GenericDAO<User, UUID> {
     // UPDATE
     @Override
     public void update(User user)  {
-        String sql = "UPDATE users SET full_name = ?, phone = ?, cpf = ?, email = ?, role = ?, password = ?, birth_date = ?, active = ?, updated_at = now() " +
-                "WHERE id_user = ?";
+        String sql = """
+                UPDATE "USER" SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, updated_at = now() " +
+                "WHERE id_user = ? AND active = true
+                """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -113,39 +144,96 @@ public class UserDAO implements GenericDAO<User, UUID> {
                 stmt.setNull(7, Types.DATE);
             }
 
-            stmt.setBoolean(8, user.isActive());
-            stmt.setObject(9, user.getIdUser());
+            stmt.setObject(7, user.getIdUser());
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found " + user.getIdUser());
+            }
+
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating user: " + e);
+            throw new DataAccessException("Error updating user: ", e);
         }
     }
 
-    // DELETE
+//    UPDATE PASSWORD
+    @Override
+    public void updatePassword(UUID id, String password) {
+        String sql = """
+            UPDATE "USER" SET password = ?, updated_at = now() WHERE id_user = ? AND active = true
+            """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setString(1, password);
+            stmt.setObject(2, id);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found " + id);
+            }
+
+        } catch (SQLException sqle) {
+            throw new DataAccessException("Error updating user password: ", sqle);
+        }
+    }
+
+    // SOFT DELETE
     @Override
     public void delete(UUID id){
-        String sql = "DELETE FROM users WHERE id_user = ?";
+        String sql = """
+            UPDATE "USER" SET active = FALSE, updated_at = now() WHERE id_user = ?
+            """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, id);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found " + id);
+            }
+
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting user: " + id, e);
+            throw new DataAccessException("Error deactivating user: " + id, e);
+        }
+    }
+
+    @Override
+    public void deleteByCpf(String cpf) {
+        String sql = """
+            UPDATE "USER" SET active = false, updated_at = now() WHERE cpf = ? AND active = true
+        """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("User not found with cpf " + cpf);
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error deleting user: " + cpf, e);
         }
     }
 
     // MAPPER
-    private User mapUser(ResultSet rs) throws SQLException {
+    private User mapUser(ResultSet rs, boolean hasPassword) throws SQLException {
         UUID id = rs.getObject("id_user", UUID.class);
         String fullName = rs.getString("full_name");
         String phone = rs.getString("phone");
         String cpf = rs.getString("cpf");
         String email = rs.getString("email");
         String role = rs.getString("role");
-        String password = rs.getString("password");
+        String password = hasPassword ? rs.getString("password") : null;
 
         LocalDate birthDate = null;
         Date sqlDate = rs.getDate("birth_date");
