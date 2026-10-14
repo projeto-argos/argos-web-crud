@@ -58,8 +58,8 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.setString(8, animal.getNotes());
             stmt.setObject(9, animal.getBatchId());
 
-            if (animal.getOriginBatchId() != null) {
-                stmt.setObject(10, animal.getOriginBatchId());
+            if (animal.getIdOriginBatch() != null) {
+                stmt.setObject(10, animal.getIdOriginBatch());
             } else {
                 stmt.setNull(10, Types.OTHER);
             }
@@ -196,8 +196,8 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.setBoolean(9, animal.isActive());
             stmt.setObject(10, animal.getBatchId());
 
-            if (animal.getOriginBatchId() != null) {
-                stmt.setObject(11, animal.getOriginBatchId());
+            if (animal.getIdOriginBatch() != null) {
+                stmt.setObject(11, animal.getIdOriginBatch());
             } else {
                 stmt.setNull(11, Types.OTHER);
             }
@@ -293,7 +293,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
         boolean clearedForSlaughter = rs.getBoolean("cleared_for_slaughter");
         boolean active = rs.getBoolean("active");
 
-        return new Animal(id, batchId, weight, originBatchId, earTag, notes, exceptionReason,
+        return new Animal(id, batchId, originBatchId, weight, earTag, notes, exceptionReason,
                 exceptionStartDate, exceptionEndDate, birthDate, updatedAt, active, clearedForSlaughter);
     }
 }
