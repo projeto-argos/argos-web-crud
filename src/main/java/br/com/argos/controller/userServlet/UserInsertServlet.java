@@ -7,21 +7,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 
-@WebServlet(name = "UserInsertServlet", value = "/users/cadastrar")
+@WebServlet(name = "UserInsertServlet", value = "/users/register")
 public class UserInsertServlet extends HttpServlet {
 
+    // ATRIBUTO
     private UserService userService;
 
+    // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         userService = new UserService();
     }
 
+    // EXIBE FORMULÁRIO
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,37 +30,61 @@ public class UserInsertServlet extends HttpServlet {
                 .forward(request, response);
     }
 
+    // PROCESSA FORMULÁRIO
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
 
         try {
-            String fullName = request.getParameter("fullName");
-            String cpf = request.getParameter("cpf");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            String role = request.getParameter("role");
-            String password = request.getParameter("password");
+            // RECEBE DADOS
+            String fullName =
+                    request.getParameter("fullName");
 
-            String birthDateStr = request.getParameter("birthDate");
+            String cpf =
+                    request.getParameter("cpf");
+
+            String email =
+                    request.getParameter("email");
+
+            String phone =
+                    request.getParameter("phone");
+
+            String role =
+                    request.getParameter("role");
+
+            String password =
+                    request.getParameter("password");
+
+            String birthDateStr =
+                    request.getParameter("birthDate");
+
+
             LocalDate birthDate = null;
-            if (birthDateStr != null && !birthDateStr.isBlank()) {
+
+            if (
+                    birthDateStr != null &&
+                            !birthDateStr.isBlank()
+            ) {
                 birthDate = LocalDate.parse(birthDateStr);
             }
 
-            boolean active = request.getParameter("active") != null &&
+            boolean active =
+                    request.getParameter("active") != null &&
                     (request.getParameter("active").equals("true") || request.getParameter("active").equals("on"));
 
+            // CADASTRA USUÁRIO
             User newUser = new User(fullName, cpf, email, phone, role, password, birthDate, active);
-
-            // Passa pelo Service (validações + insert)
             userService.create(newUser);
 
+            // REDIRECIONA
             response.sendRedirect(request.getContextPath() + "/users");
-        } catch (SQLException | IllegalArgumentException e) {
-            // Se houver erro de validação ou banco, você pode tratar ou enviar para a view
+
+        } catch (Exception e) {
+            // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/users/form.jsp").forward(request, response);
         }
