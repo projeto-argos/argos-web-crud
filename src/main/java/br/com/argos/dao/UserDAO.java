@@ -24,9 +24,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void insert(User user) {
         String sql = """
-                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, active, updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())
-                """;
+        INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, now())
+        """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -43,8 +43,6 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             } else {
                 stmt.setNull(7, Types.DATE);
             }
-
-            stmt.setBoolean(8, user.isActive());
 
             stmt.executeUpdate();
 
@@ -81,7 +79,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public User findByEmail(String email) {
         String sql = """
-        SELECT * FROM "USER" WHERE email = ?
+        SELECT * FROM "USER" WHERE email = ? AND active = true
         """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -185,7 +183,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void delete(UUID id){
         String sql = """
-            UPDATE "USER" SET active = FALSE, updated_at = now() WHERE id_user = ?
+            UPDATE "USER" SET active = FALSE, updated_at = now() WHERE id_user = ? AND active = true
             """;
 
         try (Connection conn = ConnectionFactory.getConnection();
