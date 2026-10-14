@@ -24,8 +24,8 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void insert(User user) {
         String sql = """
-                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, now())
+                INSERT INTO "USER" (full_name, phone, cpf, email, role, password, birth_date, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, now())
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -124,8 +124,8 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void update(User user)  {
         String sql = """
-                UPDATE "USER" SET full_name = ?, phone = ?, email = ?, cpf = ?, role = ?, birth_date = ?, updated_at = now() " +
-                "WHERE id_user = ? AND active = true
+                UPDATE "USER" SET full_name = ?, phone = ?, cpf = ?, email = ?, role = ?, birth_date = ?, updated_at = now()
+                WHERE id_user = ? AND active = true
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -136,12 +136,11 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             stmt.setString(3, user.getCpf());
             stmt.setString(4, user.getEmail());
             stmt.setString(5, user.getRole());
-            stmt.setString(6, user.getPassword());
 
             if (user.getBirthDate() != null) {
-                stmt.setDate(7, Date.valueOf(user.getBirthDate()));
+                stmt.setDate(6, Date.valueOf(user.getBirthDate()));
             } else {
-                stmt.setNull(7, Types.DATE);
+                stmt.setNull(6, Types.DATE);
             }
 
             stmt.setObject(7, user.getIdUser());

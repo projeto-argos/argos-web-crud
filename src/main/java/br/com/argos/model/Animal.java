@@ -42,9 +42,9 @@ public class Animal {
         this.clearedForSlaughter = clearedForSlaughter;
     }
 
-    public Animal(UUID batchId, UUID originBatchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean active, boolean clearedForSlaughter) {
+    public Animal(UUID batchId, UUID idOriginBatch, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean active, boolean clearedForSlaughter) {
         this.batchId = batchId;
-        this.originBatchId = originBatchId;
+        this.idOriginBatch = idOriginBatch;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
