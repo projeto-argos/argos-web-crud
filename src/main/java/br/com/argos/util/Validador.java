@@ -6,8 +6,7 @@ public class Validador {
 
     private static final Pattern PADRAO_CPF = Pattern.compile("^\\d{11}$");
     private static final Pattern PADRAO_TELEFONE = Pattern.compile("^\\d{10,11}$");
-    private static final Pattern PADRAO_EMAIL = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
-    private static final Pattern PADRAO_CNPJ = Pattern.compile("^\\d{14}$");
+    private static final Pattern PADRAO_EMAIL = Pattern.compile("^[\\w.+-]+@(?:[\\w-]+\\.)+[a-zA-Z]{2,}$");    private static final Pattern PADRAO_CNPJ = Pattern.compile("^\\d{14}$");
     private static final Pattern PADRAO_USUARIO = Pattern.compile("^[\\w.]{5,20}$");
     private static final Pattern PADRAO_SENHA = Pattern.compile("^.{8,64}$");
 
