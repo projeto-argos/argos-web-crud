@@ -38,7 +38,7 @@ public class UserService {
         // A senha nunca vai em texto puro para o banco
         String hash = BCrypt.hashpw(limpo.getPassword(), BCrypt.gensalt());
         User comHash = new User(limpo.getIdUser(), limpo.getFullName(), limpo.getCpf(), limpo.getEmail(),
-                limpo.getPhone(), limpo.getRole(), hash, limpo.getBirthDate(), null, true);
+                limpo.getPhone(), limpo.getRole(), hash, limpo.getBirthDate(), null, limpo.isActive());
         userDAO.insert(comHash);
     }
 
