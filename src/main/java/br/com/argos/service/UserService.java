@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static br.com.argos.util.Normalizer.onlyDigits;
+
 /** Regras de negócio e validações relacionadas a usuários. */
 public class UserService {
 
@@ -27,8 +29,7 @@ public class UserService {
     }
 
     /**
-     * Cadastra um usuário: padroniza os dados, valida e grava a senha já em hash.
-     * O usuário nasce sempre ativo.
+     * padroniza os dados, valida e grava a senha já em hash.
      */
     public void create(User user) {
         User limpo = normalizarUsuario(user);
@@ -52,7 +53,7 @@ public class UserService {
         return userDAO.findAll();
     }
 
-    /** Atualiza os dados cadastrais. A senha não é alterada aqui: use changePassword. */
+    /** Atualiza os dados cadastrais */
     public void update(User user) {
         User limpo = normalizarUsuario(user);
         validarUsuario(limpo, false);
@@ -70,7 +71,18 @@ public class UserService {
         userDAO.delete(id);
     }
 
-    /** Troca a senha: valida a nova senha, gera o hash e só então chama o DAO. */
+    public void deleteByCpf(String cpf) {
+        String digits = onlyDigits(cpf);
+        if (digits == null) {
+            throw new RequiredFieldException("cpf");
+        }
+        if (!Validador.cpfValido(digits)) {
+            throw new ValidationException("Invalid CPF");
+        }
+        userDAO.deleteByCpf(digits);
+    }
+
+    /** Troca a senha */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -81,7 +93,7 @@ public class UserService {
 
     /**
      * Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-     * A mensagem é sempre a mesma, para não revelar se o e-mail existe.
+     * mensagem sempre a mesma.
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -100,22 +112,22 @@ public class UserService {
         return user;
     }
 
-    /** Padroniza os dados de entrada (CPF e telefone só com dígitos, e-mail em minúsculas). */
+    /** Padroniza os dados de entrada */
     private User normalizarUsuario(User user) {
         if (user == null) {
             return null;
         }
-        // A senha não é normalizada: espaços podem fazer parte dela
+        // A senha não é normalizada
         return new User(user.getIdUser(),
-                Normalizer.(user.getFullName()),
+                Normalizer.text(user.getFullName()),
                 Normalizer.onlyDigits(user.getCpf()),
                 Normalizer.email(user.getEmail()),
                 Normalizer.onlyDigits(user.getPhone()),
                 Normalizer.text(user.getRole()),
-                user.getPassword(), user.getBirthDate(), null, user.isActive());
+                user.getPassword(), user.getBirthDate(), user.getUpdatedAt(), user.isActive());
     }
 
-    /** Regras da senha em texto puro (antes do hash). */
+    /** Regras da senha em texto puro  */
     private void validarSenha(String password) {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
@@ -125,9 +137,10 @@ public class UserService {
         }
     }
 
-    /** Valida os campos do usuário. A senha só é exigida no cadastro (newUser = true). */
+    /** Valida os campos do usuário. Senha apenas exigida no cadastro */
     private void validarUsuario(User user, boolean newUser) {
 
+//        OBRIGATÓRIOS
         if (user == null) {
             throw new ValidationException("Fill in the required fields.");
         }
@@ -141,11 +154,6 @@ public class UserService {
         }
         if (user.getFullName().length() > 120) {
             throw new ValidationException("The name cannot exceed 120 characters");
-        }
-
-//      Optional role
-        if (user.getRole() != null && user.getRole().length() > 50) {
-            throw new ValidationException("The role cannot exceed 50 characters");
         }
 
         if (user.getCpf() == null || user.getCpf().isBlank()) {
@@ -165,7 +173,7 @@ public class UserService {
             throw new ValidationException("The email cannot exceed 120 characters");
         }
 
-        // Optional phone
+        // OPCIONAIS
         if (user.getPhone() != null && !user.getPhone().isBlank()
                 && !Validador.telefoneValido(user.getPhone())) {
             throw new ValidationException("Invalid phone number");
@@ -173,6 +181,10 @@ public class UserService {
 
         if (user.getBirthDate() != null && user.getBirthDate().isAfter(LocalDate.now())) {
             throw new ValidationException("Birth date cannot be in the future");
+        }
+
+        if (user.getRole() != null && user.getRole().length() > 50) {
+            throw new ValidationException("The role cannot exceed 50 characters");
         }
     }
 }
