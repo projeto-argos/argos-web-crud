@@ -6,21 +6,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.UUID;
 
-@WebServlet(name = "UserDeleteServlet", value = "/users/excluir")
+@WebServlet(name = "UserDeleteServlet", value = "/users/delete")
 public class UserDeleteServlet extends HttpServlet {
 
+    // ATRIBUTO
     private UserService userService;
 
+    // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         userService = new UserService();
     }
 
+    // PROCESSA A EXCLUSÃO
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,13 +29,17 @@ public class UserDeleteServlet extends HttpServlet {
         String idParam = request.getParameter("id");
         if (idParam != null && !idParam.isBlank()) {
             try {
+                // EXCLUI USUÁRIO
                 UUID id = UUID.fromString(idParam);
                 userService.delete(id);
-            } catch (SQLException e) {
+
+            } catch (Exception e) {
+                // TRATA ERRO
                 throw new ServletException("Erro ao excluir usuário", e);
             }
         }
 
+        // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/users");
     }
 }
