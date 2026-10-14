@@ -26,7 +26,6 @@ public class Animal {
     public Animal() {
     }
 
-    // CORRIGIDO: Adicionado o idOriginBatch nos parâmetros e na atribuição
     public Animal(UUID idAnimal, UUID batchId, UUID idOriginBatch, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
         this.idAnimal = idAnimal;
         this.batchId = batchId;
@@ -43,8 +42,9 @@ public class Animal {
         this.clearedForSlaughter = clearedForSlaughter;
     }
 
-    public Animal(UUID batchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean active, boolean clearedForSlaughter) {
+    public Animal(UUID batchId, UUID originBatchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean active, boolean clearedForSlaughter) {
         this.batchId = batchId;
+        this.originBatchId = originBatchId;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
