@@ -10,6 +10,7 @@ public class Animal {
     // ATRIBUTOS
     private UUID idAnimal;
     private UUID batchId;
+    private UUID idOriginBatch;
     private BigDecimal weight;
     private String earTag;
     private String notes;
@@ -25,9 +26,11 @@ public class Animal {
     public Animal() {
     }
 
-    public Animal(UUID idAnimal, UUID batchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
+    // CORRIGIDO: Adicionado o idOriginBatch nos parâmetros e na atribuição
+    public Animal(UUID idAnimal, UUID batchId, UUID idOriginBatch, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
         this.idAnimal = idAnimal;
         this.batchId = batchId;
+        this.idOriginBatch = idOriginBatch;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
@@ -60,6 +63,10 @@ public class Animal {
 
     public UUID getBatchId() {
         return batchId;
+    }
+
+    public UUID getIdOriginBatch() {
+        return idOriginBatch;
     }
 
     public BigDecimal getWeight() {
@@ -111,6 +118,10 @@ public class Animal {
         this.batchId = batchId;
     }
 
+    public void setIdOriginBatch(UUID idOriginBatch) {
+        this.idOriginBatch = idOriginBatch;
+    }
+
     public void setWeight(BigDecimal weight) {
         this.weight = weight;
     }
@@ -157,6 +168,7 @@ public class Animal {
         return "Animal{" +
                 "idAnimal=" + idAnimal +
                 ", batchId=" + batchId +
+                ", idOriginBatch=" + idOriginBatch +
                 ", weight=" + weight +
                 ", earTag='" + earTag + '\'' +
                 ", notes='" + notes + '\'' +
