@@ -4,6 +4,7 @@ import br.com.argos.dao.AnimalDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Animal;
+import br.com.argos.util.Normalizer;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,6 +39,20 @@ public class AnimalService {
 
     public List<Animal> findAll(){
         return animalDAO.findAll();
+    }
+
+    public Animal findByEarTag(String earTag){
+        if (earTag == null || earTag.isBlank()){
+            throw new RequiredFieldException("earTag");
+        }
+        return animalDAO.findByEarTag(Normalizer.text(earTag));
+    }
+
+    public List<Animal> findByBatch(UUID batchId){
+        if (batchId == null) {
+            throw new RequiredFieldException("batchId");
+        }
+        return animalDAO.findByBatch(batchId);
     }
 
     public void update(Animal animal){
