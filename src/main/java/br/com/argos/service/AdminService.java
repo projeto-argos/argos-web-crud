@@ -52,6 +52,13 @@ public class AdminService {
         return adminDAO.findAll();
     }
 
+    public Admin findByEmail(String email){
+        if (email == null || email.isBlank()) {
+            throw new RequiredFieldException("email");
+        }
+        return adminDAO.findByEmail(Normalizer.email(email));
+    }
+
     /** Atualiza os dados cadastrais */
     public void update(Admin admin) {
         Admin limpo = normalizarAdmin(admin);
