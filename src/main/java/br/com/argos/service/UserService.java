@@ -8,6 +8,7 @@ import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -110,7 +111,7 @@ public class UserService {
             throw new RequiredFieldException("password");
         }
 
-        User user = userDAO.findByEmail(Normalizer.email(email));
+        User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
 
         if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
             throw new ValidationException("Invalid credentials");
@@ -139,6 +140,13 @@ public class UserService {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
         }
+
+        int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
+
+        if (tamanhoEmBytes > 72){
+            throw new ValidationException("Password exceeds the BCrypt byte limit (72 bytes)");
+        }
+
         if (!Validador.senhaValida(password)) {
             throw new ValidationException("Password must be 8 to 64 characters");
         }

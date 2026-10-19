@@ -14,6 +14,14 @@ public interface IAdminDAO extends GenericDAO<Admin, UUID> {
     Admin findByEmail(String email);
 
     /**
+     * Busca um administrador ativo pelo endereço de e-mail.
+     *
+     * @param email endereço de e-mail usado na busca
+     * @return administrador encontrado com senha ou {@code null} se não houver correspondência
+     */
+    Admin findByEmailForAuthentication(String email);
+
+    /**
      * Atualiza a senha do administrador identificado.
      *
      * @param id identificador do administrador
