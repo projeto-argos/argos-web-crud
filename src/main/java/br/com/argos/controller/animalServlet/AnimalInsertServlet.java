@@ -1,4 +1,106 @@
 package br.com.argos.controller.animalServlet;
 
-public class AnimalInsertServlet {
+import br.com.argos.service.AnimalService;
+import br.com.argos.model.Animal;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
+
+@WebServlet(name = "AnimalInsertServlet", value = "/animals/register")
+public class AnimalInsertServlet extends HttpServlet {
+
+    // ATRIBUTO
+    private AnimalService animalService;
+
+    // CICLO DE VIDA DO SERVLET
+    @Override
+    public void init() {
+        animalService = new AnimalService();
+    }
+
+    // EXIBE FORMULÁRIO
+    @Override
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+        request.getRequestDispatcher(
+                "/WEB-INF/views/animals/form.jsp"
+        ).forward(request, response);
+    }
+
+    // PROCESSA FORMULÁRIO
+    @Override
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+
+        try {
+            // RECEBE DADOS
+            String earTag = request.getParameter("earTag");
+
+            String weightStr = request.getParameter("weight");
+            BigDecimal weight = (weightStr != null && !weightStr.isBlank()) ? new BigDecimal(weightStr) : null;
+
+            String birthDateStr = request.getParameter("birthDate");
+            LocalDate birthDate = (birthDateStr != null && !birthDateStr.isBlank()) ? LocalDate.parse(birthDateStr) : null;
+
+            String exceptionReason = request.getParameter("exceptionReason");
+
+            String exceptionStartDateStr = request.getParameter("exceptionStartDate");
+            LocalDate exceptionStartDate = (exceptionStartDateStr != null && !exceptionStartDateStr.isBlank()) ? LocalDate.parse(exceptionStartDateStr) : LocalDate.now();
+
+            String exceptionEndDateStr = request.getParameter("exceptionEndDate");
+            LocalDate exceptionEndDate = (exceptionEndDateStr != null && !exceptionEndDateStr.isBlank()) ? LocalDate.parse(exceptionEndDateStr) : null;
+
+            boolean clearedForSlaughter = request.getParameter("clearedForSlaughter") != null &&
+                    request.getParameter("clearedForSlaughter").equals("true");
+
+            String notes = request.getParameter("notes");
+
+            String batchIdStr = request.getParameter("batchId");
+            UUID batchId = (batchIdStr != null && !batchIdStr.isBlank()) ? UUID.fromString(batchIdStr) : null;
+
+            String originBatchIdStr = request.getParameter("originBatchId");
+            UUID originBatchId = (originBatchIdStr != null && !originBatchIdStr.isBlank()) ? UUID.fromString(originBatchIdStr) : null;
+
+            boolean active = request.getParameter("active") != null &&
+                    request.getParameter("active").equals("true");
+
+            // CADASTRA ANIMAL
+            Animal newAnimal = new Animal(
+                    batchId,
+                    originBatchId,
+                    weight,
+                    earTag,
+                    notes,
+                    exceptionReason,
+                    exceptionStartDate,
+                    exceptionEndDate,
+                    birthDate,
+                    active,
+                    clearedForSlaughter
+            );
+
+            animalService.create(newAnimal);
+
+            // REDIRECIONA
+            response.sendRedirect(
+                    request.getContextPath() + "/animals");
+
+        } catch (Exception e) {
+            // TRATA ERRO
+            request.setAttribute("erro", e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/animals/form.jsp").forward(request, response);
+        }
+    }
 }
