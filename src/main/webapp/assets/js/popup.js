@@ -1,7 +1,15 @@
+/*
+ * popup.js - abre e fecha pop-ups e fecha o aviso verde.
+ * Serve para todas as telas.
+ */
+
+//  Abrir um pop-up
 function abrirPopup(botao) {
     const popup = document.getElementById(botao.dataset.abrir);
     const formulario = popup.querySelector("form");
 
+    // Limpa o que foi digitado da última vez que o pop-up abriu
+    // não limpa campos escondidos
     formulario.reset();
 
     formulario.querySelectorAll("input[type=hidden]").forEach(function (campo) {
@@ -24,6 +32,10 @@ function abrirPopup(botao) {
         });
     }
 
+    if (botao.dataset.action) {
+        formulario.action = botao.dataset.action;
+    }
+
     if (botao.dataset.titulo) {
         popup.querySelector("h2").textContent = botao.dataset.titulo;
     }
@@ -42,7 +54,9 @@ function abrirPopup(botao) {
     popup.showModal();
 }
 
-document.addEventListener("click", function (evento) {
+// Ouvir os cliques
+
+    document.addEventListener("click", function (evento) {
     const botaoAbrir = evento.target.closest("[data-abrir]");
     if (botaoAbrir) {
         abrirPopup(botaoAbrir);
@@ -60,6 +74,7 @@ document.addEventListener("click", function (evento) {
     }
 });
 
+//  Aviso (toast)
 const aviso = document.querySelector(".toast");
 
 if (aviso) {

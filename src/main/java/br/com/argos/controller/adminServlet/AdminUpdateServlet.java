@@ -40,7 +40,7 @@ public class AdminUpdateServlet extends HttpServlet {
                 if (admin != null) {
                     request.setAttribute("admin", admin);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/admins/form.jsp"
+                            "/WEB-INF/views/admins/admins.jsp"
                     ).forward(request, response);
                     return;
                 }
@@ -112,7 +112,7 @@ public class AdminUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/admins/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
         }
     }
 }

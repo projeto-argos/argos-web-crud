@@ -1,11 +1,3 @@
-/* ==========================================================
-   FORMS.CSS - pop-ups (modais) e formulários
-
-   Usa o elemento <dialog> do HTML: o próprio navegador cuida do
-   fundo escuro, da tecla Esc e de prender o foco dentro do pop-up.
-   Carregue depois do sidebar.css e do tables.css.
-   ========================================================== */
-
 :root {
     --modal-fundo: #F1EADB;
     --input-fundo: #F4F1EB;

@@ -36,7 +36,7 @@ public class AdminSelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/admins/list.jsp"
+                    "/WEB-INF/views/admins/admins.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {
