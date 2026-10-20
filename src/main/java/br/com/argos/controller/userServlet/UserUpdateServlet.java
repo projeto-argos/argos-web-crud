@@ -103,7 +103,17 @@ public class UserUpdateServlet extends HttpServlet {
 
             // TRATA SENHA VAZIA (MANTÉM A ATUAL)
             User existingUser = userService.findById(idUser);
-            String finalPassword = (password == null || password.isBlank()) ? existingUser.getPassword() : password;
+
+            String finalPassword = null;
+
+            if (
+                    password == null ||
+                            password.isBlank()
+            ) {
+                finalPassword = existingUser.getPassword();
+            } else {
+                finalPassword = password;
+            }
 
             // ATUALIZA USUÁRIO
             User userToUpdate = new User(
