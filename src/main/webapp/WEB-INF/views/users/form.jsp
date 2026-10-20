@@ -68,7 +68,6 @@
             <option value="" disabled ${empty user.role ? "selected" : ""}>Selecione um perfil...</option>
             <option value="ADMIN" ${user.role == 'ADMIN' ? "selected" : ""}>Administrador</option>
             <option value="USER" ${user.role == 'USER' ? "selected" : ""}>Usuário</option>
-            <!-- Adicione mais opções aqui se precisar (ex: MANAGER, etc.) -->
         </select>
     </div>
 

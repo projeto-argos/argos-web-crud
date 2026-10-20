@@ -8,6 +8,7 @@ import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +33,8 @@ public class UserService {
      * padroniza os dados, valida e grava a senha já em hash.
      */
     public void create(User user) {
-        User limpo = normalizarUsuario(user);
-        validarUsuario(limpo, true);
+        User limpo = normalizeUser(user);
+        validateUser(limpo, true);
 
         // A senha nunca vai em texto puro para o banco
         String hash = BCrypt.hashpw(limpo.getPassword(), BCrypt.gensalt());
@@ -53,10 +54,17 @@ public class UserService {
         return userDAO.findAll();
     }
 
+    public User findByEmail(String email){
+        if (email == null || email.isBlank()) {
+            throw new RequiredFieldException("email");
+        }
+        return userDAO.findByEmail(Normalizer.email(email));
+    }
+
     /** Atualiza os dados cadastrais */
     public void update(User user) {
-        User limpo = normalizarUsuario(user);
-        validarUsuario(limpo, false);
+        User limpo = normalizeUser(user);
+        validateUser(limpo, false);
         if (limpo.getIdUser() == null) {
             throw new RequiredFieldException("id");
         }
@@ -87,7 +95,7 @@ public class UserService {
         if (id == null) {
             throw new RequiredFieldException("id");
         }
-        validarSenha(newPassword);
+        validatePassword(newPassword);
         userDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
     }
 
@@ -103,7 +111,7 @@ public class UserService {
             throw new RequiredFieldException("password");
         }
 
-        User user = userDAO.findByEmail(Normalizer.email(email));
+        User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
 
         if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
             throw new ValidationException("Invalid credentials");
@@ -113,7 +121,7 @@ public class UserService {
     }
 
     /** Padroniza os dados de entrada */
-    private User normalizarUsuario(User user) {
+    private User normalizeUser(User user) {
         if (user == null) {
             return null;
         }
@@ -128,17 +136,24 @@ public class UserService {
     }
 
     /** Regras da senha em texto puro  */
-    private void validarSenha(String password) {
+    private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
         }
+
+        int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
+
+        if (tamanhoEmBytes > 72){
+            throw new ValidationException("Password exceeds the BCrypt byte limit (72 bytes)");
+        }
+
         if (!Validador.senhaValida(password)) {
             throw new ValidationException("Password must be 8 to 64 characters");
         }
     }
 
     /** Valida os campos do usuário. Senha apenas exigida no cadastro */
-    private void validarUsuario(User user, boolean newUser) {
+    private void validateUser(User user, boolean newUser) {
 
 //        OBRIGATÓRIOS
         if (user == null) {
@@ -146,7 +161,7 @@ public class UserService {
         }
 
         if (newUser) {
-            validarSenha(user.getPassword());
+            validatePassword(user.getPassword());
         }
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {

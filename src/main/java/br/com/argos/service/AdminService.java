@@ -7,6 +7,7 @@ import br.com.argos.util.Validador;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.exceptions.RequiredFieldException;
 import org.mindrot.jbcrypt.BCrypt;
+import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,6 +53,13 @@ public class AdminService {
         return adminDAO.findAll();
     }
 
+    public Admin findByEmail(String email){
+        if (email == null || email.isBlank()) {
+            throw new RequiredFieldException("email");
+        }
+        return adminDAO.findByEmail(Normalizer.email(email));
+    }
+
     /** Atualiza os dados cadastrais */
     public void update(Admin admin) {
         Admin limpo = normalizarAdmin(admin);
@@ -86,7 +94,7 @@ public class AdminService {
         if (id == null) {
             throw new RequiredFieldException("id");
         }
-        validarSenha(newPassword);
+        validatePassword(newPassword);
         adminDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
     }
 
@@ -102,7 +110,7 @@ public class AdminService {
             throw new RequiredFieldException("password");
         }
 
-        Admin admin = adminDAO.findByEmail(Normalizer.email(email));
+        Admin admin = adminDAO.findByEmailForAuthentication(Normalizer.email(email));
 
         if (admin == null || !admin.isActive() || !BCrypt.checkpw(password, admin.getPassword())) {
             throw new ValidationException("Invalid credentials");
@@ -126,10 +134,17 @@ public class AdminService {
     }
 
     /** Regras da senha em texto puro */
-    private void validarSenha(String password) {
+    private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new RequiredFieldException("password");
         }
+
+        int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
+
+        if (tamanhoEmBytes > 72){
+            throw new ValidationException("Password exceeds the BCrypt byte limit (72 bytes)");
+        }
+
         if (!Validador.senhaValida(password)) {
             throw new ValidationException("Password must be 8 to 64 characters");
         }
@@ -144,7 +159,7 @@ public class AdminService {
         }
 
         if (newAdmin) {
-            validarSenha(admin.getPassword());
+            validatePassword(admin.getPassword());
         }
 
         if (admin.getFullName() == null || admin.getFullName().isBlank()) {

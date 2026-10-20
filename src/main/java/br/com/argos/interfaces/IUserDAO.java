@@ -13,6 +13,14 @@ public interface IUserDAO extends GenericDAO<User, UUID> {
     User findByEmail(String email);
 
     /**
+     * Busca um usuário ativo pelo endereço de e-mail.
+     *
+     * @param email endereço de e-mail usado na busca
+     * @return usuário encontrado com senha ou {@code null} se não houver correspondência
+     */
+    User findByEmailForAuthentication(String email);
+
+    /**
      * Atualiza a senha do usuário identificado.
      *
      * @param id identificador do usuário

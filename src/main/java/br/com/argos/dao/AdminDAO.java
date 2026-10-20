@@ -74,13 +74,37 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapAdmin(rs, true);
+                    return mapAdmin(rs, false);
                 }
             }
             return null;
 
         } catch (SQLException sqle){
             throw new DataAccessException("Error searching for admin by email" + email, sqle);
+        }
+    }
+
+    @Override
+    public Admin findByEmailForAuthentication(String email){
+        String sql = "SELECT * FROM admin WHERE email = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapAdmin(rs, true);
+                }
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException(
+                    "Error searching for admin for authentication", e
+            );
         }
     }
 

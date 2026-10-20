@@ -105,7 +105,7 @@ public class SupplierService {
     private void validateSupplier(Supplier supplier) {
 
         // OBRIGATÓRIOS
-        if (supplier.getFullName() == null) {
+        if (supplier.getFullName() == null || supplier.getFullName().isBlank()) {
             throw new RequiredFieldException("name");
         }
 

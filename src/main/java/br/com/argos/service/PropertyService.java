@@ -99,7 +99,7 @@ public class PropertyService {
 
     private void validateProperty(Property property) {
         // OBRIGATÓRIOS
-        if (property.getName() == null) {
+        if (property.getName() == null ||  property.getName().isBlank()) {
             throw new RequiredFieldException("name");
         }
 

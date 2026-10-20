@@ -3,6 +3,7 @@ package br.com.argos.dao;
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
+import br.com.argos.model.Admin;
 import br.com.argos.model.User;
 import br.com.argos.interfaces.IUserDAO;
 
@@ -89,13 +90,37 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapUser(rs, true);
+                    return mapUser(rs, false);
                 }
             }
             return null;
 
         } catch (SQLException sqle){
             throw new DataAccessException("Error searching for user by email: " + email, sqle);
+        }
+    }
+
+    @Override
+    public User findByEmailForAuthentication(String email){
+        String sql = "SELECT * FROM admin WHERE email = ? AND active = true";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapUser(rs, true);
+                }
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException(
+                    "Error searching for user for authentication", e
+            );
         }
     }
 
