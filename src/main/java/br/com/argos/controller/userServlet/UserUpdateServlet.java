@@ -25,19 +25,24 @@ public class UserUpdateServlet extends HttpServlet {
 
     // EXIBE FORMULÁRIO DE EDIÇÃO
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
         String idParam = request.getParameter("id");
+
         if (idParam != null && !idParam.isBlank()) {
             try {
+
                 UUID id = UUID.fromString(idParam);
                 User user = userService.findById(id);
 
                 if (user != null) {
                     request.setAttribute("user", user);
-                    request.getRequestDispatcher("/WEB-INF/views/users/form.jsp")
-                            .forward(request, response);
+                    request.getRequestDispatcher(
+                            "/WEB-INF/views/users/form.jsp"
+                            ).forward(request, response);
                     return;
                 }
             } catch (Exception e) {
@@ -50,36 +55,69 @@ public class UserUpdateServlet extends HttpServlet {
 
     // PROCESSA A ATUALIZAÇÃO
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
 
         try {
             // RECEBE DADOS
-            UUID idUser = UUID.fromString(request.getParameter("idUser"));
-            String fullName = request.getParameter("fullName");
-            String cpf = request.getParameter("cpf");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            String role = request.getParameter("role");
-            String password = request.getParameter("password");
+            UUID idUser =
+                    UUID.fromString(request.getParameter("idUser"));
 
-            String birthDateStr = request.getParameter("birthDate");
+            String fullName =
+                    request.getParameter("fullName");
+
+            String cpf =
+                    request.getParameter("cpf");
+
+            String email =
+                    request.getParameter("email");
+
+            String phone =
+                    request.getParameter("phone");
+
+            String role =
+                    request.getParameter("role");
+
+            String password =
+                    request.getParameter("password");
+
+            String birthDateString =
+                    request.getParameter("birthDate");
+
             LocalDate birthDate = null;
-            if (birthDateStr != null && !birthDateStr.isBlank()) {
-                birthDate = LocalDate.parse(birthDateStr);
+
+            if (
+                    birthDateString != null &&
+                            !birthDateString.isBlank()
+            ) {
+                birthDate =
+                        LocalDate.parse(birthDateString);
             }
 
             boolean active = request.getParameter("active") != null &&
-                    (request.getParameter("active").equals("true") || request.getParameter("active").equals("on"));
+                    request.getParameter("active").equals("true");
 
             // TRATA SENHA VAZIA (MANTÉM A ATUAL)
             User existingUser = userService.findById(idUser);
             String finalPassword = (password == null || password.isBlank()) ? existingUser.getPassword() : password;
 
             // ATUALIZA USUÁRIO
-            User userToUpdate = new User(idUser, fullName, cpf, email, phone, role, finalPassword, birthDate, null, active);
+            User userToUpdate = new User(
+                    idUser,
+                    fullName,
+                    cpf,
+                    email,
+                    phone,
+                    role,
+                    finalPassword,
+                    birthDate,
+                    null,
+                    active
+            );
             userService.update(userToUpdate);
 
             // REDIRECIONA
