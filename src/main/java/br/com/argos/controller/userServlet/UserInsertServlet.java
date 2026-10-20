@@ -24,11 +24,15 @@ public class UserInsertServlet extends HttpServlet {
 
     // EXIBE FORMULÁRIO
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/users/admins.jsp")
-                .forward(request, response);
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+        request.getRequestDispatcher(
+                "/WEB-INF/views/users/form.jsp"
+                ).forward(request, response);
     }
+
 
     // PROCESSA FORMULÁRIO
     @Override
@@ -59,29 +63,40 @@ public class UserInsertServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            String birthDateStr =
+            String birthDateString =
                     request.getParameter("birthDate");
 
 
             LocalDate birthDate = null;
 
             if (
-                    birthDateStr != null &&
-                            !birthDateStr.isBlank()
+                    birthDateString != null &&
+                            !birthDateString.isBlank()
             ) {
-                birthDate = LocalDate.parse(birthDateStr);
+                birthDate = LocalDate.parse(birthDateString);
             }
 
             boolean active =
                     request.getParameter("active") != null &&
-                    (request.getParameter("active").equals("true") || request.getParameter("active").equals("on"));
+                    request.getParameter("active").equals("true");
 
             // CADASTRA USUÁRIO
-            User newUser = new User(fullName, cpf, email, phone, role, password, birthDate, active);
+
+            User newUser = new User(
+                    fullName,
+                    cpf, email,
+                    phone,
+                    role,
+                    password,
+                    birthDate,
+                    active
+            );
+
             userService.create(newUser);
 
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/users");
+            response.sendRedirect(
+                    request.getContextPath() + "/users");
 
         } catch (Exception e) {
             // TRATA ERRO

@@ -23,12 +23,18 @@ public class UserDeleteServlet extends HttpServlet {
 
     // PROCESSA A EXCLUSÃO
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
 
         String idParam = request.getParameter("id");
+
         if (idParam != null && !idParam.isBlank()) {
             try {
+
                 // EXCLUI USUÁRIO
                 UUID id = UUID.fromString(idParam);
                 userService.delete(id);
