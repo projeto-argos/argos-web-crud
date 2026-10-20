@@ -135,7 +135,7 @@ public class AnimalInsertServlet extends HttpServlet {
 
             boolean active =
                     request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
+                            request.getParameter("active").equals("true");
 
             // CADASTRA ANIMAL
             Animal newAnimal = new Animal(
