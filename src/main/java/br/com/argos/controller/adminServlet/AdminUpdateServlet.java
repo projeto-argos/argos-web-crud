@@ -40,7 +40,7 @@ public class AdminUpdateServlet extends HttpServlet {
                 if (admin != null) {
                     request.setAttribute("admin", admin);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/admins/form.jsp"
+                            "/WEB-INF/views/admins/admins.jsp"
                     ).forward(request, response);
                     return;
                 }

@@ -41,7 +41,7 @@ public class UserUpdateServlet extends HttpServlet {
                 if (user != null) {
                     request.setAttribute("user", user);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/users/form.jsp"
+                            "/WEB-INF/views/users/users.jsp"
                             ).forward(request, response);
                     return;
                 }
@@ -136,7 +136,7 @@ public class UserUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/users/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         }
     }
 }

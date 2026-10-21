@@ -37,7 +37,7 @@ public class SupplierSelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/suppliers/list.jsp"
+                    "/WEB-INF/views/suppliers/suppliers.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {

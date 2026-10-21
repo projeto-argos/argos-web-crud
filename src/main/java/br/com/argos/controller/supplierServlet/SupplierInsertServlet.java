@@ -29,7 +29,7 @@ public class SupplierInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/suppliers/form.jsp"
+                "/WEB-INF/views/suppliers/suppliers.jsp"
         ).forward(request, response);
     }
 
@@ -92,7 +92,7 @@ public class SupplierInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/suppliers/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/suppliers/suppliers.jsp").forward(request, response);
         }
     }
 }

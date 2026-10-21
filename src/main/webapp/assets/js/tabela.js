@@ -1,3 +1,7 @@
+/*
+ * tabela.js - busca e paginação de qualquer tabela.
+ * Serve para todas as telas de listagem.
+ */
 const LINHAS_POR_PAGINA = 10;
 let paginaAtual = 1;
 
@@ -7,8 +11,11 @@ const btnAnterior = document.getElementById("btnAnterior");
 const btnProxima = document.getElementById("btnProxima");
 const linhaVazia = document.getElementById("linhaVazia");
 
+// Pega os dados da tabela e guarda num array
 const todasAsLinhas = Array.from(document.querySelectorAll("#tabela tbody tr.linha"));
 
+
+// CPF e telefone.
 document.querySelectorAll(".cpf").forEach(function (celula) {
     const n = celula.textContent.trim();
     if (n.length === 11) {
@@ -25,10 +32,13 @@ document.querySelectorAll(".telefone").forEach(function (celula) {
     }
 });
 
+
+//  Busca
 function limparTexto(texto) {
     return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
+// Desenha a tabela (busca + página atual)
 function mostrarTabela() {
     const busca = limparTexto(campoBusca.value);
 
@@ -63,6 +73,7 @@ function mostrarTabela() {
     btnProxima.disabled = paginaAtual >= totalPaginas;
 }
 
+//  Ligar os botões
 campoBusca.addEventListener("input", function () {
     paginaAtual = 1;
     mostrarTabela();

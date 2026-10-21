@@ -1,6 +1,6 @@
 <%--
   Created by IntelliJ IDEA.
-  User: 20260166-ieg
+  User: Murilo Paiva
   Date: 17/09/2026
   Time: 12:02
   To change this template use File | Settings | File Templates.
@@ -8,8 +8,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
---%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<c:set var="urlInserir" value="${ctx}/admins/register"/>
+<c:set var="urlAtualizar" value="${ctx}/admins/edit"/>
+<c:set var="urlExcluir" value="${ctx}/admins/delete"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -17,21 +19,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admins - Argos</title>
 
-    <!-- Fontes -->
+    <!-- Fontes do Figma  -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="${ctx}assets/css/sidebar.css">
-    <link rel="stylesheet" href="${ctx}assets/css/tables.css">
-    <link rel="stylesheet" href="${ctx}assets/css/forms.css">
-    <link rel="stylesheet" href="${ctx}assets/css/feedbackMessages.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/tables.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
 
     <!-- JAVASCRIPT -->
-    <script src="${ctx}/js/sidebar.js"></script>
-    <script src="${ctx}/js/popup.js" defer></script>
-    <script src="${ctx}/js/tabela.js" defer></script>
+    <script src="${ctx}/assets/js/sidebar.js"></script>
+    <script src="${ctx}/assets/js/popup.js" defer></script>
+    <script src="${ctx}/assets/js/tabela.js" defer></script>
 </head>
 <body>
 
@@ -60,7 +62,7 @@
                 <h1>Admins cadastrados</h1>
 
                 <button type="button" class="btn btn-escuro"
-                        data-abrir="modalAdmin" data-acao="criar"
+                        data-abrir="modalAdmin" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Admin" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo admin
                 </button>
@@ -92,7 +94,7 @@
                                 <td class="telefone"><c:out value="${admin.phone}"/></td>
                                 <td class="col-acoes">
                                     <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar admin"
-                                            data-abrir="modalAdmin" data-acao="editar"
+                                            data-abrir="modalAdmin" data-acao="editar" data-action="${urlAtualizar}"
                                             data-titulo="Editar Admin" data-botao="Salvar"
                                             data-id-admin="<c:out value='${admin.idAdmin}'/>"
                                             data-full-name="<c:out value='${admin.fullName}'/>"
@@ -128,6 +130,7 @@
 
         </section>
 
+        <%-- POP-UP --%>
         <dialog class="modal" id="modalAdmin">
             <div class="modal-caixa">
                 <div class="modal-topo">
@@ -135,8 +138,7 @@
                     <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <form method="post" action="${ctx}/admin">
-                    <input type="hidden" name="acao" value="criar">
+                <form method="post" action="${urlInserir}">
                     <input type="hidden" name="idAdmin" value="">
 
                     <div class="form-grade">
@@ -184,8 +186,7 @@
                     <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
-                <form method="post" action="${ctx}/admin">
-                    <input type="hidden" name="acao" value="excluir">
+                <form method="post" action="${urlExcluir}">
                     <input type="hidden" name="idAdmin" value="">
 
                     <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="fullName"></strong>?</p>
