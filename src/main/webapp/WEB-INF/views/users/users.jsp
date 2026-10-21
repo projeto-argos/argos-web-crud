@@ -17,9 +17,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admins - Argos</title>
+    <title>Usuários - Argos</title>
 
-    <!-- Fontes do Figma  -->
+    <!-- Fontes usadas no Figma  -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -70,7 +70,7 @@
 
         <div class="busca">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="campoBusca" placeholder="Buscar Usuário ..." aria-label="Buscar Usuário" autocomplete="off">
+            <input type="search" id="campoBusca" placeholder="Buscar usuário ..." aria-label="Buscar usuário" autocomplete="off">
         </div>
 
         <div class="tabela-scroll">
@@ -91,21 +91,23 @@
                         <td><c:out value="${user.fullName}"/></td>
                         <td class="cpf"><c:out value="${user.cpf}"/></td>
                         <td><c:out value="${user.email}"/></td>
-                        <td class="cargo"><c:out value="${user.role}"/></td>
+                        <td><c:out value="${user.role}"/></td>
                         <td class="col-acoes">
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar usuário"
-                                    data-abrir="modalAdmin" data-acao="editar" data-action="${urlAtualizar}"
+                                    data-abrir="modalUser" data-acao="editar" data-action="${urlAtualizar}"
                                     data-titulo="Editar Usuário" data-botao="Salvar"
-                                    data-id-admin="<c:out value='${user.idUser}'/>"
+                                    data-id-user="<c:out value='${user.idUser}'/>"
                                     data-full-name="<c:out value='${user.fullName}'/>"
                                     data-cpf="<c:out value='${user.cpf}'/>"
+                                    data-phone="<c:out value='${user.phone}'/>"
                                     data-email="<c:out value='${user.email}'/>"
+                                    data-birth-date="<c:out value='${user.birthDate}'/>"
                                     data-role="<c:out value='${user.role}'/>">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir usuário"
                                     data-abrir="modalExcluir"
-                                    data-id-admin="<c:out value='${user.idUser}'/>"
+                                    data-id-user="<c:out value='${user.idUser}'/>"
                                     data-full-name="<c:out value='${user.fullName}'/>">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -143,20 +145,10 @@
 
                 <div class="form-grade">
                     <div class="campo">
-                        <label for="campoNome">Nome Completo</label>
-                        <input type="text" id="campoNome" name="fullName" placeholder="ex: Amanda Rodrigues Lima"
-                               required maxlength="120" autocomplete="off">
-                    </div>
-                    <div class="campo">
                         <label for="campoCpf">CPF</label>
                         <input type="text" id="campoCpf" name="cpf" placeholder="ex: 12345678901"
                                required inputmode="numeric" maxlength="11" pattern="\d{11}"
                                title="Digite os 11 números do CPF, sem pontos e traço" autocomplete="off">
-                    </div>
-                    <div class="campo">
-                        <label for="campoEmail">Email</label>
-                        <input type="email" id="campoEmail" name="email" placeholder="ex: adriana@gmail.com"
-                               required maxlength="120" autocomplete="off">
                     </div>
                     <div class="campo">
                         <label for="campoTelefone">Telefone</label>
@@ -164,7 +156,26 @@
                                required inputmode="numeric" maxlength="11" pattern="\d{10,11}"
                                title="DDD + número, só números (10 ou 11 dígitos)" autocomplete="off">
                     </div>
-                    <div class="campo largura-total" data-so-cadastro>
+                    <div class="campo largura-total">
+                        <label for="campoNome">Nome Completo</label>
+                        <input type="text" id="campoNome" name="fullName" placeholder="ex: Adriana Francesca Lima"
+                               required maxlength="120" autocomplete="off">
+                    </div>
+                    <div class="campo">
+                        <label for="campoEmail">Email</label>
+                        <input type="email" id="campoEmail" name="email" placeholder="ex: adriana@gmail.com"
+                               required maxlength="120" autocomplete="off">
+                    </div>
+                    <div class="campo">
+                        <label for="campoNascimento">Data de Nascimento</label>
+                        <input type="date" id="campoNascimento" name="birthDate" required>
+                    </div>
+                    <div class="campo">
+                        <label for="campoCargo">Cargo</label>
+                        <input type="text" id="campoCargo" name="role" placeholder="ex: Médico Veterinário"
+                               required maxlength="50" autocomplete="off">
+                    </div>
+                    <div class="campo" data-so-cadastro>
                         <label for="campoSenha">Senha</label>
                         <input type="password" id="campoSenha" name="password" placeholder="Defina a senha de acesso"
                                required autocomplete="new-password">
@@ -182,12 +193,12 @@
     <dialog class="modal modal-pequeno" id="modalExcluir">
         <div class="modal-caixa">
             <div class="modal-topo">
-                <h2>Excluir Admin</h2>
+                <h2>Excluir Usuário</h2>
                 <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form method="post" action="${urlExcluir}">
-                <input type="hidden" name="idAdmin" value="">
+                <input type="hidden" name="idUser" value="">
 
                 <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="fullName"></strong>?</p>
 
