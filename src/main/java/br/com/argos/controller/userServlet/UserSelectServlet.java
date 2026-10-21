@@ -37,7 +37,7 @@ public class UserSelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/users/list.jsp"
+                    "/WEB-INF/views/users/users.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {
