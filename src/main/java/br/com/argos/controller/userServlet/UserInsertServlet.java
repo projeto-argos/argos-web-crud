@@ -33,7 +33,6 @@ public class UserInsertServlet extends HttpServlet {
                 ).forward(request, response);
     }
 
-
     // PROCESSA FORMULÁRIO
     @Override
     protected void doPost(
@@ -78,10 +77,9 @@ public class UserInsertServlet extends HttpServlet {
 
             boolean active =
                     request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
+                            request.getParameter("active").equals("true");
 
             // CADASTRA USUÁRIO
-
             User newUser = new User(
                     fullName,
                     cpf, email,

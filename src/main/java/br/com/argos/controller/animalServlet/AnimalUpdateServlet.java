@@ -65,34 +65,97 @@ public class AnimalUpdateServlet extends HttpServlet {
 
         try {
             // RECEBE DADOS
-            UUID idAnimal = UUID.fromString(request.getParameter("idAnimal"));
+            UUID idAnimal =
+                    UUID.fromString(request.getParameter("idAnimal"));
 
-            String earTag = request.getParameter("earTag");
+            String earTag =
+                    request.getParameter("earTag");
 
-            String weightStr = request.getParameter("weight");
-            BigDecimal weight = (weightStr != null && !weightStr.isBlank()) ? new BigDecimal(weightStr) : null;
+            String weightStr =
+                    request.getParameter("weight");
 
-            String birthDateStr = request.getParameter("birthDate");
-            LocalDate birthDate = (birthDateStr != null && !birthDateStr.isBlank()) ? LocalDate.parse(birthDateStr) : null;
+            BigDecimal weight = null;
 
-            String exceptionReason = request.getParameter("exceptionReason");
+            if (
+                    weightStr != null &&
+                            !weightStr.isBlank()
+            ) {
+                weight = new BigDecimal(weightStr);
+            }
 
-            String exceptionStartDateStr = request.getParameter("exceptionStartDate");
-            LocalDate exceptionStartDate = (exceptionStartDateStr != null && !exceptionStartDateStr.isBlank()) ? LocalDate.parse(exceptionStartDateStr) : LocalDate.now();
+            String birthDateStr =
+                    request.getParameter("birthDate");
 
-            String exceptionEndDateStr = request.getParameter("exceptionEndDate");
-            LocalDate exceptionEndDate = (exceptionEndDateStr != null && !exceptionEndDateStr.isBlank()) ? LocalDate.parse(exceptionEndDateStr) : null;
+            LocalDate birthDate = null;
+
+            if (
+                    birthDateStr != null &&
+                            !birthDateStr.isBlank()
+            ) {
+                birthDate = LocalDate.parse(birthDateStr);
+            }
+
+
+            String exceptionReason =
+                    request.getParameter("exceptionReason");
+
+            String exceptionStartDateStr =
+                    request.getParameter("exceptionStartDate");
+
+            LocalDate exceptionStartDate = null;
+
+            if (
+                    exceptionStartDateStr != null &&
+                            !exceptionStartDateStr.isBlank()
+            ) {
+                exceptionStartDate = LocalDate.parse(exceptionStartDateStr);
+            }
+
+            String exceptionEndDateStr =
+                    request.getParameter("exceptionEndDate");
+
+            LocalDate exceptionEndDate = null;
+
+            if (
+                    exceptionEndDateStr != null &&
+                            !exceptionEndDateStr.isBlank()
+            ) {
+                exceptionEndDate = LocalDate.parse(exceptionEndDateStr);
+            }
+
+            String clearedForSlaughterParam =
+                    request.getParameter("clearedForSlaughter");
 
             boolean clearedForSlaughter = request.getParameter("clearedForSlaughter") != null &&
                     request.getParameter("clearedForSlaughter").equals("true");
 
-            String notes = request.getParameter("notes");
 
-            String batchIdStr = request.getParameter("batchId");
-            UUID batchId = (batchIdStr != null && !batchIdStr.isBlank()) ? UUID.fromString(batchIdStr) : null;
+            String notes =
+                    request.getParameter("notes");
 
-            String originBatchIdStr = request.getParameter("originBatchId");
-            UUID originBatchId = (originBatchIdStr != null && !originBatchIdStr.isBlank()) ? UUID.fromString(originBatchIdStr) : null;
+            String batchIdStr =
+                    request.getParameter("batchId");
+
+            UUID batchId = null;
+
+            if (
+                    batchIdStr != null &&
+                            !batchIdStr.isBlank()
+            ) {
+                batchId = UUID.fromString(batchIdStr);
+            }
+
+            String originBatchIdStr =
+                    request.getParameter("originBatchId");
+
+            UUID originBatchId = null;
+
+            if (
+                    originBatchIdStr != null &&
+                            !originBatchIdStr.isBlank()
+            ) {
+                originBatchId = UUID.fromString(originBatchIdStr);
+            }
 
             boolean active = request.getParameter("active") != null &&
                     request.getParameter("active").equals("true");
