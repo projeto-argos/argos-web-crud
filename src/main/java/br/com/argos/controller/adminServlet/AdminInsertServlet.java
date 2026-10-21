@@ -81,7 +81,7 @@ public class AdminInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/admins/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
         }
     }
 }

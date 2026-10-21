@@ -84,9 +84,18 @@ public class AdminUpdateServlet extends HttpServlet {
             boolean active = request.getParameter("active") != null &&
                     request.getParameter("active").equals("true");
 
-            // BUSCA O ADMIN EXISTENTE PARA PRESERVAR A SENHA SE NECESSÁRIO
+            // TRATA SENHA VAZIA (MANTÉM A ATUAL)
             Admin existingAdmin = adminService.findById(idAdmin);
-            String finalPassword = (password == null || password.isBlank()) ? existingAdmin.getPassword() : password;
+
+            String finalPassword = null;
+            if (
+                    password == null ||
+                            password.isBlank()
+            ) {
+                finalPassword = existingAdmin.getPassword();
+            } else {
+                finalPassword = password;
+            }
 
             // ATUALIZA ADMINISTRADOR
             Admin adminToUpdate = new Admin(
@@ -101,7 +110,7 @@ public class AdminUpdateServlet extends HttpServlet {
             );
             adminService.update(adminToUpdate);
 
-            // SE HOUVER SENHA NOVA PREENCHIDA, ATUALIZA SEPARADAMENTE USANDO O MÉTODO ESPECÍFICO DO SERVICE
+            // SENHA NOVA PREENCHIDA
             if (password != null && !password.isBlank()) {
                 adminService.changePassword(idAdmin, password);
             }
@@ -112,7 +121,7 @@ public class AdminUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/admins/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
         }
     }
 }
