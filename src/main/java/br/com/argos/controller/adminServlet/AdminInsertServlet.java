@@ -28,7 +28,7 @@ public class AdminInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/admins/form.jsp"
+                "/WEB-INF/views/admins/admins.jsp"
         ).forward(request, response);
     }
 

@@ -40,7 +40,7 @@ public class PropertyUpdateServlet extends HttpServlet {
                 if (property != null) {
                     request.setAttribute("property", property);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/properties/form.jsp"
+                            "/WEB-INF/views/properties/properties.jsp"
                     ).forward(request, response);
                     return;
                 }
@@ -125,7 +125,7 @@ public class PropertyUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/properties/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         }
     }
 }

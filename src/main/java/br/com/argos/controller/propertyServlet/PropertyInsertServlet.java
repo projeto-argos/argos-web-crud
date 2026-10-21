@@ -29,7 +29,7 @@ public class PropertyInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/properties/form.jsp"
+                "/WEB-INF/views/properties/properties.jsp"
         ).forward(request, response);
     }
 
@@ -100,7 +100,7 @@ public class PropertyInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/properties/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         }
     }
 }

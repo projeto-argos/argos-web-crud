@@ -11,7 +11,7 @@
     --editar-borda: rgba(6, 65, 47, 0.35);
 
     --perigo-fundo: #F5E1D5;
-    --perigo-texto: var(--marrom);
+    --perigo-texto: var(--vermelho);
     --perigo-borda: rgba(127, 65, 26, 0.45);
 
     --btn-escuro-fundo: var(--verde-escuro);
@@ -33,7 +33,7 @@ html.dark {
     --editar-texto: var(--verde-claro);
     --editar-borda: rgba(98, 187, 77, 0.5);
 
-    --perigo-fundo: #3A2A20;
+    --perigo-fundo: #7F411A;
     --perigo-texto: #E3A47A;
     --perigo-borda: rgba(227, 164, 122, 0.5);
 

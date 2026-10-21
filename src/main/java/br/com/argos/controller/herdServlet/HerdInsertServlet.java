@@ -29,7 +29,7 @@ public class HerdInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/herds/form.jsp"
+                "/WEB-INF/views/herds/animals.jsp"
         ).forward(request, response);
     }
 
@@ -102,7 +102,7 @@ public class HerdInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/herds/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/herds/animals.jsp").forward(request, response);
         }
     }
 }
