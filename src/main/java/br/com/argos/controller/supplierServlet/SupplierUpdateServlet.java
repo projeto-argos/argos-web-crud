@@ -40,7 +40,7 @@ public class SupplierUpdateServlet extends HttpServlet {
                 if (supplier != null) {
                     request.setAttribute("supplier", supplier);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/suppliers/form.jsp"
+                            "/WEB-INF/views/suppliers/suppliers.jsp"
                     ).forward(request, response);
                     return;
                 }
@@ -115,7 +115,7 @@ public class SupplierUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/suppliers/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/suppliers/suppliers.jsp").forward(request, response);
         }
     }
 }

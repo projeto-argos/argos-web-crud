@@ -113,7 +113,7 @@ dialog.modal::backdrop {
 }
 
 .campo input:user-invalid {
-    border-color: var(--marrom);
+    border-color: var(--vermelho);
 }
 
 .form-rodape {
@@ -153,8 +153,8 @@ dialog.modal::backdrop {
 }
 
 .btn-pilula.btn-perigo {
-    background: var(--marrom);
-    border-color: var(--marrom);
+    background: var(--vermelho);
+    border-color: var(--vermelho);
 }
 
 .modal-texto {

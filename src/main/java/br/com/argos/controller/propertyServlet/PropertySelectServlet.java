@@ -37,7 +37,7 @@ public class PropertySelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/properties/list.jsp"
+                    "/WEB-INF/views/properties/properties.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {
