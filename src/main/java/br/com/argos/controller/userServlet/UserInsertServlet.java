@@ -29,7 +29,7 @@ public class UserInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/users/form.jsp"
+                "/WEB-INF/views/users/users.jsp"
                 ).forward(request, response);
     }
 
@@ -101,7 +101,7 @@ public class UserInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/users/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         }
     }
 }

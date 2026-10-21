@@ -42,7 +42,7 @@ public class AnimalUpdateServlet extends HttpServlet {
                 if (animal != null) {
                     request.setAttribute("animal", animal);
                     request.getRequestDispatcher(
-                            "/WEB-INF/views/animals/form.jsp"
+                            "/WEB-INF/views/animals/users.jsp"
                     ).forward(request, response);
                     return;
                 }
@@ -122,7 +122,7 @@ public class AnimalUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/animals/form.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/animals/users.jsp").forward(request, response);
         }
     }
 }

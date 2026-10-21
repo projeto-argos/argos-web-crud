@@ -1,32 +1,13 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Murilo Paiva
+  Date: 17/09/2026
+  Time: 12:02
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%--
-    admins.jsp - listagem de Admins (Figma: "página de admin")
-    Fica em: webapp/WEB-INF/views/admins/admins.jsp
 
-    SERVLET -> JSP (request.setAttribute antes do forward):
-        "admins"          List<Admin>  (getters: getIdAdmin, getFullName, getCpf, getEmail, getPhone)
-        "mensagem"        String, opcional: título do aviso
-        "detalheMensagem" String, opcional: linha menor do aviso
-        "tipoMensagem"    "sucesso" ou "erro" (sem isso, vira sucesso)
-    (Se o servlet usar sendRedirect, os attributes se perdem: guarde a mensagem na sessão.)
-
-    JSP -> SERVLETS (um Servlet por ação; as URLs ficam nas 3 linhas <c:set> logo abaixo):
-        inserir  -> campos fullName, cpf, email, phone, password
-        atualizar-> idAdmin, fullName, cpf, email, phone (sem password)
-        excluir  -> idAdmin
-    Os nomes dos campos (name="...") precisam ser iguais aos do request.getParameter(...) dos Servlets.
-
-    COMO COPIAR ESTA PÁGINA PARA OUTRA TABELA (ex.: fornecedores.jsp):
-      1. Troque o título, a <c:forEach items=...>, as colunas do <thead> e as células <td>.
-      2. Nos botões editar/excluir, os atributos data-xxx-yyy precisam ter o MESMO nome do campo
-         do formulário: data-full-name  preenche  <input name="fullName">.
-      3. Troque os campos do formulário e o action (${ctx}/fornecedor).
-      4. Os arquivos .js e .css são os mesmos, não precisa criar nenhum.
-
-    SEGURANÇA: texto que vem do banco sempre dentro de <c:out value="${...}"/>.
-    Ele troca < > " & por códigos HTML e assim ninguém injeta script pela tela.
---%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="urlInserir" value="${ctx}/admins/register"/>
 <c:set var="urlAtualizar" value="${ctx}/admins/edit"/>
