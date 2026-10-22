@@ -106,7 +106,7 @@
                                     </button>
                                     <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir propriedade"
                                             data-abrir="modalExcluir"
-                                            data-id-property="<c:out value='${property.idProperty}'/>"
+                                            data-id="<c:out value='${property.idProperty}'/>"
                                             data-name="<c:out value='${property.name}'/>">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -178,7 +178,7 @@
                 </div>
 
                 <form method="post" action="${urlExcluir}">
-                    <input type="hidden" name="idProperty" value="">
+                    <input type="hidden" name="id" value="">
 
                     <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="name"></strong>?</p>
 

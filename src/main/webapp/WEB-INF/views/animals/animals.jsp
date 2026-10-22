@@ -105,7 +105,7 @@
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar animal"
                                     data-abrir="modalAnimal" data-acao="editar" data-action="${urlAtualizar}"
                                     data-titulo="Editar Animal" data-botao="Salvar"
-                                    data-id-animal="<c:out value='${animal.idAnimal}'/>"
+                                    data-id="<c:out value='${animal.idAnimal}'/>"
                                     data-ear-tag="<c:out value='${animal.earTag}'/>"
                                     data-weight="<c:out value='${animal.weight}'/>"
                                     data-exception-reason="<c:out value='${animal.exceptionReason}'/>"
@@ -199,7 +199,7 @@
             </div>
 
             <form method="post" action="${urlExcluir}">
-                <input type="hidden" name="idAnimal" value="">
+                <input type="hidden" name="id" value="">
 
                 <p class="modal-texto">Tem certeza que deseja excluir o animal <strong data-mostrar="earTag"></strong>?</p>
 

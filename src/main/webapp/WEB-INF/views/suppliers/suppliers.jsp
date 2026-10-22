@@ -105,7 +105,7 @@
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir fornecedor"
                                     data-abrir="modalExcluir"
-                                    data-id-supplier="<c:out value='${supplier.idSupplier}'/>"
+                                    data-id="<c:out value='${supplier.idSupplier}'/>"
                                     data-full-name="<c:out value='${supplier.fullName}'/>">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -187,7 +187,7 @@
             </div>
 
             <form method="post" action="${urlExcluir}">
-                <input type="hidden" name="idSupplier" value="">
+                <input type="hidden" name="id" value="">
 
                 <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="fullName"></strong>?</p>
 
