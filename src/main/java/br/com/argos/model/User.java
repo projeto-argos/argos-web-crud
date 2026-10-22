@@ -22,6 +22,16 @@ public class User {
     public User() {
     }
 
+    public User(String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate) {
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.password = password;
+        this.birthDate = birthDate;
+    }
+
     public User(UUID idUser, String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate, LocalDateTime updatedAt, boolean active) {
         this.idUser = idUser;
         this.fullName = fullName;
@@ -32,17 +42,6 @@ public class User {
         this.password = password;
         this.birthDate = birthDate;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public User(String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate, boolean active) {
-        this.fullName = fullName;
-        this.cpf = cpf;
-        this.email = email;
-        this.phone = phone;
-        this.role = role;
-        this.password = password;
-        this.birthDate = birthDate;
         this.active = active;
     }
 
@@ -138,6 +137,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
                 ", role='" + role + '\'' +
+                ", password='" + password + '\'' +
                 ", birthDate=" + birthDate +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
