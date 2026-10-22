@@ -1,14 +1,16 @@
 package br.com.argos.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Property {
 
     // ATRIBUTOS
     private UUID idProperty;
-    private UUID userId;
     private UUID addressId;
+    private List<UUID> userIds = new ArrayList<>();
     private String name;
     private String phone;
     private String cnpj;
@@ -19,23 +21,22 @@ public class Property {
     public Property() {
     }
 
-    public Property(UUID idProperty, UUID userId, UUID addressId, String name, String phone, String cnpj, LocalDateTime updatedAt, boolean active) {
-        this.idProperty = idProperty;
-        this.userId = userId;
+    public Property(UUID addressId, List<UUID> userIds, String name, String phone, String cnpj) {
         this.addressId = addressId;
+        this.userIds = userIds;
+        this.name = name;
+        this.phone = phone;
+        this.cnpj = cnpj;
+    }
+
+    public Property(UUID idProperty, UUID addressId, List<UUID> userIds, String name, String phone, String cnpj, LocalDateTime updatedAt, boolean active) {
+        this.idProperty = idProperty;
+        this.addressId = addressId;
+        this.userIds = userIds;
         this.name = name;
         this.phone = phone;
         this.cnpj = cnpj;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public Property(UUID userId, UUID addressId, String name, String phone, String cnpj, boolean active) {
-        this.userId = userId;
-        this.addressId = addressId;
-        this.name = name;
-        this.phone = phone;
-        this.cnpj = cnpj;
         this.active = active;
     }
 
@@ -44,12 +45,12 @@ public class Property {
         return idProperty;
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
-
     public UUID getAddressId() {
         return addressId;
+    }
+
+    public List<UUID> getUserIds() {
+        return userIds;
     }
 
     public String getName() {
@@ -77,12 +78,12 @@ public class Property {
         this.idProperty = idProperty;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
     public void setAddressId(UUID addressId) {
         this.addressId = addressId;
+    }
+
+    public void setUserIds(List<UUID> userIds) {
+        this.userIds = userIds;
     }
 
     public void setName(String name) {
@@ -110,8 +111,8 @@ public class Property {
     public String toString() {
         return "Property{" +
                 "idProperty=" + idProperty +
-                ", userId=" + userId +
                 ", addressId=" + addressId +
+                ", userIds=" + userIds +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", cnpj='" + cnpj + '\'' +
