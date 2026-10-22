@@ -31,7 +31,7 @@ public class AnimalInsertServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/animals/users.jsp"
+                "/WEB-INF/views/animals/animals.jsp"
         ).forward(request, response);
     }
 
@@ -161,7 +161,7 @@ public class AnimalInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/animals/users.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/animals/animals.jsp").forward(request, response);
         }
     }
 }

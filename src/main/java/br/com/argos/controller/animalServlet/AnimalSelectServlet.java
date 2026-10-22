@@ -37,7 +37,7 @@ public class AnimalSelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/animals/list.jsp"
+                    "/WEB-INF/views/animals/animals.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {
