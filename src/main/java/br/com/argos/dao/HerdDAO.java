@@ -22,7 +22,8 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
     // CREATE
     @Override
     public void insert(Herd herd) {
-        String sql = "INSERT INTO HERD (name, breed, purpose, head_count, id_property, updated_at) " +
+        String sql = "INSERT INTO HERD " +
+                "(herd_name, breed, purpose, head_count, id_property, updated_at) " +
                 "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -64,7 +65,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
     @Override
     public List<Herd> findAll() {
-        String sql = "SELECT * FROM HERD WHERE active = true ORDER BY name";
+        String sql = "SELECT * FROM HERD WHERE active = true";
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -83,7 +84,10 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
     @Override
     public List<Herd> findByName(String name) {
-        String sql = "SELECT * FROM HERD WHERE name ILIKE ? AND active = true ORDER BY name";
+        String sql = "SELECT * FROM HERD " +
+                "WHERE herd_name ILIKE ? AND active = true " +
+                "ORDER BY herd_name";
+
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -105,7 +109,10 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
     @Override
     public List<Herd> findByProperty(UUID propertyId) {
-        String sql = "SELECT * FROM HERD WHERE id_property = ? AND active = true ORDER BY name";
+        String sql = "SELECT * FROM HERD " +
+                "WHERE id_property = ? AND active = true " +
+                "ORDER BY herd_name";
+
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -128,7 +135,8 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
     // UPDATE
     @Override
     public void update(Herd herd) {
-        String sql = "UPDATE HERD SET name = ?, breed = ?, purpose = ?, head_count = ?, id_property = ?, " +
+        String sql = "UPDATE HERD SET herd_name = ?, breed = ?, " +
+                "purpose = ?, head_count = ?, id_property = ?, " +
                 "updated_at = now() WHERE id_herd = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -193,7 +201,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
     private Herd mapHerd(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_herd", UUID.class);
         UUID propertyId = rs.getObject("id_property", UUID.class);
-        String name = rs.getString("name");
+        String name = rs.getString("herd_name");
         String breed = rs.getString("breed");
         String purpose = rs.getString("purpose");
         Integer headCount = rs.getObject("head_count", Integer.class);
@@ -205,6 +213,6 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Herd(id, propertyId,headCount, purpose, name, breed, updatedAt, active);
+        return new Herd(id, propertyId, headCount, purpose, name, breed, updatedAt, active);
     }
 }

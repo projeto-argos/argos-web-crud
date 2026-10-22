@@ -102,7 +102,9 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
     @Override
     public User findByEmailForAuthentication(String email){
-        String sql = "SELECT * FROM admin WHERE email = ? AND active = true";
+        String sql = """
+        SELECT * FROM "USER" WHERE email = ? AND active = true
+        """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
