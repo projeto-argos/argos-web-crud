@@ -37,7 +37,7 @@ public class HerdSelectServlet extends HttpServlet {
 
             // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
-                    "/WEB-INF/views/herds/list.jsp"
+                    "/WEB-INF/views/herds/herds.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {
