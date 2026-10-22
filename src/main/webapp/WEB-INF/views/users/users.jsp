@@ -61,6 +61,15 @@
         <div class="painel-topo">
             <h1>Usuários cadastrados</h1>
 
+            <form method="get" action="${ctx}/users" class="filtro">
+                <label>Nome completo
+                    <input type="text" name="name" value="<c:out value='${user.name}'/>" placeholder="Ex: João Silva">
+                </label>
+                <%-- repetir para id, cpf, email, telefone --%>
+                <button type="submit">Aplicar Filtro</button>
+                <a href="${ctx}/users" class="btn">Limpar</a>
+            </form>
+
             <button type="button" class="btn btn-escuro"
                     data-abrir="modalUser" data-acao="criar" data-action="${urlInserir}"
                     data-titulo="Cadastrar Usuário" data-botao="Cadastrar">
