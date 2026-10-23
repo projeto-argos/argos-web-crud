@@ -127,7 +127,6 @@ public class AddressDAO {
     // MAPPER
     private Address mapAddress(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_address", UUID.class);
-        // Tratamento seguro para Integer que pode ser nulo no banco
         Integer number = null;
         int dbNumber = rs.getInt("number");
         if (!rs.wasNull()) {
