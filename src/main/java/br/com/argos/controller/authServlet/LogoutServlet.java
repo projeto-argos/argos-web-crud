@@ -14,7 +14,7 @@ public class LogoutServlet extends HttpServlet {
 
     // PROCESSA O LOGOUT
     @Override
-    protected void doGet(
+    protected void doPost(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -27,20 +27,9 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
 
-        // REDIRECIONA PARA A PÁGINA DE LOGIN
+        // REDIRECIONA
         response.sendRedirect(
                 request.getContextPath() + "/login"
         );
-    }
-
-    // PERMITE REALIZAR O LOGOUT POR UM FORMULÁRIO POST
-    @Override
-    protected void doPost(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws ServletException, IOException {
-
-        // REUTILIZA O PROCESSAMENTO DO LOGOUT
-        doGet(request, response);
     }
 }
