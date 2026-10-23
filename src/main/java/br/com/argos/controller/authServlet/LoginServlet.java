@@ -91,26 +91,18 @@ public class LoginServlet extends HttpServlet {
 
             session.setAttribute("usuarioLogado", loggedAdmin);
 
-            // REDIRECIONA PARA A ÁREA ADMINISTRATIVA
-            response.sendRedirect(request.getContextPath() + "/admins");
+            // REDIRECIONA
+            response.sendRedirect(
+                    request.getContextPath() + "/admins");
 
         } catch (ValidationException e) {
             // EXIBE ERRO DE AUTENTICAÇÃO
-            request.setAttribute(
-                    "erro",
-                    "E-mail ou senha inválidos."
-            );
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/login.jsp"
-            ).forward(request, response);
+            request.setAttribute("erro", "E-mail ou senha inválidos.");
+            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
 
         } catch (Exception e) {
             // TRATA ERROS INESPERADOS
-            throw new ServletException(
-                    "Erro ao processar o login.",
-                    e
-            );
+            throw new ServletException("Erro ao processar o login.", e);
         }
     }
 }
