@@ -61,14 +61,86 @@
         <div class="painel-topo">
             <h1>Usuários cadastrados</h1>
 
-            <form method="get" action="${ctx}/users" class="filtro">
-                <label>Nome completo
-                    <input type="text" name="name" value="<c:out value='${user.name}'/>" placeholder="Ex: João Silva">
-                </label>
-                <%-- repetir para id, cpf, email, telefone --%>
-                <button type="submit">Aplicar Filtro</button>
-                <a href="${ctx}/users" class="btn">Limpar</a>
-            </form>
+
+            <c:set var="filtrando"
+                   value="${not empty param.fullName
+            or not empty param.cpf
+            or not empty param.email
+            or not empty param.phone
+            or not empty param.role}"/>
+
+            <details class="filtro" ${filtrando ? 'open' : ''}>
+
+                <summary>Filtrar</summary>
+
+                <form method="get" action="${ctx}/users">
+
+                    <label for="filtroNome">
+                        Nome completo
+                        <input
+                                type="text"
+                                id="filtroNome"
+                                name="fullName"
+                                placeholder="Ex.: João Silva"
+                                value="<c:out value='${param.fullName}'/>"
+                        >
+                    </label>
+
+                    <label for="filtroCpf">
+                        CPF
+                        <input
+                                type="text"
+                                id="filtroCpf"
+                                name="cpf"
+                                placeholder="Ex.: 12345678901"
+                                value="<c:out value='${param.cpf}'/>"
+                        >
+                    </label>
+
+                    <label for="filtroEmail">
+                        E-mail
+                        <input
+                                type="text"
+                                id="filtroEmail"
+                                name="email"
+                                placeholder="Ex.: joao@email.com"
+                                value="<c:out value='${param.email}'/>"
+                        >
+                    </label>
+
+                    <label for="filtroTelefone">
+                        Telefone
+                        <input
+                                type="text"
+                                id="filtroTelefone"
+                                name="phone"
+                                placeholder="Ex.: 11999999999"
+                                value="<c:out value='${param.phone}'/>"
+                        >
+                    </label>
+
+                    <label for="filtroCargo">
+                        Cargo
+                        <input
+                                type="text"
+                                id="filtroCargo"
+                                name="role"
+                                placeholder="Ex.: Administrador"
+                                value="<c:out value='${param.role}'/>"
+                        >
+                    </label>
+
+                    <button type="submit" class="btn-filtro">
+                        Aplicar filtro
+                    </button>
+
+                    <a href="${ctx}/users" class="btn-filtro btn-limpar">
+                        Limpar
+                    </a>
+
+                </form>
+
+            </details>
 
             <button type="button" class="btn btn-escuro"
                     data-abrir="modalUser" data-acao="criar" data-action="${urlInserir}"

@@ -163,28 +163,166 @@ dialog.modal::backdrop {
     color: var(--texto-corpo);
 }
 
+
+/* Área de filtros */
 .filtro {
-    margin: 12px 0;
+    position: relative;
+    margin: 0;
+    color: var(--texto-pagina);
 }
 
+/* Botão que abre e fecha os filtros */
 .filtro summary {
-    cursor: pointer; font-weight: 600; color: #06412F;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+
+    border: 1px solid var(--verde-claro);
+    border-radius: 999px;
+
+    color: var(--texto-pagina);
+    font-family: var(--fonte-titulo);
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    list-style: none;
+    transition: var(--tran-rapida);
 }
 
+.filtro summary::-webkit-details-marker {
+    display: none;
+}
+
+.filtro summary::before {
+    content: "\f0b0";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.filtro summary:hover {
+    background: var(--verde-claro);
+    color: #fff;
+}
+
+.filtro summary:focus-visible {
+    outline: 3px solid var(--verde-claro);
+    outline-offset: 3px;
+}
+
+/* Grade dos campos */
 .filtro form {
-    display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+
+    margin-top: 16px;
+    padding: 20px;
+
+    border: 1px solid var(--texto-suave);
+    border-radius: 16px;
+    background: var(--modal-fundo);
 }
 
+/* Rótulos e campos */
 .filtro label {
-    display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #06412F;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+
+    color: var(--texto-pagina);
+    font-family: var(--fonte-titulo);
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.filtro input, .filtro select {
-    padding: 8px 14px; border: 1px solid #1A6A64; border-radius: 999px; background: #F4F1EB;
+.filtro input,
+.filtro select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+
+    border: 1px solid var(--texto-suave);
+    border-radius: 8px;
+
+    background: var(--input-fundo);
+    color: var(--texto-corpo);
+    font: inherit;
+    font-weight: 400;
 }
 
-.btn-filtro {
-    background: #1A6A64; color: #fff; border: 0; border-radius: 999px; padding: 9px 20px; cursor: pointer; text-decoration: none;
+.filtro input:focus,
+.filtro select:focus {
+    outline: 2px solid var(--verde-claro);
+    outline-offset: 2px;
+}
+
+/* Botões de ação */
+.filtro .btn-filtro {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: end;
+
+    box-sizing: border-box;
+    min-height: 42px;
+    padding: 0 18px;
+
+    border: 1px solid #1A6A64;
+    border-radius: 8px;
+
+    background: #1A6A64;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: var(--tran-rapida);
+}
+
+.filtro .btn-filtro:hover {
+    filter: brightness(1.1);
+}
+
+.filtro .btn-filtro:focus-visible {
+    outline: 3px solid var(--verde-claro);
+    outline-offset: 2px;
+}
+
+
+.filtro .btn-limpar {
+    background: transparent;
+    color: var(--texto-pagina);
+    border-color: var(--texto-suave);
+}
+
+.filtro .btn-limpar:hover {
+    background: var(--texto-suave);
+    color: var(--texto-pagina);
+}
+
+
+/* Adaptação para telas menores */
+@media (max-width: 900px) {
+    .filtro form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .filtro form {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 14px;
+    }
+
+    .filtro .btn-filtro {
+        width: 100%;
+    }
 }
 
 @media (max-width: 600px) {
