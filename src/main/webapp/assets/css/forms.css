@@ -163,9 +163,7 @@ dialog.modal::backdrop {
     color: var(--texto-corpo);
 }
 
-/* ===== Filtro ===== */
 
-/* Agrupa "Filtrar" e "Novo usuário" no canto direito; o painel se ancora aqui */
 .painel-acoes {
     position: relative;
     display: flex;
@@ -177,7 +175,6 @@ dialog.modal::backdrop {
     color: var(--texto-pagina);
 }
 
-/* Botão que abre o painel */
 .filtro summary {
     display: inline-flex;
     align-items: center;
@@ -198,14 +195,12 @@ dialog.modal::backdrop {
     display: none;
 }
 
-/* ícone de funil */
 .filtro summary::before {
     content: "\f0b0";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
 
-/* setinha que gira quando abre */
 .filtro summary::after {
     content: "\f078";
     font-family: "Font Awesome 6 Free";
@@ -229,7 +224,6 @@ dialog.modal::backdrop {
     outline-offset: 2px;
 }
 
-/* Painel flutuante embaixo dos botões */
 .filtro form {
     position: absolute;
     top: calc(100% + 10px);
@@ -248,7 +242,7 @@ dialog.modal::backdrop {
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
 }
 
-/* Linha dos botões, sempre embaixo e à direita */
+
 .filtro-acoes {
     grid-column: 1 / -1;
     display: flex;
@@ -257,7 +251,6 @@ dialog.modal::backdrop {
     margin-top: 6px;
 }
 
-/* "Limpar" é um <a>, então precisa alinhar o texto como um botão */
 .filtro-acoes a.btn-pilula {
     display: inline-flex;
     align-items: center;

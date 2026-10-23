@@ -23,7 +23,7 @@
 .toast-erro {
     background: #F5DDD0;
     border-color: #E2B9A0;
-    color: var(--marrom);
+    color: var(--vermelho);
 }
 
 .toast-icone {
@@ -40,7 +40,7 @@
 }
 
 .toast-erro .toast-icone {
-    background: var(--marrom);
+    background: var(--vermelho);
 }
 
 .toast-texto strong {
