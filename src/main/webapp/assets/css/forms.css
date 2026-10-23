@@ -163,29 +163,32 @@ dialog.modal::backdrop {
     color: var(--texto-corpo);
 }
 
+/* ===== Filtro ===== */
 
-/* Área de filtros */
-.filtro {
+/* Agrupa "Filtrar" e "Novo usuário" no canto direito; o painel se ancora aqui */
+.painel-acoes {
     position: relative;
-    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filtro {
     color: var(--texto-pagina);
 }
 
-/* Botão que abre e fecha os filtros */
+/* Botão que abre o painel */
 .filtro summary {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-
     border: 1px solid var(--verde-claro);
     border-radius: 999px;
-
     color: var(--texto-pagina);
     font-family: var(--fonte-titulo);
     font-size: 14px;
     font-weight: 600;
-
     cursor: pointer;
     list-style: none;
     transition: var(--tran-rapida);
@@ -195,142 +198,68 @@ dialog.modal::backdrop {
     display: none;
 }
 
+/* ícone de funil */
 .filtro summary::before {
     content: "\f0b0";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
 
-.filtro summary:hover {
+/* setinha que gira quando abre */
+.filtro summary::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.filtro[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.filtro summary:hover,
+.filtro-ativo summary {
     background: var(--verde-claro);
     color: #fff;
 }
 
 .filtro summary:focus-visible {
-    outline: 3px solid var(--verde-claro);
-    outline-offset: 3px;
-}
-
-/* Grade dos campos */
-.filtro form {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-
-    margin-top: 16px;
-    padding: 20px;
-
-    border: 1px solid var(--texto-suave);
-    border-radius: 16px;
-    background: var(--modal-fundo);
-}
-
-/* Rótulos e campos */
-.filtro label {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    min-width: 0;
-
-    color: var(--texto-pagina);
-    font-family: var(--fonte-titulo);
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.filtro input,
-.filtro select {
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    height: 42px;
-    padding: 0 12px;
-
-    border: 1px solid var(--texto-suave);
-    border-radius: 8px;
-
-    background: var(--input-fundo);
-    color: var(--texto-corpo);
-    font: inherit;
-    font-weight: 400;
-}
-
-.filtro input:focus,
-.filtro select:focus {
     outline: 2px solid var(--verde-claro);
     outline-offset: 2px;
 }
 
-/* Botões de ação */
-.filtro .btn-filtro {
+/* Painel flutuante embaixo dos botões */
+.filtro form {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 30;
+    width: min(720px, calc(100vw - 48px));
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px 20px;
+    padding: 22px 24px;
+
+    border: 1px solid var(--texto-suave);
+    border-radius: 20px;
+    background: var(--modal-fundo);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Linha dos botões, sempre embaixo e à direita */
+.filtro-acoes {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+/* "Limpar" é um <a>, então precisa alinhar o texto como um botão */
+.filtro-acoes a.btn-pilula {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    align-self: end;
-
-    box-sizing: border-box;
-    min-height: 42px;
-    padding: 0 18px;
-
-    border: 1px solid #1A6A64;
-    border-radius: 8px;
-
-    background: #1A6A64;
-    color: #fff;
-    font: inherit;
-    font-weight: 600;
     text-decoration: none;
-    cursor: pointer;
-
-    transition: var(--tran-rapida);
-}
-
-.filtro .btn-filtro:hover {
-    filter: brightness(1.1);
-}
-
-.filtro .btn-filtro:focus-visible {
-    outline: 3px solid var(--verde-claro);
-    outline-offset: 2px;
-}
-
-
-.filtro .btn-limpar {
-    background: transparent;
-    color: var(--texto-pagina);
-    border-color: var(--texto-suave);
-}
-
-.filtro .btn-limpar:hover {
-    background: var(--texto-suave);
-    color: var(--texto-pagina);
-}
-
-
-/* Adaptação para telas menores */
-@media (max-width: 900px) {
-    .filtro form {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 520px) {
-    .filtro form {
-        grid-template-columns: minmax(0, 1fr);
-        padding: 14px;
-    }
-
-    .filtro .btn-filtro {
-        width: 100%;
-    }
-}
-
-@media (max-width: 600px) {
-    .form-grade {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .modal-caixa {
-        padding: 22px 20px 24px;
-    }
 }
