@@ -5,10 +5,12 @@ import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IPropertyDAO;
 import br.com.argos.model.Property;
+import org.postgresql.jdbc.UUIDArrayAssistant;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +27,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             stmt.setString(1, property.getName());
             stmt.setString(2, property.getCnpj());
             stmt.setString(3, property.getPhone());
-            stmt.setObject(4, property.getUserId());
+            stmt.setObject(4, property.getUserIds());
 
             if (property.getAddressId() != null) {
                 stmt.setObject(5, property.getAddressId());
@@ -135,7 +137,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             stmt.setString(1, property.getName());
             stmt.setString(2, property.getCnpj());
             stmt.setString(3, property.getPhone());
-            stmt.setObject(4, property.getUserId());
+            stmt.setObject(4, property.getUserIds());
 
             if (property.getAddressId() != null) {
                 stmt.setObject(5, property.getAddressId());
@@ -197,7 +199,17 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
     private Property mapProperty(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_property", UUID.class);
-        UUID userId = rs.getObject("id_user", UUID.class);
+
+        // Tratamento correto para array de UUIDs vindos do PostgreSQL
+        List<UUID> userIds = new ArrayList<>();
+        Array sqlArray = rs.getArray("id_user");
+        if (sqlArray != null) {
+            UUID[] uuids = (UUID[]) sqlArray.getArray();
+            if (uuids != null) {
+                userIds = Arrays.asList(uuids);
+            }
+        }
+
         UUID addressId = rs.getObject("id_address", UUID.class);
         String name = rs.getString("name");
         String cnpj = rs.getString("cnpj");
@@ -210,6 +222,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }
 
-        return new Property(id, userId, addressId, name, phone, cnpj, updatedAt, active);
+        return new Property(id, addressId, userIds, name, phone, cnpj, updatedAt, active);
     }
 }

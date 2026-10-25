@@ -1,6 +1,7 @@
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Address;
 
 import java.sql.*;
@@ -9,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AddressDAO {
+public class AddressDAO implements GenericDAO<Address, UUID> {
 
     // CREATE
+    @Override
     public void insert(Address address) throws SQLException {
         String sql = "INSERT INTO address (number, complement, street, city, state, updated_at, active) " +
                 "VALUES (?, ?, ?, ?, ?, now(), ?)";
