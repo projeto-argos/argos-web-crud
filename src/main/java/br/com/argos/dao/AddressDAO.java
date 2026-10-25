@@ -1,6 +1,8 @@
+
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
+import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Address;
 
@@ -14,9 +16,10 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
 
     // CREATE
     @Override
-    public void insert(Address address) throws SQLException {
-        String sql = "INSERT INTO address (number, complement, street, city, state, updated_at, active) " +
-                "VALUES (?, ?, ?, ?, ?, now(), ?)";
+    public void insert(Address address) {
+        String sql = "INSERT INTO ADDRESS " +
+                "(number, complement, street, city, state, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, now())";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -26,26 +29,24 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             } else {
                 stmt.setNull(1, Types.INTEGER);
             }
+
             stmt.setString(2, address.getComplement());
-
-
             stmt.setString(3, address.getStreet());
             stmt.setString(4, address.getCity());
             stmt.setString(5, address.getState());
-            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setBoolean(7, address.isActive());
 
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("Error inserting address: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error inserting address: ", e);
         }
     }
 
-    // READ
-    public Address findById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM address WHERE id_address = ?";
+    // READ BY ID
+    @Override
+    public Address findById(UUID id) {
+        String sql = "SELECT * FROM ADDRESS " +
+                "WHERE id_address = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -57,12 +58,21 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
                     return mapAddress(rs);
                 }
             }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException(
+                    "Error searching for address: " + id, e);
         }
-        return null;
     }
 
-    public List<Address> findAll() throws SQLException {
-        String sql = "SELECT * FROM address ORDER BY street";
+    // READ ALL ACTIVE ADDRESSES
+    @Override
+    public List<Address> findAll() {
+        String sql = "SELECT * FROM ADDRESS " +
+                "WHERE active = true ORDER BY street";
+
         List<Address> addresses = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -74,16 +84,18 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error listing addresses: " + e.getMessage());
-            throw e;
+            throw new DataAccessException("Error listing addresses: ", e);
         }
+
         return addresses;
     }
 
     // UPDATE
-    public void update(Address address) throws SQLException {
-        String sql = "UPDATE address SET number = ?, complement = ?, street = ?, city = ?, " +
-                "state = ?, updated_at = now(), active = ? WHERE id_address = ?";
+    @Override
+    public void update(Address address) {
+        String sql = "UPDATE ADDRESS SET number = ?, complement = ?, " +
+                "street = ?, city = ?, state = ?, updated_at = now() " +
+                "WHERE id_address = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,53 +105,68 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             } else {
                 stmt.setNull(1, Types.INTEGER);
             }
+
             stmt.setString(2, address.getComplement());
-
-
             stmt.setString(3, address.getStreet());
             stmt.setString(4, address.getCity());
-            stmt.setObject(5, address.getState());
-            stmt.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setBoolean(7, address.isActive());
+            stmt.setString(5, address.getState());
+            stmt.setObject(6, address.getIdAddress());
 
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException(
+                        "Address not found: " + address.getIdAddress());
+            }
 
         } catch (SQLException e) {
-            System.err.println("Error updating address: " + e.getMessage());
-            throw e;
+            throw new DataAccessException(
+                    "Error updating address: " + address.getIdAddress(), e);
         }
     }
 
-    // DELETE
-    public void delete(UUID id) throws SQLException {
-        String sql = "DELETE FROM address WHERE id_address = ?";
+    // SOFT DELETE
+    @Override
+    public void delete(UUID id) {
+        String sql = "UPDATE ADDRESS SET active = FALSE, updated_at = now() " +
+                "WHERE id_address = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setObject(1, id);
-            stmt.executeUpdate();
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DataAccessException("Address not found: " + id);
+            }
 
         } catch (SQLException e) {
-            System.err.println("Error deleting address: " + e.getMessage());
-            throw e;
+            throw new DataAccessException(
+                    "Error deleting address: " + id, e);
         }
     }
 
     // MAPPER
     private Address mapAddress(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_address", UUID.class);
+
         Integer number = null;
         int dbNumber = rs.getInt("number");
+
         if (!rs.wasNull()) {
             number = dbNumber;
         }
+
         String complement = rs.getString("complement");
         String street = rs.getString("street");
         String city = rs.getString("city");
         String state = rs.getString("state");
+
         LocalDateTime updatedAt = null;
         Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
+
         if (tsUpdatedAt != null) {
             updatedAt = tsUpdatedAt.toLocalDateTime();
         }

@@ -200,7 +200,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
     private Property mapProperty(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_property", UUID.class);
 
-        // Tratamento correto para array de UUIDs vindos do PostgreSQL
         List<UUID> userIds = new ArrayList<>();
         Array sqlArray = rs.getArray("id_user");
         if (sqlArray != null) {
