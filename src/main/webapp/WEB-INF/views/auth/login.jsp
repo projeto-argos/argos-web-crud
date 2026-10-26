@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
-
 </head>
 <body>
 
@@ -63,7 +62,7 @@
 
             <div class="campo">
                 <label for="senha">Senha</label>
-                <div class="campo_caixa ${not empty mensagem ? 'erro' : ''}">
+                <div class="campo_caixa ${not empty error ? 'erro' : ''}">
                     <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4V7Z" fill="currentColor"/></svg>
                     <input type="password" id="senha" name="password" placeholder="Sua senha" autocomplete="current-password" required>
                     <button type="button" class="btn_olho" id="btnOlho" aria-label="Mostrar senha">
@@ -73,7 +72,7 @@
                 </div>
             </div>
 
-            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${mensagem}"/></p>
+            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${error}"/></p>
 
             <button type="submit" class="btn_entrar" id="btnEntrar">Entrar</button>
 
@@ -84,24 +83,19 @@
 </main>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const campoSenha = document.getElementById("senha");
-        const botaoOlho = document.getElementById("btnOlho");
-        const olhoAberto = document.getElementById("olhoAberto");
-        const olhoFechado = document.getElementById("olhoFechado");
+    const campoSenha = document.getElementById("senha");
+    const botaoOlho = document.getElementById("btnOlho");
+    const olhoAberto = document.getElementById("olhoAberto");
+    const olhoFechado = document.getElementById("olhoFechado");
 
-        if (botaoOlho && campoSenha) {
-            botaoOlho.addEventListener("click", () => {
-                const estavaEscondida = campoSenha.type === "password";
+    botaoOlho.addEventListener("click", () => {
+        const estavaEscondida = campoSenha.type === "password";
 
-                campoSenha.type = estavaEscondida ? "text" : "password";
-                olhoAberto.toggleAttribute("hidden", !estavaEscondida);   // senha visível -> olho aberto
-                olhoFechado.toggleAttribute("hidden", estavaEscondida);   // senha escondida -> olho riscado
-                botaoOlho.setAttribute("aria-label", estavaEscondida ? "Esconder senha" : "Mostrar senha");
-            });
-        }
+        campoSenha.type = estavaEscondida ? "text" : "password";
+        olhoAberto.toggleAttribute("hidden", !estavaEscondida);   // senha visível -> olho aberto
+        olhoFechado.toggleAttribute("hidden", estavaEscondida);   // senha escondida -> olho riscado
+        botaoOlho.setAttribute("aria-label", estavaEscondida ? "Esconder senha" : "Mostrar senha");
     });
 </script>
-
 </body>
 </html>
