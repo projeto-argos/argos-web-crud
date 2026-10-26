@@ -25,17 +25,16 @@ public class AddressService {
 
     public AddressService(AddressDAO addressDAO) {
         this.addressDAO = Objects.requireNonNull(
-                addressDAO, "AddressDAO cannot be null");
+                addressDAO, "AddressDAO cannot be null"
+        );
     }
 
-    // CREATE
     public void create(Address address) {
         Address normalized = normalizeAddress(address);
         validateAddress(normalized);
         addressDAO.insert(normalized);
     }
 
-    // READ BY ID
     public Address findById(UUID id) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -44,12 +43,10 @@ public class AddressService {
         return addressDAO.findById(id);
     }
 
-    // READ ALL
     public List<Address> findAll() {
         return addressDAO.findAll();
     }
 
-    // UPDATE
     public void update(Address address) {
         Address normalized = normalizeAddress(address);
 
@@ -61,7 +58,6 @@ public class AddressService {
         addressDAO.update(normalized);
     }
 
-    // SOFT DELETE
     public void delete(UUID id) {
         if (id == null) {
             throw new RequiredFieldException("id");
@@ -70,11 +66,13 @@ public class AddressService {
         addressDAO.delete(id);
     }
 
-    // NORMALIZATION
     private Address normalizeAddress(Address address) {
         if (address == null) {
-            throw new ValidationException("Address cannot be null");
+            throw new ValidationException("Address cannot be null.");
         }
+
+        String state = text(address.getState());
+        String zipCode = text(address.getZipCode());
 
         return new Address(
                 address.getIdAddress(),
@@ -82,41 +80,46 @@ public class AddressService {
                 text(address.getComplement()),
                 text(address.getStreet()),
                 text(address.getCity()),
-                text(address.getState()) == null
-                        ? null
-                        : text(address.getState()).toUpperCase(),
+                state != null ? state.toUpperCase() : null,
+                zipCode,
                 address.getUpdatedAt(),
                 address.isActive()
         );
     }
 
-    // VALIDATION
     private void validateAddress(Address address) {
-
-        // OPTIONAL
-
-        if (address.getNumber() != null
-                && address.getNumber() < 0) {
+        if (address.getNumber() != null && address.getNumber() < 0) {
             throw new ValidationException(
-                    "Address number cannot be negative");
+                    "Address number cannot be negative."
+            );
         }
 
         if (address.getStreet() != null
                 && address.getStreet().length() > 150) {
             throw new ValidationException(
-                    "Street cannot exceed 150 characters");
+                    "Street cannot exceed 150 characters."
+            );
         }
 
         if (address.getCity() != null
                 && address.getCity().length() > 100) {
             throw new ValidationException(
-                    "City cannot exceed 100 characters");
+                    "City cannot exceed 100 characters."
+            );
         }
 
         if (address.getState() != null
                 && !address.getState().matches("[A-Z]{2}")) {
             throw new ValidationException(
-                    "State must contain exactly 2 letters");
+                    "State must contain exactly 2 letters."
+            );
+        }
+
+        if (address.getZipCode() != null
+                && !address.getZipCode().matches("\\d{8}")) {
+            throw new ValidationException(
+                    "ZIP code must contain exactly 8 digits."
+            );
         }
     }
 }
