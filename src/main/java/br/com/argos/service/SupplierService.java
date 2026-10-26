@@ -4,6 +4,7 @@ import br.com.argos.dao.SupplierDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Supplier;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
 import br.com.argos.util.Validador;
 
@@ -37,6 +38,15 @@ public class SupplierService {
             throw new RequiredFieldException("id");
         }
         return supplierDAO.findById(id);
+    }
+
+    public List<Supplier> filter(String fullName, String cnpj, String phone, String email) {
+        return findAll().stream()
+                .filter(supplier -> FilterUtil.contains(supplier.getFullName(), fullName))
+                .filter(supplier -> FilterUtil.contains(supplier.getCnpj(), FilterUtil.digits(cnpj)))
+                .filter(supplier -> FilterUtil.contains(supplier.getPhone(), FilterUtil.digits(phone)))
+                .filter(supplier -> FilterUtil.contains(supplier.getEmail(), email))
+                .toList();
     }
 
     public List<Supplier> findAll() {

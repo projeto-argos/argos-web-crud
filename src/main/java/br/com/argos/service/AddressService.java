@@ -5,7 +5,10 @@ import br.com.argos.dao.AddressDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Address;
+import br.com.argos.model.Lot;
+import br.com.argos.util.FilterUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,6 +44,17 @@ public class AddressService {
         }
 
         return addressDAO.findById(id);
+    }
+
+    public List<Address> filter(String number, String complement, String street, String city, String state, String zipCode) {
+        return findAll().stream()
+                .filter(address -> number == null || number.isBlank() || String.valueOf(address.getNumber()).equals(number.trim()))
+                .filter(address -> FilterUtil.contains(address.getComplement(), complement))
+                .filter(address -> FilterUtil.contains(address.getStreet(), street))
+                .filter(address -> FilterUtil.contains(address.getCity(), city))
+                .filter(address -> FilterUtil.contains(address.getState(), state))
+                .filter(address -> FilterUtil.contains(address.getZipCode(), FilterUtil.digits(zipCode)))
+                .toList();
     }
 
     public List<Address> findAll() {

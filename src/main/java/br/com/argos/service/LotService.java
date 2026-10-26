@@ -4,10 +4,13 @@ import br.com.argos.dao.LotDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Lot;
+import br.com.argos.util.FilterUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Filter;
 
 import static br.com.argos.util.Normalizer.text;
 
@@ -40,6 +43,15 @@ public class LotService {
         }
 
         return lotDAO.findById(id);
+    }
+
+    public List<Lot> filter(String headCount, String category, String lotCode, LocalDate openDate) {
+        return findAll().stream()
+                .filter(lot -> headCount == null || headCount.isBlank() || String.valueOf(lot.getHeadCount()).equals(headCount.trim()))
+                .filter(lot -> FilterUtil.contains(lot.getCategory(), category))
+                .filter(lot -> FilterUtil.contains(lot.getLotCode(), FilterUtil.digits(lotCode)))
+                .filter(lot -> openDate == null || Objects.equals(lot.getOpenDate(), openDate))
+                .toList();
     }
 
     public List<Lot> findAll() {

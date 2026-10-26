@@ -4,6 +4,7 @@ import br.com.argos.dao.AnimalDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Animal;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
 
 import java.math.BigDecimal;
@@ -36,6 +37,20 @@ public class AnimalService {
         }
         return animalDAO.findById(id);
     }
+
+    public List<Animal> filter(String weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, Boolean clearedForSlaughter) {
+        return findAll().stream()
+                .filter(animal -> FilterUtil.contains(animal.getWeight() != null ? animal.getWeight().toPlainString() : null, weight))
+                .filter(animal -> FilterUtil.contains(animal.getEarTag(), earTag))
+                .filter(animal -> FilterUtil.contains(animal.getNotes(), notes))
+                .filter(animal -> FilterUtil.contains(animal.getExceptionReason(), exceptionReason))
+                .filter(animal -> exceptionStartDate == null || Objects.equals(animal.getExceptionStartDate(), exceptionStartDate))
+                .filter(animal -> exceptionEndDate == null || Objects.equals(animal.getExceptionEndDate(), exceptionEndDate))
+                .filter(animal -> birthDate == null || Objects.equals(animal.getBirthDate(), birthDate))
+                .filter(animal -> clearedForSlaughter == null || animal.isClearedForSlaughter() == clearedForSlaughter)
+                .toList();
+    }
+
 
     public List<Animal> findAll(){
         return animalDAO.findAll();

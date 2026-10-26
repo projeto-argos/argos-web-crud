@@ -4,6 +4,7 @@ import br.com.argos.dao.HerdDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Herd;
+import br.com.argos.util.FilterUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,15 @@ public class HerdService {
             throw new RequiredFieldException("id");
         }
         return herdDAO.findById(id);
+    }
+
+    public List<Herd> filter(String headCount, String purpose, String name, String breed) {
+        return findAll().stream()
+                .filter(herd -> headCount == null || headCount.isBlank() || String.valueOf(herd.getHeadCount()).equals(headCount.trim()))
+                .filter(herd -> FilterUtil.contains(herd.getPurpose(), purpose))
+                .filter(herd -> FilterUtil.contains(herd.getName(), name))
+                .filter(herd -> FilterUtil.contains(herd.getBreed(), breed))
+                .toList();
     }
 
     public List<Herd> findAll() {

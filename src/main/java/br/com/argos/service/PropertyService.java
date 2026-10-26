@@ -5,6 +5,7 @@ import br.com.argos.dao.PropertyDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Property;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Validador;
 
 import java.util.ArrayList;
@@ -43,6 +44,14 @@ public class PropertyService {
         }
 
         return propertyDAO.findById(id);
+    }
+
+    public List<Property> filter(String name, String cnpj, String phone) {
+        return findAll().stream()
+                .filter(property -> FilterUtil.contains(property.getName(), name))
+                .filter(property -> FilterUtil.contains(property.getCnpj(), FilterUtil.digits(cnpj)))
+                .filter(property -> FilterUtil.contains(property.getPhone(), FilterUtil.digits(phone)))
+                .toList();
     }
 
     public List<Property> findAll() {
