@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -11,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
+
 </head>
 <body>
 
@@ -29,12 +31,11 @@
     </div>
 
     <div class="logo_login">
-        <a class="brand" href="${pageContext.request.contextPath}/landingV2.jsp#inicio"><img src="${pageContext.request.contextPath}/assets/img/Logo Deitada clara.svg" alt="Argos"></a>
+        <a class="brand" href="${pageContext.request.contextPath}/login"><img src="${pageContext.request.contextPath}/assets/img/Logo Deitada clara.svg" alt="Argos"></a>
     </div>
 
-    <!-- PERSONAGEM (boi) -->
     <div class="personagem_login">
-        <img src="${pageContext.request.contextPath}/assets/img/imagens/mascote-login.svg" alt="Mascote do ARGOS">
+        <img src="${pageContext.request.contextPath}/assets/img/mascote-login.svg" alt="Mascote do ARGOS">
     </div>
 
     <div class="arvore_login">
@@ -45,10 +46,9 @@
         </svg>
     </div>
 
-    <!-- FORMULÁRIO (lado direito) -->
     <section class="area_form">
 
-        <form class="form_login" id="formLogin" novalidate>
+        <form class="form_login" id="formLogin" method="post" action="${pageContext.request.contextPath}/login">
 
             <h1 class="form_titulo">BEM-VINDO DE VOLTA!</h1>
             <p class="form_subtitulo">Faça login para continuar</p>
@@ -57,32 +57,25 @@
                 <label for="email">E-mail</label>
                 <div class="campo_caixa">
                     <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.2L4.5 7v.1L12 12.4 19.5 7.1V7L12 12.2Z" fill="currentColor"/></svg>
-                    <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" required>
+                    <input type="email" id="email" name="email" value="<c:out value="${param.email}"/>" placeholder="seu@email.com" autocomplete="email" required>
                 </div>
             </div>
 
             <div class="campo">
                 <label for="senha">Senha</label>
-                <div class="campo_caixa">
+                <div class="campo_caixa ${not empty mensagem ? 'erro' : ''}">
                     <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4V7Z" fill="currentColor"/></svg>
-                    <input type="password" id="senha" name="senha" placeholder="Sua senha" autocomplete="current-password" required>
+                    <input type="password" id="senha" name="password" placeholder="Sua senha" autocomplete="current-password" required>
                     <button type="button" class="btn_olho" id="btnOlho" aria-label="Mostrar senha">
-                        <!-- olho aberto (aparece quando a senha está visível) -->
                         <svg id="olhoAberto" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M12 5c5 0 9 4.5 10 7-1 2.5-5 7-10 7S3 14.5 2 12c1-2.5 5-7 10-7Zm0 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z" fill="currentColor"/></svg>
-                        <!-- olho riscado (aparece quando a senha está escondida) -->
                         <svg id="olhoFechado" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.3 4.7 4.7 3.3l16 16-1.4 1.4-3.1-3.1A10.5 10.5 0 0 1 12 19C7 19 3 14.5 2 12c.6-1.4 2-3.2 3.9-4.600L3.3 4.7ZM12 5c5 0 9 4.5 10 7-.4 1-1.2 2.2-2.400 3.3L16.700 12.400A4.800 4.800 0 0 0 12 7.2c-.4 0-.8.1-1.2.2L8.600 5.2C9.700 5 10.800 5 12 5Z" fill="currentColor"/></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Mensagem de erro (preenchida pelo login.js) -->
-            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"></p>
-
-            <a href="esqueci-senha.html" class="link_esqueceu">Esqueceu sua senha?</a>
+            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${mensagem}"/></p>
 
             <button type="submit" class="btn_entrar" id="btnEntrar">Entrar</button>
-
-            <p class="form_rodape">Ainda não tem uma conta? <a href="${pageContext.request.contextPath}/cadastro.jsp">Cadastre-se já</a></p>
 
         </form>
 
@@ -90,6 +83,25 @@
 
 </main>
 
-<script src="${pageContext.request.contextPath}/assets/js/login.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const campoSenha = document.getElementById("senha");
+        const botaoOlho = document.getElementById("btnOlho");
+        const olhoAberto = document.getElementById("olhoAberto");
+        const olhoFechado = document.getElementById("olhoFechado");
+
+        if (botaoOlho && campoSenha) {
+            botaoOlho.addEventListener("click", () => {
+                const estavaEscondida = campoSenha.type === "password";
+
+                campoSenha.type = estavaEscondida ? "text" : "password";
+                olhoAberto.toggleAttribute("hidden", !estavaEscondida);   // senha visível -> olho aberto
+                olhoFechado.toggleAttribute("hidden", estavaEscondida);   // senha escondida -> olho riscado
+                botaoOlho.setAttribute("aria-label", estavaEscondida ? "Esconder senha" : "Mostrar senha");
+            });
+        }
+    });
+</script>
+
 </body>
 </html>

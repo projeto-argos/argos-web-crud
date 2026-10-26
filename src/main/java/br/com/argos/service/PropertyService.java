@@ -88,13 +88,14 @@ public class PropertyService {
 
         return new Property(
                 property.getIdProperty(),
-                property.getUserId(),
                 property.getAddressId(),
+                property.getUserIds(),
                 text(property.getName()),
                 onlyDigits(property.getPhone()),
                 onlyDigits(property.getCnpj()),
                 property.getUpdatedAt(),
-                property.isActive());
+                property.isActive()
+        );
     }
 
     private void validateProperty(Property property) {
@@ -107,8 +108,8 @@ public class PropertyService {
             throw new ValidationException("Name cannot exceed 120 characters");
         }
 
-        if (property.getUserId() == null) {
-            throw new RequiredFieldException("userId");
+        if (property.getUserIds() == null || property.getUserIds().isEmpty()) {
+            throw new RequiredFieldException("userIds");
         }
 
         // OPCIONAIS
