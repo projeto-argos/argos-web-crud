@@ -19,6 +19,14 @@ public class Herd {
     public Herd() {
     }
 
+    public Herd(UUID propertyId, Integer headCount, String purpose, String name, String breed) {
+        this.propertyId = propertyId;
+        this.headCount = headCount;
+        this.purpose = purpose;
+        this.name = name;
+        this.breed = breed;
+    }
+
     public Herd(UUID idHerd, UUID propertyId, Integer headCount, String purpose, String name, String breed, LocalDateTime updatedAt, boolean active) {
         this.idHerd = idHerd;
         this.propertyId = propertyId;
@@ -27,15 +35,6 @@ public class Herd {
         this.name = name;
         this.breed = breed;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public Herd(UUID propertyId, Integer headCount, String purpose, String name, String breed, boolean active) {
-        this.propertyId = propertyId;
-        this.headCount = headCount;
-        this.purpose = purpose;
-        this.name = name;
-        this.breed = breed;
         this.active = active;
     }
 

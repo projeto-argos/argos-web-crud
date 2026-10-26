@@ -19,6 +19,14 @@ public class Admin {
     public Admin() {
     }
 
+    public Admin(String fullName, String cpf, String email, String phone, String password) {
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+    }
+
     public Admin(UUID idAdmin, String fullName, String cpf, String email, String phone, String password, LocalDateTime updatedAt, boolean active) {
         this.idAdmin = idAdmin;
         this.fullName = fullName;
@@ -27,15 +35,6 @@ public class Admin {
         this.phone = phone;
         this.password = password;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public Admin(String fullName, String cpf, String email, String phone, String password, boolean active) {
-        this.fullName = fullName;
-        this.cpf = cpf;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
         this.active = active;
     }
 
