@@ -46,14 +46,14 @@ public class LotService {
         return lotDAO.findAll();
     }
 
-    public Lot findByLotCode(String lotCode) {
-        String normalizedCode = text(lotCode);
-
-        if (normalizedCode == null) {
+    public Lot findByLotCodeAndHerd(String lotCode, UUID idHerd){
+        if (idHerd == null) {
+            throw new RequiredFieldException("idHerd");
+        } if (lotCode == null || lotCode.isBlank()) {
             throw new RequiredFieldException("lotCode");
         }
 
-        return lotDAO.findByLotCode(normalizedCode);
+        return lotDAO.findByLotCodeAndHerd(lotCode, idHerd);
     }
 
     public List<Lot> findByHerd(UUID idHerd) {
@@ -114,18 +114,18 @@ public class LotService {
 
         return new Lot(
                 lot.getIdLot(),
-                lot.getIdHerd(),
-                lotCode,
-                category != null ? category.toUpperCase() : null,
+                lot.getHerdId(),
                 lot.getHeadCount(),
-                lot.getOpeningDate(),
+                category != null ? category.toUpperCase() : null,
+                lot.getLotCode(),
+                lot.getOpenDate(),
                 lot.getUpdatedAt(),
                 lot.isActive()
         );
     }
 
     private void validateLot(Lot lot) {
-        if (lot.getIdHerd() == null) {
+        if (lot.getHerdId() == null) {
             throw new RequiredFieldException("idHerd");
         }
 

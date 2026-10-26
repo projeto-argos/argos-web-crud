@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="argos" uri="/WEB-INF/argos.tld" %>
 
 <fmt:setLocale value="pt_BR"/>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -97,15 +98,15 @@
                     <tr class="linha">
                         <td><c:out value="${animal.earTag}"/></td>
                         <td><fmt:formatNumber value="${animal.weight}" minFractionDigits="2" maxFractionDigits="2"/></td>
-                        <td><c:out value="${animal.birthDate}"/></td>
-                        <td><c:out value="${animal.exceptionStartDate}"/></td>
-                        <td><c:out value="${animal.exceptionEndDate}"/></td>
+                        <td><c:out value="${argos:formatDate(animal.birthDate)}"/></td>
+                        <td><c:out value="${argos:formatDate(animal.exceptionStartDate)}"/></td>
+                        <td><c:out value="${argos:formatDate(animal.exceptionEndDate)}"/></td>
                         <td><c:out value="${animal.exceptionReason}"/></td>
                         <td class="col-acoes">
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar animal"
                                     data-abrir="modalAnimal" data-acao="editar" data-action="${urlAtualizar}"
                                     data-titulo="Editar Animal" data-botao="Salvar"
-                                    data-id="<c:out value='${animal.idAnimal}'/>"
+                                    data-id-animal="<c:out value='${animal.idAnimal}'/>"
                                     data-ear-tag="<c:out value='${animal.earTag}'/>"
                                     data-weight="<c:out value='${animal.weight}'/>"
                                     data-exception-reason="<c:out value='${animal.exceptionReason}'/>"
@@ -116,7 +117,7 @@
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir animal"
                                     data-abrir="modalExcluir"
-                                    data-id-animal="<c:out value='${animal.idAnimal}'/>"
+                                    data-id="<c:out value='${animal.idAnimal}'/>"
                                     data-ear-tag="<c:out value='${animal.earTag}'/>">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>

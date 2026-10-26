@@ -25,7 +25,6 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 INSERT INTO property
                     (name, cnpj, phone, id_address, updated_at)
                 VALUES (?, ?, ?, ?, now())
-                RETURNING id_property
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();

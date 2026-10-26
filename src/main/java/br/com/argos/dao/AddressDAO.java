@@ -18,7 +18,7 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
     public void insert(Address address) {
         String sql = "INSERT INTO ADDRESS " +
                 "(street, number, city, state, zip_code, complement, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?, now())";
+                "VALUES (?, ?, ?, ?, ?, ?, now()) RETURNING id_address";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

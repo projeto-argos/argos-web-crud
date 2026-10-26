@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="argos" uri="/WEB-INF/argos.tld" %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="urlInserir" value="${ctx}/properties/register"/>
@@ -43,11 +44,11 @@
 
     <main class="conteudo">
 
-        <c:if test="${not empty mensagem}">
-            <div class="toast ${tipoMensagem == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
-                <span class="toast-icone"><i class="fa-solid ${tipoMensagem == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+        <c:if test="${not empty erro or not empty mensagem}">
+            <div class="toast ${(tipoMensagem == 'erro' or not empty erro) ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${(tipoMensagem == 'erro' or not empty erro) ? 'fa-exclamation' : 'fa-check'}"></i></span>
                 <div class="toast-texto">
-                    <strong><c:out value="${mensagem}"/></strong>
+                    <strong><c:out value="${not empty erro ? erro : mensagem}"/></strong>
                     <c:if test="${not empty detalheMensagem}">
                         <p><c:out value="${detalheMensagem}"/></p>
                     </c:if>
@@ -61,13 +62,44 @@
             <div class="painel-topo">
                 <h1>Propriedades cadastradas</h1>
 
-                <%-- FILTROS (futuro): o botão "Filtrar" do Figma entra aqui, antes do botão de novo registro --%>
+                <div class="painel-acoes">
+
+                    <c:set var="filtrando"
+                           value="${not empty param.name or not empty param.cnpj
+                                or not empty param.phone}"/>
+
+                    <details class="filtro ${filtrando ? 'filtro-ativo' : ''}" ${filtrando ? 'open' : ''}>
+                        <summary>Filtrar</summary>
+
+                        <form method="get" action="${ctx}/properties">
+                            <div class="campo">
+                                <label for="filtroNome">Nome da Propriedade</label>
+                                <input type="text" id="filtroNome" name="name" placeholder="Ex.: Fazenda Feliz"
+                                       value="<c:out value='${param.name}'/>">
+                            </div>
+                            <div class="campo">
+                                <label for="filtroCnpj">CNPJ</label>
+                                <input type="text" id="filtroCnpj" name="cnpj" placeholder="Ex.: 12345678901232"
+                                       value="<c:out value='${param.cnpj}'/>">
+                            </div>
+                            <div class="campo">
+                                <label for="filtroTelefone">Telefone</label>
+                                <input type="text" id="filtroTelefone" name="phone" placeholder="Ex.: 11999999999"
+                                       value="<c:out value='${param.phone}'/>">
+                            </div>
+                            <div class="filtro-acoes">
+                                <a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a>
+                                <button type="submit" class="btn-pilula">Aplicar filtro</button>
+                            </div>
+                        </form>
+                    </details>
 
                 <button type="button" class="btn btn-escuro"
                         data-abrir="modalPropriedade" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Propriedade" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Nova propriedade
                 </button>
+            </div>
             </div>
 
             <div class="busca">
@@ -89,11 +121,11 @@
                     <tbody>
 
                         <c:forEach var="property" items="${properties}">
-                            <tr class="linha">
+                            <tr class="linha" data-filter-name="<c:out value='${property.name}'/>" data-filter-cnpj="<c:out value='${property.cnpj}'/>" data-filter-phone="<c:out value='${property.phone}'/>">
                                 <td><c:out value="${property.name}"/></td>
                                 <td class="cnpj"><c:out value="${property.cnpj}"/></td>
                                 <td class="telefone"><c:out value="${property.phone}"/></td>
-                                <td><c:out value="${property.updatedAt}"/></td>
+                                <td><c:out value="${argos:formatDateTime(property.updatedAt)}"/></td>
                                 <td class="col-acoes">
                                     <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar propriedade"
                                             data-abrir="modalPropriedade" data-acao="editar" data-action="${urlAtualizar}"
@@ -101,7 +133,13 @@
                                             data-id-property="<c:out value='${property.idProperty}'/>"
                                             data-name="<c:out value='${property.name}'/>"
                                             data-cnpj="<c:out value='${property.cnpj}'/>"
-                                            data-phone="<c:out value='${property.phone}'/>">
+                                            data-phone="<c:out value='${property.phone}'/>"
+                                            data-street="<c:out value='${propertyAddresses[property.idProperty].street}'/>"
+                                            data-number="<c:out value='${propertyAddresses[property.idProperty].number}'/>"
+                                            data-city="<c:out value='${propertyAddresses[property.idProperty].city}'/>"
+                                            data-state="<c:out value='${propertyAddresses[property.idProperty].state}'/>"
+                                            data-zip-code="<c:out value='${propertyAddresses[property.idProperty].zipCode}'/>"
+                                            data-complement="<c:out value='${propertyAddresses[property.idProperty].complement}'/>">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir propriedade"
@@ -160,6 +198,12 @@
                             <input type="text" id="campoNome" name="name" placeholder="ex: Recanto do Vale"
                                    required maxlength="120" autocomplete="off">
                         </div>
+                        <div class="campo largura-total"><label for="campoRua">Rua</label><input type="text" id="campoRua" name="street" maxlength="150"></div>
+                        <div class="campo"><label for="campoNumero">Número</label><input type="number" id="campoNumero" name="number" min="0"></div>
+                        <div class="campo"><label for="campoCidade">Cidade</label><input type="text" id="campoCidade" name="city" maxlength="100"></div>
+                        <div class="campo"><label for="campoEstado">UF</label><input type="text" id="campoEstado" name="state" maxlength="2" pattern="[A-Za-z]{2}"></div>
+                        <div class="campo"><label for="campoCep">CEP</label><input type="text" id="campoCep" name="zipCode" maxlength="8" inputmode="numeric" pattern="\d{8}"></div>
+                        <div class="campo largura-total"><label for="campoComplemento">Complemento</label><input type="text" id="campoComplemento" name="complement"></div>
                     </div>
 
                     <div class="form-rodape">
