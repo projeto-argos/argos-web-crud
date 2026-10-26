@@ -1,3 +1,4 @@
+
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
@@ -27,7 +28,12 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
             stmt.setObject(1, lot.getIdHerd());
             stmt.setString(2, lot.getLotCode());
             stmt.setString(3, lot.getCategory());
-            stmt.setObject(4, lot.getHeadCount());
+
+            if (lot.getHeadCount() != null) {
+                stmt.setInt(4, lot.getHeadCount());
+            } else {
+                stmt.setNull(4, Types.INTEGER);
+            }
 
             if (lot.getOpeningDate() != null) {
                 stmt.setDate(5, Date.valueOf(lot.getOpeningDate()));
@@ -38,7 +44,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting lot: ", e);
+            throw new DataAccessException("Error inserting lot.", e);
         }
     }
 
@@ -47,7 +53,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     public Lot findById(UUID id) {
         String sql = """
                 SELECT * FROM LOT
-                WHERE id_lot = ? AND active = true
+                WHERE id_lot = ? AND active = TRUE
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -59,9 +65,8 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 if (rs.next()) {
                     return mapLot(rs);
                 }
+                return null;
             }
-
-            return null;
 
         } catch (SQLException e) {
             throw new DataAccessException(
@@ -74,7 +79,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     public List<Lot> findAll() {
         String sql = """
                 SELECT * FROM LOT
-                WHERE active = true
+                WHERE active = TRUE
                 ORDER BY lot_code
                 """;
 
@@ -88,37 +93,36 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 lots.add(mapLot(rs));
             }
 
-        } catch (SQLException e) {
-            throw new DataAccessException("Error listing lots: ", e);
-        }
+            return lots;
 
-        return lots;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error listing lots.", e);
+        }
     }
 
-    // FIND LOT BY CODE
-    @Override
-    public Lot findByLotCode(String lotCode) {
+    // FIND LOT BY CODE AND HERD
+    public Lot findByLotCodeAndHerd(String lotCode, UUID idHerd) {
         String sql = """
                 SELECT * FROM LOT
-                WHERE lot_code = ? AND active = true
+                WHERE lot_code = ? AND id_herd = ? AND active = TRUE
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, lotCode);
+            stmt.setObject(2, idHerd);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapLot(rs);
                 }
+                return null;
             }
-
-            return null;
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for lot by code: " + lotCode, e);
+                    "Error searching for lot by code and herd.", e);
         }
     }
 
@@ -127,7 +131,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     public List<Lot> findByHerd(UUID idHerd) {
         String sql = """
                 SELECT * FROM LOT
-                WHERE id_herd = ? AND active = true
+                WHERE id_herd = ? AND active = TRUE
                 ORDER BY lot_code
                 """;
 
@@ -144,12 +148,12 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 }
             }
 
+            return lots;
+
         } catch (SQLException e) {
             throw new DataAccessException(
                     "Error listing lots by herd: " + idHerd, e);
         }
-
-        return lots;
     }
 
     // FIND LOTS BY CATEGORY
@@ -157,7 +161,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     public List<Lot> findByCategory(String category) {
         String sql = """
                 SELECT * FROM LOT
-                WHERE category = ? AND active = true
+                WHERE category = ? AND active = TRUE
                 ORDER BY lot_code
                 """;
 
@@ -174,20 +178,27 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 }
             }
 
+            return lots;
+
         } catch (SQLException e) {
             throw new DataAccessException(
                     "Error listing lots by category: " + category, e);
         }
-
-        return lots;
     }
 
     // UPDATE
     @Override
     public void update(Lot lot) {
-        String sql = "UPDATE LOT SET id_herd = ?, lot_code = ?, " +
-                "category = ?, head_count = ?, open_date = ?, " +
-                "updated_at = now() WHERE id_lot = ? AND active = true";
+        String sql = """
+                UPDATE LOT SET
+                    id_herd = ?,
+                    lot_code = ?,
+                    category = ?,
+                    head_count = ?,
+                    open_date = ?,
+                    updated_at = now()
+                WHERE id_lot = ? AND active = TRUE
+                """;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -195,7 +206,12 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
             stmt.setObject(1, lot.getIdHerd());
             stmt.setString(2, lot.getLotCode());
             stmt.setString(3, lot.getCategory());
-            stmt.setObject(4, lot.getHeadCount());
+
+            if (lot.getHeadCount() != null) {
+                stmt.setInt(4, lot.getHeadCount());
+            } else {
+                stmt.setNull(4, Types.INTEGER);
+            }
 
             if (lot.getOpeningDate() != null) {
                 stmt.setDate(5, Date.valueOf(lot.getOpeningDate()));
@@ -223,8 +239,8 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     public void delete(UUID id) {
         String sql = """
                 UPDATE LOT
-                SET active = false, updated_at = now()
-                WHERE id_lot = ? AND active = true
+                SET active = FALSE, updated_at = now()
+                WHERE id_lot = ? AND active = TRUE
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -245,12 +261,11 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     }
 
     // SOFT DELETE ALL LOTS OF A HERD
-    @Override
     public void deleteByHerd(UUID idHerd) {
         String sql = """
                 UPDATE LOT
-                SET active = false, updated_at = now()
-                WHERE id_herd = ? AND active = true
+                SET active = FALSE, updated_at = now()
+                WHERE id_herd = ? AND active = TRUE
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -272,6 +287,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
 
         String lotCode = rs.getString("lot_code");
         String category = rs.getString("category");
+
         Integer headCount = rs.getObject("head_count", Integer.class);
 
         LocalDate openingDate = null;
@@ -282,10 +298,10 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
         }
 
         LocalDateTime updatedAt = null;
-        Timestamp tsUpdatedAt = rs.getTimestamp("updated_at");
+        Timestamp timestamp = rs.getTimestamp("updated_at");
 
-        if (tsUpdatedAt != null) {
-            updatedAt = tsUpdatedAt.toLocalDateTime();
+        if (timestamp != null) {
+            updatedAt = timestamp.toLocalDateTime();
         }
 
         boolean active = rs.getBoolean("active");
