@@ -19,6 +19,14 @@ public class Supplier {
     public Supplier() {
     }
 
+    public Supplier(UUID addressId, String fullName, String cnpj, String phone, String email) {
+        this.addressId = addressId;
+        this.fullName = fullName;
+        this.cnpj = cnpj;
+        this.phone = phone;
+        this.email = email;
+    }
+
     public Supplier(UUID idSupplier, UUID addressId, String fullName, String cnpj, String phone, String email, LocalDateTime updatedAt, boolean active) {
         this.idSupplier = idSupplier;
         this.addressId = addressId;
@@ -27,15 +35,6 @@ public class Supplier {
         this.phone = phone;
         this.email = email;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public Supplier(UUID addressId, String fullName, String cnpj, String phone, String email, boolean active) {
-        this.addressId = addressId;
-        this.fullName = fullName;
-        this.cnpj = cnpj;
-        this.phone = phone;
-        this.email = email;
         this.active = active;
     }
 

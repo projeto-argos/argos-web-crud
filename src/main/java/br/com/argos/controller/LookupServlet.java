@@ -1,9 +1,11 @@
 package br.com.argos.controller;
 
-import br.com.argos.dao.UserDAO;
-import br.com.argos.dao.PropertyDAO;
-import br.com.argos.dao.HerdDAO;
-import br.com.argos.dao.LotDAO;
+import br.com.argos.service.UserService;
+import br.com.argos.service.PropertyService;
+import br.com.argos.service.HerdService;
+// import br.com.argos.service.LotService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,142 +14,67 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "LookupServlet", value = "/lookup")
 public class LookupServlet extends HttpServlet {
 
     // ATRIBUTOS
-    private UserDAO userDAO = new UserDAO();
-    private PropertyDAO propertyDAO = new PropertyDAO();
-    private HerdDAO herdDAO = new HerdDAO();
-    private LotDAO lotDAO = new LotDAO();
+    private UserService userService;
+    private PropertyService propertyService;
+    private HerdService herdService;
+//    private LotService lotService;
+
+    private ObjectMapper objectMapper;
 
     // CICLO DE VIDA DO SERVLET
     @Override
-    public void init() {
-        dao = new LookupDAO();
+    public void init() throws ServletException {
+        userService = new UserService();
+        propertyService = new PropertyService();
+        herdService = new HerdService();
+//        lotService = new LotService();
+
+        objectMapper = new ObjectMapper();
     }
 
-    // PROCESSA BUSCA
+    // PROCESSA A BUSCA
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        response.setContentType("application/json;charset=UTF-8");
-        try {
-            // RECEBE DADOS DA BUSCA
-            String type =
-                    request.getParameter("type");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
 
-            String lookup =
-                    request.getParameter("lookup");
+        // RECEBE OS DADOS
+        String type =
+                request.getParameter("type");
 
-
-            // VERIFICA TEXTO DA BUSCA
-            if (lookup == null) {
-                lookup = "";
-            }
-
-            lookup = lookup.trim();
-
-            if (lookup.isEmpty()) {
-                response.getWriter().write("[]");
-                return;
-            }
+        String search =
+                request.getParameter("search");
 
 
-            // REALIZA BUSCA
-            List<Map<String, String>> results;
+        // EXECUTA A BUSCA DO TIPO SOLICITADO
 
-            if ("user".equals(type)) {
+        Object results = null;
+/*
+        if (type.equals("user")) {
+            results = userService.findUsers(search);
 
-                results = UserDAO.lookup(lookup);
+        } else if (type.equals("property")) {
+            results = propertyService.findProperties(search);
 
-            } else if ("property".equals(type)) {
+        } else if (type.equals("herd")) {
+            results = herdService.findHerds(search);
 
-                results = propertieDAO.lookup(lookup);
+        } else if (type.equals("lot")) {
+            results = lotService.findLots(search);
 
-            } else if ("herd".equals(type)) {
+        }*/
 
-                results = herdDAO.lookup(lookup);
-
-            } else if ("lot".equals(type)) {
-
-                results = lotDAO.lookup(lookup);
-
-            }
-
-            // DEVOLVE RESULTADOS EM JSON
-            response.getWriter().write(
-                    createJson(results)
-            );
-
-        } catch (RuntimeException e) {
-
-            // TRATA ERRO
-            response.setStatus(
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR
-            );
-
-            response.getWriter().write(
-                    "{\"error\":\"Erro ao realizar busca\"}"
-            );
-
-            getServletContext().log(
-                    "Erro ao realizar busca",
-                    e
-            );
-        }
-    }
-
-    // CONVERTE RESULTADOS PARA JSON
-    private String createJson(List<Map<String, String>> results) {
-
-        StringBuilder json = new StringBuilder("[");
-
-        boolean first = true;
-
-        for (Map<String, String> result : results) {
-
-            if (!first) {
-                json.append(',');
-            }
-
-            first = false;
-
-            json.append('{');
-
-            boolean firstField = true;
-
-            for (Map.Entry<String, String> content : result.entrySet()) {
-
-                if (!firstField) {
-                    json.append(',');
-                }
-
-                firstField = false;
-
-                json.append('"')
-                        .append(content.getKey())
-                        .append("\":");
-
-                if (content.getValue() == null) {
-
-                    json.append("null");
-
-                } else {
-
-                    json.append('"')
-                            .append(content.getValue())
-                            .append('"');
-                }
-            }
-            json.append('}');
-        }
-        return json.append(']').toString();
+        // CONVERTE OS RESULTADOS PARA JSON
+        String json = objectMapper.writeValueAsString(results);
+        response.getWriter().write(json);
     }
 }

@@ -1,4 +1,4 @@
-/*package br.com.argos.model;
+package br.com.argos.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -6,37 +6,39 @@ import java.util.UUID;
 public class Address {
 
     // ATRIBUTOS
-    private UUID idAddress; // ID DO ENDEREÇO
-    private Integer number; // NÚMERO DO ENDEREÇO
-    private String complement; // COMPLEMENTO DO ENDEREÇO
-    private String street; // RUA DO ENDEREÇO
-    private String city; // CIDADE DO ENDEREÇO
-    private String state; // ESTADO DO ENDEREÇO
-    private LocalDateTime updatedAt; // ATUALIZADO EM
-    private boolean active; // ATIVO
+    private UUID idAddress;
+    private Integer number;
+    private String complement;
+    private String street;
+    private String city;
+    private String state;
+    private String zipCode;
+    private LocalDateTime updatedAt;
+    private boolean active;
 
 
     // MÉTODOS CONSTRUTORES
     public Address() {
     }
 
-    public Address(UUID idAddress, Integer number, String complement, String street, String city, String state, LocalDateTime updatedAt, boolean active) {
+    public Address(Integer number, String complement, String street, String city, String state, String zipCode) {
+        this.number = number;
+        this.complement = complement;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+    }
+
+    public Address(UUID idAddress, Integer number, String complement, String street, String city, String state, String zipCode, LocalDateTime updatedAt, boolean active) {
         this.idAddress = idAddress;
         this.number = number;
         this.complement = complement;
         this.street = street;
         this.city = city;
         this.state = state;
+        this.zipCode = zipCode;
         this.updatedAt = updatedAt;
-        this.active = active;
-    }
-
-    public Address(Integer number, String complement, String street, String city, String state, boolean active) {
-        this.number = number;
-        this.complement = complement;
-        this.street = street;
-        this.city = city;
-        this.state = state;
         this.active = active;
     }
 
@@ -63,6 +65,10 @@ public class Address {
 
     public String getState() {
         return state;
+    }
+
+    public String getZipCode() {
+        return zipCode;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -98,6 +104,10 @@ public class Address {
         this.state = state;
     }
 
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -116,8 +126,9 @@ public class Address {
                 ", street='" + street + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
+                ", zipCode='" + zipCode + '\'' +
                 ", updatedAt=" + updatedAt +
                 ", active=" + active +
                 '}';
     }
-}*/
+}

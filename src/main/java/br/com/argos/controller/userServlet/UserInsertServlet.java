@@ -86,8 +86,7 @@ public class UserInsertServlet extends HttpServlet {
                     phone,
                     role,
                     password,
-                    birthDate,
-                    active
+                    birthDate
             );
 
             userService.create(newUser);
