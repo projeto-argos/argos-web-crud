@@ -65,7 +65,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 //    FIND ADMIN BY EMAIL
     @Override
     public Admin findByEmail(String email) {
-        String sql = "SELECT * FROM admin WHERE email = ?";
+        String sql = "SELECT * FROM admin WHERE email = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -145,7 +145,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
            int rowsAffected = stmt.executeUpdate();
 
            if (rowsAffected == 0) {
-               throw new DataAccessException("Admin not found " + admin);
+               throw new DataAccessException("Admin not found " + admin.getIdAdmin());
            }
 
         } catch (SQLException e) {
@@ -157,7 +157,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     //    UPDATE PASSWORD
     @Override
     public void updatePassword(UUID id, String password) {
-        String sql = "UPDATE admin SET password = ?, updated_at = now() WHERE id_admin = ?";
+        String sql = "UPDATE admin SET password = ?, updated_at = now() WHERE id_admin = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -167,7 +167,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("User not found " + id);
+                throw new DataAccessException("Admin not found " + id);
             }
 
         } catch (SQLException sqle) {

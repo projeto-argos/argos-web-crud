@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Murilo Paiva
+  Date: 17/09/2026
+  Time: 12:05
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
@@ -99,7 +106,7 @@
                                     </button>
                                     <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir propriedade"
                                             data-abrir="modalExcluir"
-                                            data-id-property="<c:out value='${property.idProperty}'/>"
+                                            data-id="<c:out value='${property.idProperty}'/>"
                                             data-name="<c:out value='${property.name}'/>">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
@@ -171,7 +178,7 @@
                 </div>
 
                 <form method="post" action="${urlExcluir}">
-                    <input type="hidden" name="idProperty" value="">
+                    <input type="hidden" name="id" value="">
 
                     <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="name"></strong>?</p>
 

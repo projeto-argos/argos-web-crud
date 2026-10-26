@@ -61,11 +61,56 @@
         <div class="painel-topo">
             <h1>Usuários cadastrados</h1>
 
-            <button type="button" class="btn btn-escuro"
-                    data-abrir="modalUser" data-acao="criar" data-action="${urlInserir}"
-                    data-titulo="Cadastrar Usuário" data-botao="Cadastrar">
-                <i class="fa-solid fa-plus"></i> Novo usuário
-            </button>
+            <div class="painel-acoes">
+
+                <c:set var="filtrando"
+                       value="${not empty param.fullName or not empty param.cpf
+                     or not empty param.email or not empty param.phone
+                     or not empty param.role}"/>
+
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+
+                    <form method="get" action="${ctx}/users">
+                        <div class="campo">
+                            <label for="filtroNome">Nome completo</label>
+                            <input type="text" id="filtroNome" name="fullName" placeholder="Ex.: João Silva"
+                                   value="<c:out value='${param.fullName}'/>">
+                        </div>
+                        <div class="campo">
+                            <label for="filtroCpf">CPF</label>
+                            <input type="text" id="filtroCpf" name="cpf" placeholder="Ex.: 12345678901"
+                                   value="<c:out value='${param.cpf}'/>">
+                        </div>
+                        <div class="campo">
+                            <label for="filtroEmail">E-mail</label>
+                            <input type="text" id="filtroEmail" name="email" placeholder="Ex.: joao@email.com"
+                                   value="<c:out value='${param.email}'/>">
+                        </div>
+                        <div class="campo">
+                            <label for="filtroTelefone">Telefone</label>
+                            <input type="text" id="filtroTelefone" name="phone" placeholder="Ex.: 11999999999"
+                                   value="<c:out value='${param.phone}'/>">
+                        </div>
+                        <div class="campo">
+                            <label for="filtroCargo">Cargo</label>
+                            <input type="text" id="filtroCargo" name="role" placeholder="Ex.: Administrador"
+                                   value="<c:out value='${param.role}'/>">
+                        </div>
+
+                        <div class="filtro-acoes">
+                            <a href="${ctx}/users" class="btn-pilula btn-neutro">Limpar</a>
+                            <button type="submit" class="btn-pilula">Aplicar filtro</button>
+                        </div>
+                    </form>
+                </details>
+
+                <button type="button" class="btn btn-escuro"
+                        data-abrir="modalUser" data-acao="criar" data-action="${urlInserir}"
+                        data-titulo="Cadastrar Usuário" data-botao="Cadastrar">
+                    <i class="fa-solid fa-plus"></i> Novo usuário
+                </button>
+            </div>
         </div>
 
         <div class="busca">
@@ -107,7 +152,7 @@
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir usuário"
                                     data-abrir="modalExcluir"
-                                    data-id-user="<c:out value='${user.idUser}'/>"
+                                    data-id="<c:out value='${user.idUser}'/>"
                                     data-full-name="<c:out value='${user.fullName}'/>">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -198,7 +243,7 @@
             </div>
 
             <form method="post" action="${urlExcluir}">
-                <input type="hidden" name="idUser" value="">
+                <input type="hidden" name="id" value="">
 
                 <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="fullName"></strong>?</p>
 
