@@ -24,7 +24,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
         String sql = """
                 INSERT INTO property
                     (name, cnpj, phone, id_address, updated_at)
-                VALUES (?, ?, ?, ?, now())
+                VALUES (?, ?, ?, ?, now()) RETURNING id_property
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
