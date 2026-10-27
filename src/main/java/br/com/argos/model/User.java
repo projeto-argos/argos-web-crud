@@ -32,6 +32,16 @@ public class User {
         this.birthDate = birthDate;
     }
 
+    public User(UUID idUser, String fullName, String cpf, String email, String phone, String role, LocalDate birthDate) {
+        this.idUser = idUser;
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+        this.birthDate = birthDate;
+    }
+
     public User(UUID idUser, String fullName, String cpf, String email, String phone, String role, String password, LocalDate birthDate, LocalDateTime updatedAt, boolean active) {
         this.idUser = idUser;
         this.fullName = fullName;
