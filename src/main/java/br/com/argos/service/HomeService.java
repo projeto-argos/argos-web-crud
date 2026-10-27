@@ -1,14 +1,7 @@
 package br.com.argos.service;
 
 import br.com.argos.exceptions.ValidationException;
-import br.com.argos.model.Admin;
-import br.com.argos.model.Animal;
-import br.com.argos.model.Herd;
-import br.com.argos.model.HomeSummary;
-import br.com.argos.model.Property;
-import br.com.argos.model.RecentRecord;
-import br.com.argos.model.Supplier;
-import br.com.argos.model.User;
+import br.com.argos.model.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,22 +18,22 @@ public class HomeService {
     private final UserService userService;
     private final PropertyService propertyService;
     private final AnimalService animalService;
-    private final SupplierService supplierService;
+    private final LotService lotService;
     private final HerdService herdService;
     private final AdminService adminService;
 
     public HomeService() {
         this(new UserService(), new PropertyService(), new AnimalService(),
-                new SupplierService(), new HerdService(), new AdminService());
+                new LotService(), new HerdService(), new AdminService());
     }
 
     public HomeService(UserService userService, PropertyService propertyService,
-                       AnimalService animalService, SupplierService supplierService,
+                       AnimalService animalService, LotService lotService,
                        HerdService herdService, AdminService adminService) {
         this.userService = Objects.requireNonNull(userService, "userService cannot be null");
         this.propertyService = Objects.requireNonNull(propertyService, "propertyService cannot be null");
         this.animalService = Objects.requireNonNull(animalService, "animalService cannot be null");
-        this.supplierService = Objects.requireNonNull(supplierService, "supplierService cannot be null");
+        this.lotService = Objects.requireNonNull(lotService, "lotService cannot be null");
         this.herdService = Objects.requireNonNull(herdService, "herdService cannot be null");
         this.adminService = Objects.requireNonNull(adminService, "adminService cannot be null");
     }
@@ -57,7 +50,7 @@ public class HomeService {
         List<User> users = userService.findAll();
         List<Property> properties = propertyService.findAll();
         List<Animal> animals = animalService.findAll();
-        List<Supplier> suppliers = supplierService.findAll();
+        List<Lot> lots = lotService.findAll();
         List<Herd> herds = herdService.findAll();
         List<Admin> admins = adminService.findAll();
 
@@ -71,8 +64,8 @@ public class HomeService {
         for (Animal a : animals) {
             all.add(new RecentRecord(a.getEarTag(), "Animal", a.getUpdatedAt()));
         }
-        for (Supplier s : suppliers) {
-            all.add(new RecentRecord(s.getFullName(), "Fornecedor", s.getUpdatedAt()));
+        for (Lot l : lots) {
+            all.add(new RecentRecord(l.getCategory(), "Lotes", l.getUpdatedAt()));
         }
         for (Herd h : herds) {
             all.add(new RecentRecord(h.getName(), "Rebanho", h.getUpdatedAt()));
@@ -87,6 +80,6 @@ public class HomeService {
         List<RecentRecord> recent = all.subList(0, Math.min(recentLimit, all.size()));
 
         return new HomeSummary(users.size(), properties.size(), animals.size(),
-                suppliers.size(), herds.size(), admins.size(), recent);
+                lots.size(), herds.size(), admins.size(), recent);
     }
 }
