@@ -27,6 +27,14 @@ public class Admin {
         this.password = password;
     }
 
+    public Admin(UUID idAdmin, String fullName, String cpf, String email, String phone) {
+        this.idAdmin = idAdmin;
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.phone = phone;
+    }
+
     public Admin(UUID idAdmin, String fullName, String cpf, String email, String phone, String password, LocalDateTime updatedAt, boolean active) {
         this.idAdmin = idAdmin;
         this.fullName = fullName;
