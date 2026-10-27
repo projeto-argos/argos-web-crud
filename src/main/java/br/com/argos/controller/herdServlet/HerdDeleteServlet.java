@@ -34,7 +34,6 @@ public class HerdDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 // EXCLUI REBANHO
                 UUID id = UUID.fromString(idParam);
                 herdService.delete(id);
@@ -44,7 +43,6 @@ public class HerdDeleteServlet extends HttpServlet {
                 throw new ServletException("Erro ao excluir rebanho", e);
             }
         }
-
         // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/herds");
     }
