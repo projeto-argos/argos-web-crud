@@ -93,8 +93,8 @@
         const estavaEscondida = campoSenha.type === "password";
 
         campoSenha.type = estavaEscondida ? "text" : "password";
-        olhoAberto.toggleAttribute("hidden", !estavaEscondida);   // senha visível -> olho aberto
-        olhoFechado.toggleAttribute("hidden", estavaEscondida);   // senha escondida -> olho riscado
+        olhoAberto.toggleAttribute("hidden", !estavaEscondida);   // senha visível
+        olhoFechado.toggleAttribute("hidden", estavaEscondida);   // senha escondida
         botaoOlho.setAttribute("aria-label", estavaEscondida ? "Esconder senha" : "Mostrar senha");
     });
 </script>
