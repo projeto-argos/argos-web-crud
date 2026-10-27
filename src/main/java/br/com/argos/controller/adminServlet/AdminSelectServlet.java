@@ -22,20 +22,16 @@ public class AdminSelectServlet extends HttpServlet {
         adminService = new AdminService();
     }
 
-    // REQUISIÇÃO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException{
-
         try {
             // LISTAR
             List<Admin> admins = adminService.findAll();
-
             request.setAttribute("admins", admins);
 
-            // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/admins/admins.jsp"
             ).forward(request, response);
