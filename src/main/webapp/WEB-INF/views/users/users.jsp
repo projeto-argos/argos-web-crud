@@ -42,21 +42,19 @@
 </jsp:include>
 
 <main class="conteudo">
-
-    <c:if test="${not empty mensagem}">
-        <div class="toast ${tipoMensagem == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
-            <span class="toast-icone"><i class="fa-solid ${tipoMensagem == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
-            <div class="toast-texto">
-                <strong><c:out value="${mensagem}"/></strong>
-                <c:if test="${not empty detalheMensagem}">
-                    <p><c:out value="${detalheMensagem}"/></p>
-                </c:if>
+        <c:set var="textoMensagem" value="${not empty mensagem ? mensagem : erro}"/>
+        <c:set var="tipoAviso" value="${not empty erro or tipoMensagem == 'erro' or tipoMensagem == 'error' ? 'erro' : tipoMensagem}"/>
+        <c:if test="${not empty textoMensagem}">
+            <div class="toast ${tipoAviso == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${tipoAviso == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+                <div class="toast-texto"><strong><c:out value="${textoMensagem}"/></strong>
+                    <c:if test="${not empty detalheMensagem}"><p><c:out value="${detalheMensagem}"/></p></c:if>
+                </div>
+                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-    </c:if>
+        </c:if>
 
-    <section class="painel">
+        <section class="painel">
 
         <div class="painel-topo">
             <h1>Usuários cadastrados</h1>

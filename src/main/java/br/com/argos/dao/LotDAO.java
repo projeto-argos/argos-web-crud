@@ -4,6 +4,7 @@ package br.com.argos.dao;
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
 import br.com.argos.interfaces.GenericDAO;
+import br.com.argos.interfaces.ILotDAO;
 import br.com.argos.model.Lot;
 
 import java.sql.*;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class LotDAO implements GenericDAO<Lot, UUID> {
+public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
     // CREATE
     @Override
@@ -25,7 +26,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, lot.getIdHerd());
+            stmt.setObject(1, lot.getHerdId());
             stmt.setString(2, lot.getLotCode());
             stmt.setString(3, lot.getCategory());
 
@@ -35,8 +36,8 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 stmt.setNull(4, Types.INTEGER);
             }
 
-            if (lot.getOpeningDate() != null) {
-                stmt.setDate(5, Date.valueOf(lot.getOpeningDate()));
+            if (lot.getOpenDate() != null) {
+                stmt.setDate(5, Date.valueOf(lot.getOpenDate()));
             } else {
                 stmt.setNull(5, Types.DATE);
             }
@@ -101,6 +102,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     }
 
     // FIND LOT BY CODE AND HERD
+    @Override
     public Lot findByLotCodeAndHerd(String lotCode, UUID idHerd) {
         String sql = """
                 SELECT * FROM LOT
@@ -203,7 +205,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setObject(1, lot.getIdHerd());
+            stmt.setObject(1, lot.getHerdId());
             stmt.setString(2, lot.getLotCode());
             stmt.setString(3, lot.getCategory());
 
@@ -213,8 +215,8 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
                 stmt.setNull(4, Types.INTEGER);
             }
 
-            if (lot.getOpeningDate() != null) {
-                stmt.setDate(5, Date.valueOf(lot.getOpeningDate()));
+            if (lot.getOpenDate() != null) {
+                stmt.setDate(5, Date.valueOf(lot.getOpenDate()));
             } else {
                 stmt.setNull(5, Types.DATE);
             }
@@ -261,6 +263,7 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
     }
 
     // SOFT DELETE ALL LOTS OF A HERD
+    @Override
     public void deleteByHerd(UUID idHerd) {
         String sql = """
                 UPDATE LOT
@@ -306,6 +309,6 @@ public class LotDAO implements GenericDAO<Lot, UUID> {
 
         boolean active = rs.getBoolean("active");
 
-        return new Lot(id, idHerd, lotCode, category, headCount, openingDate, updatedAt, active);
+        return new Lot(id, idHerd, headCount, category, lotCode, openingDate, updatedAt, active);
     }
 }

@@ -4,6 +4,7 @@ import br.com.argos.dao.AnimalDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Animal;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
 
 import java.math.BigDecimal;
@@ -26,8 +27,9 @@ public class AnimalService {
     }
 
     public void create(Animal animal){
-        validateAnimal(animal, true);
-        animalDAO.insert(animal);
+        Animal normalized = normalizeAnimal(animal);
+        validateAnimal(normalized, true);
+        animalDAO.insert(normalized);
     }
 
     public Animal findById(UUID id){
@@ -36,6 +38,20 @@ public class AnimalService {
         }
         return animalDAO.findById(id);
     }
+
+    public List<Animal> filter(String weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, Boolean clearedForSlaughter) {
+        return findAll().stream()
+                .filter(animal -> FilterUtil.contains(animal.getWeight() != null ? animal.getWeight().toPlainString() : null, weight))
+                .filter(animal -> FilterUtil.contains(animal.getEarTag(), earTag))
+                .filter(animal -> FilterUtil.contains(animal.getNotes(), notes))
+                .filter(animal -> FilterUtil.contains(animal.getExceptionReason(), exceptionReason))
+                .filter(animal -> exceptionStartDate == null || Objects.equals(animal.getExceptionStartDate(), exceptionStartDate))
+                .filter(animal -> exceptionEndDate == null || Objects.equals(animal.getExceptionEndDate(), exceptionEndDate))
+                .filter(animal -> birthDate == null || Objects.equals(animal.getBirthDate(), birthDate))
+                .filter(animal -> clearedForSlaughter == null || animal.isClearedForSlaughter() == clearedForSlaughter)
+                .toList();
+    }
+
 
     public List<Animal> findAll(){
         return animalDAO.findAll();
@@ -62,8 +78,9 @@ public class AnimalService {
         if (animal.getIdAnimal() == null){
             throw new RequiredFieldException("id");
         }
-        validateAnimal(animal, false);
-        animalDAO.update(animal);
+        Animal normalized = normalizeAnimal(animal);
+        validateAnimal(normalized, false);
+        animalDAO.update(normalized);
     }
 
     public void delete(UUID id){
@@ -100,8 +117,8 @@ public class AnimalService {
         BigDecimal minLimit = BigDecimal.ZERO;
         BigDecimal maxLimit = new BigDecimal("99999.99");
 
-        if (animal.getWeight().compareTo(minLimit) < 0 || animal.getWeight().compareTo(maxLimit) > 0) {
-            throw new ValidationException("Weight must be between 0 and 99999.99");
+        if (animal.getWeight().compareTo(minLimit) <= 0 || animal.getWeight().compareTo(maxLimit) > 0) {
+            throw new ValidationException("Weight must be greater than 0 and at most 99999.99");
         }
 
         if (animal.getBirthDate() != null && animal.getBirthDate().isAfter(LocalDate.now())) {
@@ -129,7 +146,7 @@ public class AnimalService {
             throw new ValidationException("Batch ID cannot be null");
         }
 
-        Animal existing = animalDAO.findByEarTag(animal.getEarTag().trim());
+        Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getBatchId());
         if (existing != null){
             boolean sameAnimal = !newAnimal && animal.getIdAnimal().equals(existing.getIdAnimal());
             if (!sameAnimal){
@@ -137,6 +154,17 @@ public class AnimalService {
             }
         }
 
+    }
+
+    private Animal normalizeAnimal(Animal animal) {
+        if (animal == null) {
+            throw new ValidationException("Animal cannot be null");
+        }
+        return new Animal(animal.getIdAnimal(), animal.getBatchId(), animal.getOriginBatchId(),
+                animal.getWeight(), Normalizer.text(animal.getEarTag()), Normalizer.text(animal.getNotes()),
+                Normalizer.text(animal.getExceptionReason()), animal.getExceptionStartDate(),
+                animal.getExceptionEndDate(), animal.getBirthDate(), animal.getUpdatedAt(),
+                animal.isActive(), animal.isClearedForSlaughter());
     }
 
 }

@@ -2,6 +2,7 @@ package br.com.argos.service;
 
 import br.com.argos.dao.UserDAO;
 import br.com.argos.model.User;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
 import br.com.argos.util.Validador;
 import br.com.argos.exceptions.RequiredFieldException;
@@ -48,6 +49,16 @@ public class UserService {
             throw new RequiredFieldException("id");
         }
         return userDAO.findById(id);
+    }
+
+    public List<User> filter(String fullName, String cpf, String email, String phone, String role) {
+        return findAll().stream()
+                .filter(user -> FilterUtil.contains(user.getFullName(), fullName))
+                .filter(user -> FilterUtil.contains(user.getCpf(), FilterUtil.digits(cpf)))
+                .filter(user -> FilterUtil.contains(user.getEmail(), email))
+                .filter(user -> FilterUtil.contains(user.getPhone(), FilterUtil.digits(phone)))
+                .filter(user -> FilterUtil.contains(user.getRole(), role))
+                .toList();
     }
 
     public List<User> findAll() {
