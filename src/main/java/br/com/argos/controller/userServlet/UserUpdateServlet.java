@@ -14,7 +14,7 @@ import java.util.UUID;
 @WebServlet(name = "UserUpdateServlet", value = "/users/edit")
 public class UserUpdateServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private UserService userService;
 
     // CICLO DE VIDA DO SERVLET
@@ -34,7 +34,6 @@ public class UserUpdateServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 UUID id = UUID.fromString(idParam);
                 User user = userService.findById(id);
 
@@ -42,14 +41,13 @@ public class UserUpdateServlet extends HttpServlet {
                     request.setAttribute("user", user);
                     request.getRequestDispatcher(
                             "/WEB-INF/views/users/users.jsp"
-                            ).forward(request, response);
+                    ).forward(request, response);
                     return;
                 }
             } catch (Exception e) {
                 throw new ServletException("Erro ao buscar usuário para edição", e);
             }
         }
-
         response.sendRedirect(request.getContextPath() + "/users");
     }
 
@@ -85,34 +83,21 @@ public class UserUpdateServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
+            // SENHA NOVA PREENCHIDA
+            if (password != null &&
+                    !password.isBlank()) {
+                userService.changePassword(idUser, password);
+            }
+
             String birthDateString =
                     request.getParameter("birthDate");
 
             LocalDate birthDate = null;
 
-            if (
-                    birthDateString != null &&
-                            !birthDateString.isBlank()
-            ) {
+            if (birthDateString != null &&
+                            !birthDateString.isBlank()) {
                 birthDate =
                         LocalDate.parse(birthDateString);
-            }
-
-            boolean active = request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
-
-            // TRATA SENHA VAZIA (MANTÉM A ATUAL)
-            User existingUser = userService.findById(idUser);
-
-            String finalPassword = null;
-
-            if (
-                    password == null ||
-                            password.isBlank()
-            ) {
-                finalPassword = existingUser.getPassword();
-            } else {
-                finalPassword = password;
             }
 
             // ATUALIZA USUÁRIO
@@ -123,15 +108,14 @@ public class UserUpdateServlet extends HttpServlet {
                     email,
                     phone,
                     role,
-                    finalPassword,
-                    birthDate,
-                    null,
-                    active
+                    birthDate
             );
+
             userService.update(userToUpdate);
 
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/users");
+            response.sendRedirect(
+                    request.getContextPath() + "/users");
 
         } catch (Exception e) {
             // TRATA ERRO

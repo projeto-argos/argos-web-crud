@@ -34,7 +34,6 @@ public class AdminDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 // EXCLUI ADMINISTRADOR
                 UUID id = UUID.fromString(idParam);
                 adminService.delete(id);
@@ -44,7 +43,6 @@ public class AdminDeleteServlet extends HttpServlet {
                 throw new ServletException("Erro ao excluir administrador", e);
             }
         }
-
         // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/admins");
     }

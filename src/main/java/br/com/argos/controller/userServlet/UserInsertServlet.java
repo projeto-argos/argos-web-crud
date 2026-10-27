@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @WebServlet(name = "UserInsertServlet", value = "/users/register")
 public class UserInsertServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private UserService userService;
 
     // CICLO DE VIDA DO SERVLET
@@ -68,21 +68,16 @@ public class UserInsertServlet extends HttpServlet {
 
             LocalDate birthDate = null;
 
-            if (
-                    birthDateString != null &&
-                            !birthDateString.isBlank()
-            ) {
+            if (birthDateString != null &&
+                            !birthDateString.isBlank()) {
                 birthDate = LocalDate.parse(birthDateString);
             }
-
-            boolean active =
-                    request.getParameter("active") != null &&
-                            request.getParameter("active").equals("true");
 
             // CADASTRA USUÁRIO
             User newUser = new User(
                     fullName,
-                    cpf, email,
+                    cpf,
+                    email,
                     phone,
                     role,
                     password,

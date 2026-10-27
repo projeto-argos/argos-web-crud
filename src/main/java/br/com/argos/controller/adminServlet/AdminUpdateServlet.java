@@ -13,7 +13,7 @@ import java.util.UUID;
 @WebServlet(name = "AdminUpdateServlet", value = "/admins/edit")
 public class AdminUpdateServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private AdminService adminService;
 
     // CICLO DE VIDA DO SERVLET
@@ -33,7 +33,6 @@ public class AdminUpdateServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 UUID id = UUID.fromString(idParam);
                 Admin admin = adminService.findById(id);
 
@@ -48,7 +47,6 @@ public class AdminUpdateServlet extends HttpServlet {
                 throw new ServletException("Erro ao buscar administrador para edição", e);
             }
         }
-
         response.sendRedirect(request.getContextPath() + "/admins");
     }
 
@@ -81,20 +79,10 @@ public class AdminUpdateServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            boolean active = request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
-
-            // TRATA SENHA VAZIA (MANTÉM A ATUAL)
-            Admin existingAdmin = adminService.findById(idAdmin);
-
-            String finalPassword = null;
-            if (
-                    password == null ||
-                            password.isBlank()
-            ) {
-                finalPassword = existingAdmin.getPassword();
-            } else {
-                finalPassword = password;
+            // SENHA NOVA PREENCHIDA
+            if (password != null &&
+                    !password.isBlank()) {
+                adminService.changePassword(idAdmin, password);
             }
 
             // ATUALIZA ADMINISTRADOR
@@ -103,20 +91,14 @@ public class AdminUpdateServlet extends HttpServlet {
                     fullName,
                     cpf,
                     email,
-                    phone,
-                    finalPassword,
-                    null,
-                    active
+                    phone
             );
+
             adminService.update(adminToUpdate);
 
-            // SENHA NOVA PREENCHIDA
-            if (password != null && !password.isBlank()) {
-                adminService.changePassword(idAdmin, password);
-            }
-
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/admins");
+            response.sendRedirect(
+                    request.getContextPath() + "/admins");
 
         } catch (Exception e) {
             // TRATA ERRO

@@ -29,6 +29,15 @@ public class Lot {
         this.openDate = openDate;
     }
 
+    public Lot(UUID idLot, UUID herdId, Integer headCount, String category, String lotCode, LocalDate openDate) {
+        this.idLot = idLot;
+        this.herdId = herdId;
+        HeadCount = headCount;
+        this.category = category;
+        this.lotCode = lotCode;
+        this.openDate = openDate;
+    }
+
     public Lot(UUID idLot, UUID herdId, Integer headCount, String category, String lotCode, LocalDate openDate, LocalDateTime updatedAt, boolean active) {
         this.idLot = idLot;
         this.herdId = herdId;

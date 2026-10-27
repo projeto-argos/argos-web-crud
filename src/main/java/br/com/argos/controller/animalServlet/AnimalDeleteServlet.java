@@ -34,7 +34,6 @@ public class AnimalDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 // EXCLUI ANIMAL
                 UUID id = UUID.fromString(idParam);
                 animalService.delete(id);
@@ -44,7 +43,6 @@ public class AnimalDeleteServlet extends HttpServlet {
                 throw new ServletException("Erro ao excluir animal", e);
             }
         }
-
         // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/animals");
     }

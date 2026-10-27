@@ -33,7 +33,6 @@ public class HerdUpdateServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 UUID id = UUID.fromString(idParam);
                 Herd herd = herdService.findById(id);
 
@@ -48,7 +47,6 @@ public class HerdUpdateServlet extends HttpServlet {
                 throw new ServletException("Erro ao buscar rebanho para edição", e);
             }
         }
-
         response.sendRedirect(request.getContextPath() + "/herds");
     }
 
@@ -80,10 +78,8 @@ public class HerdUpdateServlet extends HttpServlet {
 
             Integer headCount = null;
 
-            if (
-                    headCountParam != null &&
-                            !headCountParam.isBlank()
-            ) {
+            if (headCountParam != null &&
+                            !headCountParam.isBlank()) {
                 headCount =
                         Integer.valueOf(headCountParam);
             }
@@ -93,16 +89,11 @@ public class HerdUpdateServlet extends HttpServlet {
 
             UUID propertyId = null;
 
-            if (
-                    propertyIdParam != null &&
-                            !propertyIdParam.isBlank()
-            ) {
+            if (propertyIdParam != null &&
+                            !propertyIdParam.isBlank()) {
                 propertyId =
                         UUID.fromString(propertyIdParam);
             }
-
-            boolean active = request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
 
             // ATUALIZA REBANHO
             Herd herdToUpdate = new Herd(
@@ -111,15 +102,14 @@ public class HerdUpdateServlet extends HttpServlet {
                     headCount,
                     purpose,
                     name,
-                    breed,
-                    null,
-                    active
+                    breed
             );
 
             herdService.update(herdToUpdate);
 
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/herds");
+            response.sendRedirect(
+                    request.getContextPath() + "/herds");
 
         } catch (Exception e) {
             // TRATA ERRO

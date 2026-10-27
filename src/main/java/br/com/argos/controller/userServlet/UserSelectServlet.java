@@ -22,20 +22,16 @@ public class UserSelectServlet extends HttpServlet {
         userService = new UserService();
     }
 
-    // REQUISIÇÃO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException{
-
         try {
             // LISTAR
             List<User> users = userService.findAll();
-
             request.setAttribute("users", users);
 
-            // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/users/users.jsp"
             ).forward(request, response);

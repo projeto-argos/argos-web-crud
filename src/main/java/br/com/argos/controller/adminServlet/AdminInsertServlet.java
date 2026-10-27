@@ -12,7 +12,7 @@ import java.io.IOException;
 @WebServlet(name = "AdminInsertServlet", value = "/admins/register")
 public class AdminInsertServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private AdminService adminService;
 
     // CICLO DE VIDA DO SERVLET
@@ -58,18 +58,13 @@ public class AdminInsertServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            boolean active =
-                    request.getParameter("active") != null &&
-                            request.getParameter("active").equals("true");
-
             // CADASTRA ADMINISTRADOR
             Admin newAdmin = new Admin(
                     fullName,
                     cpf,
                     email,
                     phone,
-                    password,
-                    active
+                    password
             );
 
             adminService.create(newAdmin);

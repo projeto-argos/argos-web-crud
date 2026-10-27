@@ -35,7 +35,6 @@ public class AnimalUpdateServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 UUID id = UUID.fromString(idParam);
                 Animal animal = animalService.findById(id);
 
@@ -50,7 +49,6 @@ public class AnimalUpdateServlet extends HttpServlet {
                 throw new ServletException("Erro ao buscar animal para edição", e);
             }
         }
-
         response.sendRedirect(request.getContextPath() + "/animals");
     }
 
@@ -76,10 +74,8 @@ public class AnimalUpdateServlet extends HttpServlet {
 
             BigDecimal weight = null;
 
-            if (
-                    weightStr != null &&
-                            !weightStr.isBlank()
-            ) {
+            if (weightStr != null &&
+                            !weightStr.isBlank()) {
                 weight = new BigDecimal(weightStr);
             }
 
@@ -88,13 +84,10 @@ public class AnimalUpdateServlet extends HttpServlet {
 
             LocalDate birthDate = null;
 
-            if (
-                    birthDateStr != null &&
-                            !birthDateStr.isBlank()
-            ) {
+            if (birthDateStr != null &&
+                            !birthDateStr.isBlank()) {
                 birthDate = LocalDate.parse(birthDateStr);
             }
-
 
             String exceptionReason =
                     request.getParameter("exceptionReason");
@@ -104,10 +97,8 @@ public class AnimalUpdateServlet extends HttpServlet {
 
             LocalDate exceptionStartDate = null;
 
-            if (
-                    exceptionStartDateStr != null &&
-                            !exceptionStartDateStr.isBlank()
-            ) {
+            if (exceptionStartDateStr != null &&
+                            !exceptionStartDateStr.isBlank()) {
                 exceptionStartDate = LocalDate.parse(exceptionStartDateStr);
             }
 
@@ -116,55 +107,45 @@ public class AnimalUpdateServlet extends HttpServlet {
 
             LocalDate exceptionEndDate = null;
 
-            if (
-                    exceptionEndDateStr != null &&
-                            !exceptionEndDateStr.isBlank()
-            ) {
+            if (exceptionEndDateStr != null &&
+                            !exceptionEndDateStr.isBlank()) {
                 exceptionEndDate = LocalDate.parse(exceptionEndDateStr);
             }
 
             String clearedForSlaughterParam =
                     request.getParameter("clearedForSlaughter");
 
-            boolean clearedForSlaughter = request.getParameter("clearedForSlaughter") != null &&
-                    request.getParameter("clearedForSlaughter").equals("true");
-
+            boolean clearedForSlaughter = clearedForSlaughterParam != null &&
+                    clearedForSlaughterParam.equals("true");
 
             String notes =
                     request.getParameter("notes");
 
-            String batchIdStr =
-                    request.getParameter("batchId");
+            String lotIdString =
+                    request.getParameter("lotId");
 
-            UUID batchId = null;
+            UUID lotId = null;
 
-            if (
-                    batchIdStr != null &&
-                            !batchIdStr.isBlank()
-            ) {
-                batchId = UUID.fromString(batchIdStr);
+            if (lotIdString != null &&
+                            !lotIdString.isBlank()) {
+                lotId = UUID.fromString(lotIdString);
             }
 
-            String originBatchIdStr =
-                    request.getParameter("originBatchId");
+            String originLotIdString =
+                    request.getParameter("originLotId");
 
-            UUID originBatchId = null;
+            UUID originLotId = null;
 
-            if (
-                    originBatchIdStr != null &&
-                            !originBatchIdStr.isBlank()
-            ) {
-                originBatchId = UUID.fromString(originBatchIdStr);
+            if (originLotIdString != null &&
+                            !originLotIdString.isBlank()) {
+                originLotId = UUID.fromString(originLotIdString);
             }
-
-            boolean active = request.getParameter("active") != null &&
-                    request.getParameter("active").equals("true");
 
             // ATUALIZA ANIMAL
             Animal animalToUpdate = new Animal(
                     idAnimal,
-                    batchId,
-                    originBatchId,
+                    lotId,
+                    originLotId,
                     weight,
                     earTag,
                     notes,
@@ -172,8 +153,6 @@ public class AnimalUpdateServlet extends HttpServlet {
                     exceptionStartDate,
                     exceptionEndDate,
                     birthDate,
-                    null,
-                    active,
                     clearedForSlaughter
             );
 

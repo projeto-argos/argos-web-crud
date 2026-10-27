@@ -4,13 +4,11 @@ import br.com.argos.model.Address;
 import br.com.argos.model.Property;
 import br.com.argos.service.AddressService;
 import br.com.argos.service.PropertyService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +34,12 @@ public class PropertyInsertServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
         request.getRequestDispatcher(
                 "/WEB-INF/views/properties/properties.jsp"
         ).forward(request, response);
     }
 
-    // PROCESSA FORMULÁRIO DE CADASTRO
+    // PROCESSA FORMULÁRIO
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -52,9 +49,7 @@ public class PropertyInsertServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         try {
-
             // RECEBE DADOS DA PROPRIEDADE
-
             String name =
                     request.getParameter("name");
 
@@ -65,8 +60,7 @@ public class PropertyInsertServlet extends HttpServlet {
                     request.getParameter("cnpj");
 
 
-            // RECEBE IDS DOS USUÁRIOS SELECIONADOS
-
+            // IDS DOS USUÁRIOS
             String[] userIdsString =
                     request.getParameterValues("userIds");
 
@@ -140,13 +134,12 @@ public class PropertyInsertServlet extends HttpServlet {
             propertyService.create(newProperty);
 
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/properties");
+            response.sendRedirect(
+                    request.getContextPath() + "/properties");
 
         } catch (Exception e) {
-
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-
             request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         }
     }
