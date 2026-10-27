@@ -54,20 +54,29 @@
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </c:if>
-                </div>
-                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        </c:if>
 
         <section class="painel">
 
             <div class="painel-topo">
                 <h1>Rebanhos cadastrados</h1>
-<button type="button" class="btn btn-escuro"
+<div class="painel-acoes">
+                <c:set var="filtrando" value="${not empty param.name or not empty param.breed or not empty param.purpose or not empty param.propertyId}"/>
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+                    <form method="get" action="${ctx}/herds">
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-breed">Raça</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${param.breed}'/>"/></div>
+                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${param.purpose}'/>"/></div>
+                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${param.propertyId == property.idProperty ? 'selected="selected"' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
+                        <div class="filtro-acoes"><a href="${ctx}/herds" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                    </form>
+                </details>
+                <button type="button" class="btn btn-escuro"
                         data-abrir="modalHerd" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Rebanho" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo rebanho
                 </button>
+            </div>
             </div>
 
             <div class="busca">
@@ -104,7 +113,8 @@
                                             data-name="<c:out value='${herd.name}'/>"
                                             data-breed="<c:out value='${herd.breed}'/>"
                                             data-purpose="<c:out value='${herd.purpose}'/>"
-                                            data-head-count="<c:out value='${herd.headCount}'/>">
+                                            data-head-count="<c:out value='${herd.headCount}'/>"
+                                            data-property-id="<c:out value='${herd.propertyId}'/>">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir rebanho"
@@ -128,17 +138,6 @@
                 <p id="infoPaginas" aria-live="polite"></p>
                 <div class="paginacao">
                     <button type="button" class="btn btn-contorno" id="btnAnterior">Anterior</button>
-                    <c:set var="filtrando" value="${not empty param.name or not empty param.breed or not empty param.purpose or not empty param.propertyId}"/>
-                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
-                    <summary>Filtrar</summary>
-                    <form method="get" action="${ctx}/PATH">
-                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
-                            <div class="campo"><label for="filtro-breed">Ra?a</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${param.breed}'/>"/></div>
-                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${param.purpose}'/>"/></div>
-                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${param.propertyId == property.idProperty ? 'selected' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
-                        <div class="filtro-acoes"><a href="${ctx}/herds" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
-                    </form>
-                </details>
                 <button type="button" class="btn btn-escuro" id="btnProxima">Próxima</button>
                 </div>
             </div>
@@ -172,6 +171,10 @@
                             <select id="campoFinalidade" name="purpose" required>
                                 <option value="Beef">Bovinos de corte (Beef)</option>
                             </select>
+                        </div>
+                        <div class="campo">
+                            <label for="campoPropriedade">Propriedade</label>
+                            <select id="campoPropriedade" name="propertyId" required><option value="">Selecione</option><c:if test="${not empty properties}"><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>"><c:out value="${property.name}"/></option></c:forEach></c:if></select>
                         </div>
                         <div class="campo">
                             <label for="campoQuantidade">Quantidade de cabeças</label>

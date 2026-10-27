@@ -54,10 +54,6 @@
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </c:if>
-                </div>
-                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        </c:if>
 
         <section class="painel">
 
@@ -69,11 +65,11 @@
                     <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.idUser}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
-                    <form method="get" action="${ctx}/PATH">
+                    <form method="get" action="${ctx}/properties">
                             <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
                             <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${param.cnpj}'/>"/></div>
                             <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
-                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-idUser">Usu?rio</label><select id="filtro-idUser" name="idUser"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.idUser == user.idUser ? 'selected' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
+                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-idUser">Usuário</label><select id="filtro-idUser" name="idUser"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.idUser == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -163,7 +159,12 @@
                 <form method="post" action="${urlInserir}">
                     <input type="hidden" name="idProperty" value="">
 
+                    <c:forEach var="propertyItem" items="${properties}"><c:forEach var="userId" items="${propertyItem.userIds}"><input type="hidden" name="userIds" value="<c:out value='${userId}'/>" data-property-user-ids="<c:out value='${propertyItem.idProperty}'/>" disabled></c:forEach></c:forEach>
                     <div class="form-grade">
+                        <div class="campo" data-so-cadastro>
+                            <label for="campoUsuarios">Usuários vinculados</label>
+                            <select id="campoUsuarios" name="userIds" multiple><c:if test="${not empty users}"><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>"><c:out value="${user.fullName}"/></option></c:forEach></c:if></select>
+                        </div>
                         <div class="campo">
                             <label for="campoCnpj">CNPJ</label>
                             <input type="text" id="campoCnpj" name="cnpj" placeholder="ex: 12345678901234"

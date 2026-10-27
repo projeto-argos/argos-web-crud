@@ -53,10 +53,6 @@
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </c:if>
-                </div>
-                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        </c:if>
 
         <section class="painel">
 
@@ -66,7 +62,7 @@
                 <c:set var="filtrando" value="${not empty param.fullName or not empty param.cpf or not empty param.email or not empty param.phone}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
-                    <form method="get" action="${ctx}/PATH">
+                    <form method="get" action="${ctx}/admins">
                             <div class="campo"><label for="filtro-fullName">Nome completo</label><input type="text" id="filtro-fullName" name="fullName" value="<c:out value='${param.fullName}'/>"/></div>
                             <div class="campo"><label for="filtro-cpf">CPF</label><input type="text" id="filtro-cpf" name="cpf" value="<c:out value='${param.cpf}'/>"/></div>
                             <div class="campo"><label for="filtro-email">E-mail</label><input type="text" id="filtro-email" name="email" value="<c:out value='${param.email}'/>"/></div>

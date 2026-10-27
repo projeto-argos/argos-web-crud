@@ -53,12 +53,8 @@
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
         </c:if>
-            </div>
-            <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-    </c:if>
 
-    <section class="painel">
+        <section class="painel">
 
         <div class="painel-topo">
             <h1>Usuários cadastrados</h1>

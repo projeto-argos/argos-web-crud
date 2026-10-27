@@ -57,7 +57,7 @@
                 <label for="email">E-mail</label>
                 <div class="campo_caixa">
                     <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm9 7.2L4.5 7v.1L12 12.4 19.5 7.1V7L12 12.2Z" fill="currentColor"/></svg>
-                    <input type="email" id="email" name="email" value="<c:out value="${param.email}"/>" placeholder="seu@email.com" autocomplete="email" required>
+                    <input type="email" id="email" name="email" value="<c:out value='${param.email}'/>" placeholder="seu@email.com" autocomplete="email" required>
                 </div>
             </div>
 
