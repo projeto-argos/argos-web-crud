@@ -6,11 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 /**
- * {@code AuthFilter} é um filtro de autenticação que restringe o acesso
- * a rotas da aplicação apenas para administradores logados.
- * tem sessão com o atributo {@code "usuarioLogado"}, gravado pelo LoginServlet.
+ * {@code AuthFilter} porta das telas do painel: só deixa passar quem
+ * tem sessão com o atributo {@code "usuarioLogado"} do tipo {@code "ADMIN"}, gravado pelo LoginServlet.
  * Quem não tem é redirecionado para {@code /login}.
  * <p>
  */
@@ -26,10 +26,12 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-        boolean loggedIn = (session != null && session.getAttribute("usuarioLogado") != null);
+        // só "ADMIN" entra no painel
+        boolean loggedIn = session != null
+                && session.getAttribute("usuarioLogado") instanceof Map<?, ?> user
+                && "ADMIN".equals(user.get("type"));
 
         if (loggedIn) {
-            // impede o navegador de guardar a tela em cache
             resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
             resp.setHeader("Pragma", "no-cache");
             resp.setDateHeader("Expires", 0);
