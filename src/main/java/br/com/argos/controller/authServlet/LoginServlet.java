@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         request.getRequestDispatcher(
-                "/WEB-INF/views/login.jsp"
+                "/WEB-INF/views/auth/login.jsp"
         ).forward(request, response);
     }
 
@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
                     password == null ||
                     password.isBlank()) {
                 request.setAttribute("erro", "Informe o e-mail e a senha.");
-                request.getRequestDispatcher("/WEB-INF/views/login.jsp"
+                request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp"
                         ).forward(request, response);
                 return;
             }
@@ -87,7 +87,7 @@ public class LoginServlet extends HttpServlet {
 
         } catch (ValidationException e) {
             request.setAttribute("erro", "E-mail ou senha inválidos.");
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp")
+            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp")
                     .forward(request, response);
         }
     }
