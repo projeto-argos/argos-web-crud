@@ -2,6 +2,7 @@ package br.com.argos.service;
 
 import br.com.argos.dao.AdminDAO;
 import br.com.argos.model.Admin;
+import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
 import br.com.argos.util.Validador;
 import br.com.argos.exceptions.ValidationException;
@@ -47,6 +48,15 @@ public class AdminService {
             throw new RequiredFieldException("id");
         }
         return adminDAO.findById(id);
+    }
+
+    public List<Admin> filter(String fullName, String cpf, String email, String phone, String role) {
+        return findAll().stream()
+                .filter(admin -> FilterUtil.contains(admin.getFullName(), fullName))
+                .filter(admin -> FilterUtil.contains(admin.getCpf(), FilterUtil.digits(cpf)))
+                .filter(admin -> FilterUtil.contains(admin.getEmail(), email))
+                .filter(admin -> FilterUtil.contains(admin.getPhone(), FilterUtil.digits(phone)))
+                .toList();
     }
 
     public List<Admin> findAll() {

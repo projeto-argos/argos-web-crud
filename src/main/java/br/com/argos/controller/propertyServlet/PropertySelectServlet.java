@@ -22,20 +22,16 @@ public class PropertySelectServlet extends HttpServlet {
         propertyService = new PropertyService();
     }
 
-    // REQUISIÇÃO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
         try {
             // LISTAR
             List<Property> properties = propertyService.findAll();
-
             request.setAttribute("properties", properties);
 
-            // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/properties/properties.jsp"
             ).forward(request, response);

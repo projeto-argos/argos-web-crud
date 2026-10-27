@@ -25,8 +25,8 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     @Override
     public void insert(Animal animal) {
         String sql = """
-                INSERT INTO animal (ear_tag, weight, birth_date, exception_reason, exception_start_date,
-                                    exception_end_date, cleared_for_slaughter, notes, id_batch, id_origin_batch, updated_at)
+                INSERT INTO animal (ear_tag, current_weight, birth_date, exception_reason, exception_start_date,
+                                    exception_end_date, cleared_for_slaughter, notes, id_lot, id_origin_lot, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())
                 """;
 
@@ -123,11 +123,27 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
         }
     }
 
+    @Override
+    public Animal findAnyByEarTagAndBatch(String earTag, UUID idBatch) {
+        // A restrição UNIQUE do schema inclui também registros inativos.
+        String sql = "SELECT * FROM animal WHERE ear_tag = ? AND id_lot = ?";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, earTag);
+            stmt.setObject(2, idBatch);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? mapAnimal(rs) : null;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error searching for animal by ear tag and lot: " + earTag, e);
+        }
+    }
+
     // FIND ANIMALS BY BATCH
     @Override
     public List<Animal> findByBatch(UUID idBatch) {
         String sql = """
-                SELECT * FROM animal WHERE id_batch = ? AND active = true
+                SELECT * FROM animal WHERE id_lot = ? AND active = true
                 """;
         List<Animal> animals = new ArrayList<>();
 
@@ -173,9 +189,9 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     @Override
     public void update(Animal animal) {
         String sql = """
-                UPDATE animal SET ear_tag = ?, weight = ?, birth_date = ?, exception_reason = ?, exception_start_date = ?,
-                                  exception_end_date = ?, cleared_for_slaughter = ?, notes = ?, id_batch = ?,
-                                  id_origin_batch = ?, updated_at = now()
+                UPDATE animal SET ear_tag = ?, current_weight = ?, birth_date = ?, exception_reason = ?, exception_start_date = ?,
+                                  exception_end_date = ?, cleared_for_slaughter = ?, notes = ?, id_lot = ?,
+                                  id_origin_lot = ?, updated_at = now()
                 WHERE id_animal = ? AND active = true
                 """;
 
@@ -279,10 +295,10 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     // MAPPER
     private Animal mapAnimal(ResultSet rs) throws SQLException {
         UUID id = rs.getObject("id_animal", UUID.class);
-        UUID batchId = rs.getObject("id_batch", UUID.class);
-        UUID originBatchId = rs.getObject("id_origin_batch", UUID.class);
+        UUID batchId = rs.getObject("id_lot", UUID.class);
+        UUID originBatchId = rs.getObject("id_origin_lot", UUID.class);
         String earTag = rs.getString("ear_tag");
-        BigDecimal weight = rs.getBigDecimal("weight");
+        BigDecimal weight = rs.getBigDecimal("current_weight");
         String exceptionReason = rs.getString("exception_reason");
         String notes = rs.getString("notes");
 

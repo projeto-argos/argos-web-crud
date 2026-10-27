@@ -41,9 +41,19 @@ function limparTexto(texto) {
 // Desenha a tabela (busca + página atual)
 function mostrarTabela() {
     const busca = limparTexto(campoBusca.value);
+    const parametros = new URLSearchParams(window.location.search);
+    const filtroNome = limparTexto(parametros.get("name") || "");
+    const filtroCnpj = (parametros.get("cnpj") || "").replace(/\D/g, "");
+    const filtroTelefone = (parametros.get("phone") || "").replace(/\D/g, "");
 
     const encontradas = todasAsLinhas.filter(function (linha) {
-        return limparTexto(linha.textContent).includes(busca);
+        const nome = limparTexto(linha.dataset.filterName || "");
+        const cnpj = (linha.dataset.filterCnpj || "").replace(/\D/g, "");
+        const telefone = (linha.dataset.filterPhone || "").replace(/\D/g, "");
+        return limparTexto(linha.textContent).includes(busca)
+            && (!filtroNome || nome.includes(filtroNome))
+            && (!filtroCnpj || cnpj.includes(filtroCnpj))
+            && (!filtroTelefone || telefone.includes(filtroTelefone));
     });
 
     const totalPaginas = Math.max(1, Math.ceil(encontradas.length / LINHAS_POR_PAGINA));

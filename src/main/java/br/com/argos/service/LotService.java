@@ -4,10 +4,13 @@ import br.com.argos.dao.LotDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Lot;
+import br.com.argos.util.FilterUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Filter;
 
 import static br.com.argos.util.Normalizer.text;
 
@@ -42,18 +45,27 @@ public class LotService {
         return lotDAO.findById(id);
     }
 
+    public List<Lot> filter(String headCount, String category, String lotCode, LocalDate openDate) {
+        return findAll().stream()
+                .filter(lot -> headCount == null || headCount.isBlank() || String.valueOf(lot.getHeadCount()).equals(headCount.trim()))
+                .filter(lot -> FilterUtil.contains(lot.getCategory(), category))
+                .filter(lot -> FilterUtil.contains(lot.getLotCode(), FilterUtil.digits(lotCode)))
+                .filter(lot -> openDate == null || Objects.equals(lot.getOpenDate(), openDate))
+                .toList();
+    }
+
     public List<Lot> findAll() {
         return lotDAO.findAll();
     }
 
-    public Lot findByLotCode(String lotCode) {
-        String normalizedCode = text(lotCode);
-
-        if (normalizedCode == null) {
+    public Lot findByLotCodeAndHerd(String lotCode, UUID idHerd){
+        if (idHerd == null) {
+            throw new RequiredFieldException("idHerd");
+        } if (lotCode == null || lotCode.isBlank()) {
             throw new RequiredFieldException("lotCode");
         }
 
-        return lotDAO.findByLotCode(normalizedCode);
+        return lotDAO.findByLotCodeAndHerd(lotCode, idHerd);
     }
 
     public List<Lot> findByHerd(UUID idHerd) {
@@ -114,18 +126,18 @@ public class LotService {
 
         return new Lot(
                 lot.getIdLot(),
-                lot.getIdHerd(),
-                lotCode,
-                category != null ? category.toUpperCase() : null,
+                lot.getHerdId(),
                 lot.getHeadCount(),
-                lot.getOpeningDate(),
+                category != null ? category.toUpperCase() : null,
+                lot.getLotCode(),
+                lot.getOpenDate(),
                 lot.getUpdatedAt(),
                 lot.isActive()
         );
     }
 
     private void validateLot(Lot lot) {
-        if (lot.getIdHerd() == null) {
+        if (lot.getHerdId() == null) {
             throw new RequiredFieldException("idHerd");
         }
 
