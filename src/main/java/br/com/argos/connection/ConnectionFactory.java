@@ -8,8 +8,6 @@ import java.util.Properties;
 
 public class ConnectionFactory{
 
-
-
     // CRIA LUGAR PRO .ENV
     private static final Properties env = new Properties();
 
