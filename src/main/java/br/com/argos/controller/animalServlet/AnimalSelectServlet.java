@@ -22,20 +22,16 @@ public class AnimalSelectServlet extends HttpServlet {
         animalService = new AnimalService();
     }
 
-    // REQUISIÇÃO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException{
-
         try {
             // LISTAR
             List<Animal> animals = animalService.findAll();
-
             request.setAttribute("animals", animals);
 
-            // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/animals/animals.jsp"
             ).forward(request, response);

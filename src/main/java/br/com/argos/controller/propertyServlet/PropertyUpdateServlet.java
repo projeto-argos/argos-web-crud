@@ -1,4 +1,3 @@
-
 package br.com.argos.controller.propertyServlet;
 
 import br.com.argos.model.Address;
@@ -7,13 +6,11 @@ import br.com.argos.model.User;
 import br.com.argos.service.AddressService;
 import br.com.argos.service.PropertyService;
 import br.com.argos.service.UserService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,59 +39,39 @@ public class PropertyUpdateServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        String idParam =
-                request.getParameter("id");
+        String idParam = request.getParameter("id");
 
-        if (idParam == null || idParam.isBlank()) {
-            response.sendRedirect(
-                    request.getContextPath() + "/properties"
-            );
-            return;
-        }
+        if (idParam != null && !idParam.isBlank()) {
+            try {
+                UUID idProperty = UUID.fromString(idParam);
+                Property property = propertyService.findById(idProperty);
 
-        try {
-            UUID idProperty = UUID.fromString(idParam);
+                if (property != null) {
+                    Address address = addressService.findById(property.getAddressId());
 
-            Property property =
-                    propertyService.findById(idProperty);
+                    // BUSCA USUÁRIOS VINCULADOS
+                    List<User> users = new ArrayList<>();
 
-            if (property == null) {
-                response.sendRedirect(
-                        request.getContextPath() + "/properties"
-                );
-                return;
-            }
+                    for (UUID userId : property.getUserIds()) {
+                        User user = userService.findById(userId);
+                        if (user != null) {
+                            users.add(user);
+                        }
+                    }
+                    request.setAttribute("property", property);
+                    request.setAttribute("address", address);
+                    request.setAttribute("users", users);
 
-            // BUSCA ENDEREÇO DA PROPRIEDADE
-            Address address =
-                    addressService.findById(property.getAddressId());
-
-            // BUSCA USUÁRIOS VINCULADOS
-            List<User> selectedUsers = new ArrayList<>();
-
-            for (UUID userId : property.getUserIds()) {
-                User user = userService.findById(userId);
-
-                if (user != null) {
-                    selectedUsers.add(user);
+                    request.getRequestDispatcher(
+                            "/WEB-INF/views/properties/properties.jsp"
+                    ).forward(request, response);
+                    return;
                 }
+            } catch (Exception e) {
+                throw new ServletException("Erro ao buscar propriedade para edição", e);
             }
-
-            // ENVIA DADOS PARA A JSP
-            request.setAttribute("property", property);
-            request.setAttribute("address", address);
-            request.setAttribute("selectedUsers", selectedUsers);
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/properties/properties.jsp"
-            ).forward(request, response);
-
-        } catch (Exception e) {
-            throw new ServletException(
-                    "Erro ao buscar propriedade para edição",
-                    e
-            );
         }
+        response.sendRedirect(request.getContextPath() + "/properties");
     }
 
     // PROCESSA A ATUALIZAÇÃO
@@ -107,22 +84,10 @@ public class PropertyUpdateServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         try {
-
-            // RECEBE ID DA PROPRIEDADE
+            // RECEBE DADOS DA PROPRIEDADE
             UUID idProperty =
                     UUID.fromString(request.getParameter("idProperty"));
 
-            // BUSCA REGISTRO ATUAL
-            Property existingProperty =
-                    propertyService.findById(idProperty);
-
-            if (existingProperty == null) {
-                throw new IllegalArgumentException(
-                        "Propriedade não encontrada."
-                );
-            }
-
-            // RECEBE DADOS DA PROPRIEDADE
             String name =
                     request.getParameter("name");
 
@@ -133,7 +98,6 @@ public class PropertyUpdateServlet extends HttpServlet {
                     request.getParameter("cnpj");
 
 
-            // RECEBE IDS DOS USUÁRIOS SELECIONADOS
             String[] userIdsString =
                     request.getParameterValues("userIds");
 
@@ -141,14 +105,10 @@ public class PropertyUpdateServlet extends HttpServlet {
 
             if (userIdsString != null) {
                 for (int i = 0; i < userIdsString.length; i++) {
-
                     String userIdString = userIdsString[i];
 
-                    if (userIdString != null
-                            && !userIdString.isBlank()) {
-
-                        UUID userId =
-                                UUID.fromString(userIdString.trim());
+                    if (userIdString != null && !userIdString.isBlank()) {
+                        UUID userId = UUID.fromString(userIdString.trim());
 
                         if (!userIds.contains(userId)) {
                             userIds.add(userId);
@@ -157,16 +117,14 @@ public class PropertyUpdateServlet extends HttpServlet {
                 }
             }
 
-
-            // RECEBE DADOS DO ENDEREÇO
+            // RECEBE OS DADOS DO ENDEREÇO
             String numberString =
                     request.getParameter("number");
 
             Integer number = null;
 
-            if (numberString != null
-                    && !numberString.isBlank()) {
-
+            if (numberString != null &&
+                    !numberString.isBlank()) {
                 number = Integer.valueOf(numberString);
             }
 
@@ -185,64 +143,46 @@ public class PropertyUpdateServlet extends HttpServlet {
             String zipCode =
                     request.getParameter("zipCode");
 
+            // PEGA ID DE ENDERECO
+            Property property =
+                    propertyService.findById(idProperty);
 
-            // BUSCA ENDEREÇO ATUAL
-            UUID addressId = existingProperty.getAddressId();
-
-            Address existingAddress =
-                    addressService.findById(addressId);
-
-            if (existingAddress == null) {
-                throw new IllegalArgumentException(
-                        "Endereço da propriedade não encontrado."
-                );
-            }
+            UUID addressId =
+                    property.getAddressId();
 
 
-            // ATUALIZA ENDEREÇO EXISTENTE
+            // ATUALIZA O ENDEREÇO
             Address addressToUpdate = new Address(
-                    existingAddress.getIdAddress(),
                     number,
                     complement,
                     street,
                     city,
                     state,
-                    zipCode,
-                    null,
-                    existingAddress.isActive()
+                    zipCode
             );
 
             addressService.update(addressToUpdate);
 
-
-            // ATUALIZA PROPRIEDADE
+            // ATUALIZA A PROPRIEDADE
             Property propertyToUpdate = new Property(
                     idProperty,
                     addressId,
                     userIds,
                     name,
                     phone,
-                    cnpj,
-                    null,
-                    existingProperty.isActive()
+                    cnpj
             );
 
             propertyService.update(propertyToUpdate);
 
-
             // REDIRECIONA
             response.sendRedirect(
-                    request.getContextPath() + "/properties"
-            );
+                    request.getContextPath() + "/properties");
 
         } catch (Exception e) {
-
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/properties/properties.jsp"
-            ).forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         }
     }
 }

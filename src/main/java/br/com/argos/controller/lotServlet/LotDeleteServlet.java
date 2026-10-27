@@ -1,6 +1,6 @@
-package br.com.argos.controller.supplierServlet;
+package br.com.argos.controller.lotServlet;
 
-import br.com.argos.service.SupplierService;
+import br.com.argos.service.LotService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,16 +9,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-@WebServlet(name = "SupplierDeleteServlet", value = "/suppliers/delete")
-public class SupplierDeleteServlet extends HttpServlet {
+@WebServlet(name = "LotDeleteServlet", value = "/lots/delete")
+public class LotDeleteServlet extends HttpServlet {
 
     // ATRIBUTO
-    private SupplierService supplierService;
+    private LotService lotService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
-        supplierService = new SupplierService();
+        lotService = new LotService();
     }
 
     // PROCESSA A EXCLUSÃO
@@ -34,18 +34,16 @@ public class SupplierDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
-                // EXCLUI FORNECEDOR
+                // EXCLUI USUÁRIO
                 UUID id = UUID.fromString(idParam);
-                supplierService.delete(id);
+                lotService.delete(id);
 
             } catch (Exception e) {
                 // TRATA ERRO
-                throw new ServletException("Erro ao excluir fornecedor", e);
+                throw new ServletException("Erro ao excluir lote", e);
             }
         }
-
         // REDIRECIONA
-        response.sendRedirect(request.getContextPath() + "/suppliers");
+        response.sendRedirect(request.getContextPath() + "/lots");
     }
 }

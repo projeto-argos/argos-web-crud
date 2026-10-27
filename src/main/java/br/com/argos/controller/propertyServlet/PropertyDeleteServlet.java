@@ -34,7 +34,6 @@ public class PropertyDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 // EXCLUI PROPRIEDADE
                 UUID id = UUID.fromString(idParam);
                 propertyService.delete(id);
@@ -44,7 +43,6 @@ public class PropertyDeleteServlet extends HttpServlet {
                 throw new ServletException("Erro ao excluir propriedade", e);
             }
         }
-
         // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/properties");
     }

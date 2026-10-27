@@ -29,6 +29,15 @@ public class Property {
         this.cnpj = cnpj;
     }
 
+    public Property(UUID idProperty, UUID addressId, List<UUID> userIds, String name, String phone, String cnpj) {
+        this.idProperty = idProperty;
+        this.addressId = addressId;
+        this.userIds = userIds;
+        this.name = name;
+        this.phone = phone;
+        this.cnpj = cnpj;
+    }
+
     public Property(UUID idProperty, UUID addressId, List<UUID> userIds, String name, String phone, String cnpj, LocalDateTime updatedAt, boolean active) {
         this.idProperty = idProperty;
         this.addressId = addressId;

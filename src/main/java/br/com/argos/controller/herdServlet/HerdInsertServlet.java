@@ -13,7 +13,7 @@ import java.util.UUID;
 @WebServlet(name = "HerdInsertServlet", value = "/herds/register")
 public class HerdInsertServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private HerdService herdService;
 
     // CICLO DE VIDA DO SERVLET
@@ -22,7 +22,7 @@ public class HerdInsertServlet extends HttpServlet {
         herdService = new HerdService();
     }
 
-    // EXIBE FORMULÁRIO DE CADASTRO
+    // EXIBE FORMULÁRIO
     @Override
     protected void doGet(
             HttpServletRequest request,
@@ -33,7 +33,7 @@ public class HerdInsertServlet extends HttpServlet {
         ).forward(request, response);
     }
 
-    // PROCESSA FORMULÁRIO DE CADASTRO
+    // PROCESSA FORMULÁRIO
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -58,10 +58,8 @@ public class HerdInsertServlet extends HttpServlet {
 
             Integer headCount = null;
 
-            if (
-                    headCountString != null &&
-                            !headCountString.isBlank()
-            ) {
+            if (headCountString != null &&
+                            !headCountString.isBlank()) {
                 headCount =
                         Integer.valueOf(headCountString);
             }
@@ -71,17 +69,11 @@ public class HerdInsertServlet extends HttpServlet {
 
             UUID propertyId = null;
 
-            if (
-                    propertyIdString != null &&
-                            !propertyIdString.isBlank()
-            ) {
+            if (propertyIdString != null &&
+                            !propertyIdString.isBlank()) {
                 propertyId =
                         UUID.fromString(propertyIdString);
             }
-
-            boolean active =
-                    request.getParameter("active") != null &&
-                            request.getParameter("active").equals("true");
 
             // CADASTRA REBANHO
             Herd newHerd = new Herd(
@@ -89,8 +81,7 @@ public class HerdInsertServlet extends HttpServlet {
                     headCount,
                     purpose,
                     name,
-                    breed,
-                    active
+                    breed
             );
 
             herdService.create(newHerd);

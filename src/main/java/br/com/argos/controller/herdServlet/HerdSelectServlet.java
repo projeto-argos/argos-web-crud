@@ -22,20 +22,16 @@ public class HerdSelectServlet extends HttpServlet {
         herdService = new HerdService();
     }
 
-    // REQUISIÇÃO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
         try {
             // LISTAR
             List<Herd> herds = herdService.findAll();
-
             request.setAttribute("herds", herds);
 
-            // ENCAMINHA PARA JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/herds/herds.jsp"
             ).forward(request, response);

@@ -15,7 +15,7 @@ import java.util.UUID;
 @WebServlet(name = "AnimalInsertServlet", value = "/animals/register")
 public class AnimalInsertServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private AnimalService animalService;
 
     // CICLO DE VIDA DO SERVLET
@@ -54,10 +54,8 @@ public class AnimalInsertServlet extends HttpServlet {
 
             BigDecimal weight = null;
 
-            if (
-                    weightString != null &&
-                            !weightString.isBlank()
-            ) {
+            if (weightString != null &&
+                            !weightString.isBlank()) {
                 weight = new BigDecimal(weightString);
             }
 
@@ -66,10 +64,8 @@ public class AnimalInsertServlet extends HttpServlet {
 
             LocalDate birthDate = null;
 
-            if (
-                    birthDateString != null &&
-                            !birthDateString.isBlank()
-            ) {
+            if (birthDateString != null &&
+                            !birthDateString.isBlank()) {
                 birthDate = LocalDate.parse(birthDateString);
             }
 
@@ -81,23 +77,18 @@ public class AnimalInsertServlet extends HttpServlet {
 
             LocalDate exceptionStartDate = null;
 
-            if (
-                    exceptionStartDateString != null &&
-                            !exceptionStartDateString.isBlank()
-            ) {
+            if (exceptionStartDateString != null &&
+                            !exceptionStartDateString.isBlank()) {
                 exceptionStartDate = LocalDate.parse(exceptionStartDateString);
             }
-
 
             String exceptionEndDateString =
                     request.getParameter("exceptionEndDate");
 
             LocalDate exceptionEndDate = null;
 
-            if (
-                    exceptionEndDateString != null &&
-                            !exceptionEndDateString.isBlank()
-            ) {
+            if (exceptionEndDateString != null &&
+                            !exceptionEndDateString.isBlank()) {
                 exceptionEndDate = LocalDate.parse(exceptionEndDateString);
             }
 
@@ -108,39 +99,30 @@ public class AnimalInsertServlet extends HttpServlet {
             String notes =
                     request.getParameter("notes");
 
-            String batchIdString =
-                    request.getParameter("batchId");
+            String lotIdString =
+                    request.getParameter("lotId");
 
-            UUID batchId = null;
+            UUID lotId = null;
 
-            if (
-                    batchIdString != null &&
-                            !batchIdString.isBlank()
-            ) {
-                batchId = UUID.fromString(batchIdString);
+            if (lotIdString != null &&
+                            !lotIdString.isBlank()) {
+                lotId = UUID.fromString(lotIdString);
             }
 
+            String originLotIdString =
+                    request.getParameter("originLotId");
 
-            String originBatchIdString =
-                    request.getParameter("originBatchId");
+            UUID originLotId = null;
 
-            UUID originBatchId = null;
-
-            if (
-                    originBatchIdString != null &&
-                            !originBatchIdString.isBlank()
-            ) {
-                originBatchId = UUID.fromString(originBatchIdString);
+            if (originLotIdString != null &&
+                            !originLotIdString.isBlank()) {
+                originLotId = UUID.fromString(originLotIdString);
             }
-
-            boolean active =
-                    request.getParameter("active") != null &&
-                            request.getParameter("active").equals("true");
 
             // CADASTRA ANIMAL
             Animal newAnimal = new Animal(
-                    batchId,
-                    originBatchId,
+                    lotId,
+                    originLotId,
                     weight,
                     earTag,
                     notes,
@@ -148,7 +130,6 @@ public class AnimalInsertServlet extends HttpServlet {
                     exceptionStartDate,
                     exceptionEndDate,
                     birthDate,
-                    active,
                     clearedForSlaughter
             );
 
