@@ -9,15 +9,15 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-<c:set var="urlInserir" value="${ctx}/admins/register"/>
-<c:set var="urlAtualizar" value="${ctx}/admins/edit"/>
-<c:set var="urlExcluir" value="${ctx}/admins/delete"/>
+<c:set var="urlInserir" value="${ctx}/lots/register"/>
+<c:set var="urlAtualizar" value="${ctx}/lots/edit"/>
+<c:set var="urlExcluir" value="${ctx}/lots/delete"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admins - Argos</title>
+    <title>Lotes - Argos</title>
 
     <!-- Fontes do Figma  -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,7 @@
 <body>
 
 <jsp:include page="/WEB-INF/views/components/_sidebar.jsp">
-    <jsp:param name="ativo" value="admin"/>
+    <jsp:param name="ativo" value="lot"/>
 </jsp:include>
 
 <main class="conteudo">
@@ -57,65 +57,74 @@
     <section class="painel">
 
         <div class="painel-topo">
-            <h1>Admins cadastrados</h1>
+            <h1>Lotes cadastrados</h1>
 
-            <c:set var="filtrando" value="${not empty param.fullName or not empty param.cpf or not empty param.email or not empty param.phone}"/>
+            <c:set var="filtrando" value="${not empty param.lotCode or not empty param.category or not empty param.headCount or not empty param.openDate}"/>
             <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                 <summary>Filtrar</summary>
-                <form method="get" action="${ctx}/admins">
-                    <div class="campo"><label for="filtro-fullName">Nome completo</label><input type="text" id="filtro-fullName" name="fullName" value="<c:out value='${param.fullName}'/>"/></div>
-                    <div class="campo"><label for="filtro-cpf">CPF</label><input type="text" id="filtro-cpf" name="cpf" value="<c:out value='${param.cpf}'/>"/></div>
-                    <div class="campo"><label for="filtro-email">E-mail</label><input type="text" id="filtro-email" name="email" value="<c:out value='${param.email}'/>"/></div>
-                    <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
-                    <div class="filtro-acoes"><a href="${ctx}/admins" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                <form method="get" action="${ctx}/lots">
+                    <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${param.lotCode}'/>"/></div>
+                    <div class="campo">
+                        <label for="filtro-category">Categoria</label>
+                        <select id="filtro-category" name="category">
+                            <option value="">Todas</option>
+                            <option value="CRIA" ${param.category == 'CRIA' ? 'selected' : ''}>CRIA</option>
+                            <option value="RECRIA" ${param.category == 'RECRIA' ? 'selected' : ''}>RECRIA</option>
+                            <option value="ENGORDA" ${param.category == 'ENGORDA' ? 'selected' : ''}>ENGORDA</option>
+                        </select>
+                    </div>
+                    <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${param.headCount}'/>"/></div>
+                    <div class="campo"><label for="filtro-openDate">Data de abertura</label><input type="date" id="filtro-openDate" name="openDate" value="<c:out value='${param.openDate}'/>"/></div>
+                    <div class="filtro-acoes"><a href="${ctx}/lots" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                 </form>
             </details>
             <button type="button" class="btn btn-escuro"
-                    data-abrir="modalAdmin" data-acao="criar" data-action="${urlInserir}"
-                    data-titulo="Cadastrar Admin" data-botao="Cadastrar">
-                <i class="fa-solid fa-plus"></i> Novo admin
+                    data-abrir="modalLote" data-acao="criar" data-action="${urlInserir}"
+                    data-titulo="Cadastrar Lote" data-botao="Cadastrar">
+                <i class="fa-solid fa-plus"></i> Novo lote
             </button>
         </div>
 
         <div class="busca">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="campoBusca" placeholder="Buscar admin ..." aria-label="Buscar admin" autocomplete="off">
+            <input type="search" id="campoBusca" placeholder="Buscar lote ..." aria-label="Buscar lote" autocomplete="off">
         </div>
 
         <div class="tabela-scroll">
             <table class="tabela" id="tabela">
                 <thead>
                 <tr>
-                    <th>Nome completo</th>
-                    <th>CPF</th>
-                    <th>Email</th>
-                    <th>Telefone</th>
+                    <th>Código lote</th>
+                    <th>Categoria</th>
+                    <th>Quantidade de cabeças</th>
+                    <th>Data de abertura</th>
                     <th class="col-acoes">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
 
-                <c:forEach var="admin" items="${admins}">
+                <c:forEach var="lot" items="${lots}">
                     <tr class="linha">
-                        <td><c:out value="${admin.fullName}"/></td>
-                        <td class="cpf"><c:out value="${admin.cpf}"/></td>
-                        <td><c:out value="${admin.email}"/></td>
-                        <td class="telefone"><c:out value="${admin.phone}"/></td>
+                        <td><c:out value="${lot.lotCode}"/></td>
+                        <td><c:out value="${lot.category}"/></td>
+                        <td><c:out value="${lot.headCount}"/></td>
+                        <td><c:out value="${lot.openDate}"/></td>
                         <td class="col-acoes">
-                            <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar admin"
-                                    data-abrir="modalAdmin" data-acao="editar" data-action="${urlAtualizar}"
-                                    data-titulo="Editar Admin" data-botao="Salvar"
-                                    data-id-admin="<c:out value='${admin.idAdmin}'/>"
-                                    data-full-name="<c:out value='${admin.fullName}'/>"
-                                    data-cpf="<c:out value='${admin.cpf}'/>"
-                                    data-email="<c:out value='${admin.email}'/>"
-                                    data-phone="<c:out value='${admin.phone}'/>">
+                            <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar lote"
+                                    data-abrir="modalLote" data-acao="editar" data-action="${urlAtualizar}"
+                                    data-titulo="Editar Lote" data-botao="Salvar"
+                                    data-id-lot="<c:out value='${lot.idLot}'/>"
+                                    data-herd-id="<c:out value='${lot.herdId}'/>"
+                                    data-lot-code="<c:out value='${lot.lotCode}'/>"
+                                    data-category="<c:out value='${lot.category}'/>"
+                                    data-head-count="<c:out value='${lot.headCount}'/>"
+                                    data-open-date="<c:out value='${lot.openDate}'/>">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
-                            <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir admin"
+                            <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir lote"
                                     data-abrir="modalExcluir"
-                                    data-id="<c:out value='${admin.idAdmin}'/>"
-                                    data-full-name="<c:out value='${admin.fullName}'/>">
+                                    data-id="<c:out value='${lot.idLot}'/>"
+                                    data-lot-code="<c:out value='${lot.lotCode}'/>">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -140,43 +149,48 @@
     </section>
 
     <%-- POP-UP --%>
-    <dialog class="modal" id="modalAdmin">
+    <dialog class="modal" id="modalLote">
         <div class="modal-caixa">
             <div class="modal-topo">
-                <h2>Cadastrar Admin</h2>
+                <h2>Cadastrar Lote</h2>
                 <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form method="post" action="${urlInserir}">
-                <input type="hidden" name="idAdmin" value="">
+                <input type="hidden" name="idLot" value="">
 
                 <div class="form-grade">
                     <div class="campo">
-                        <label for="campoNome">Nome Completo</label>
-                        <input type="text" id="campoNome" name="fullName" placeholder="ex: Amanda Rodrigues Lima"
-                               required maxlength="120" autocomplete="off">
+                        <label for="campoCodigo">Código do Lote</label>
+                        <input type="text" id="campoCodigo" name="lotCode" placeholder="ex: LOTE-001"
+                               required maxlength="50" autocomplete="off">
                     </div>
                     <div class="campo">
-                        <label for="campoCpf">CPF</label>
-                        <input type="text" id="campoCpf" name="cpf" placeholder="ex: 12345678901"
-                               required inputmode="numeric" maxlength="11" pattern="\d{11}"
-                               title="Digite os 11 números do CPF, sem pontos e traço" autocomplete="off">
+                        <label for="campoCategoria">Categoria</label>
+                        <select id="campoCategoria" name="category" required>
+                            <option value="" disabled selected>Selecione a categoria</option>
+                            <option value="CRIA">CRIA</option>
+                            <option value="RECRIA">RECRIA</option>
+                            <option value="ENGORDA">ENGORDA</option>
+                        </select>
                     </div>
                     <div class="campo">
-                        <label for="campoEmail">Email</label>
-                        <input type="email" id="campoEmail" name="email" placeholder="ex: adriana@gmail.com"
-                               required maxlength="120" autocomplete="off">
+                        <label for="campoQuantidade">Quantidade de Cabeças</label>
+                        <input type="number" id="campoQuantidade" name="headCount" placeholder="ex: 10"
+                               required min="0" step="1" inputmode="numeric" autocomplete="off">
                     </div>
                     <div class="campo">
-                        <label for="campoTelefone">Telefone</label>
-                        <input type="tel" id="campoTelefone" name="phone" placeholder="ex: 11999999999"
-                               required inputmode="numeric" maxlength="11" pattern="\d{10,11}"
-                               title="DDD + número, só números (10 ou 11 dígitos)" autocomplete="off">
+                        <label for="campoDataAbertura">Data de Abertura</label>
+                        <input type="date" id="campoDataAbertura" name="openDate" required>
                     </div>
-                    <div class="campo largura-total" data-so-cadastro>
-                        <label for="campoSenha">Senha</label>
-                        <input type="password" id="campoSenha" name="password" placeholder="Defina a senha de acesso"
-                               required autocomplete="new-password">
+                    <div class="campo largura-total">
+                        <label for="campoRebanho">Rebanho</label>
+                        <select id="campoRebanho" name="herdId" required>
+                            <option value="" disabled selected>Selecione o rebanho</option>
+                            <c:forEach var="herd" items="${herds}">
+                                <option value="<c:out value='${herd.idHerd}'/>"><c:out value="${herd.name}"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
 
@@ -191,14 +205,14 @@
     <dialog class="modal modal-pequeno" id="modalExcluir">
         <div class="modal-caixa">
             <div class="modal-topo">
-                <h2>Excluir Admin</h2>
+                <h2>Excluir Lote</h2>
                 <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form method="post" action="${urlExcluir}">
                 <input type="hidden" name="id" value="">
 
-                <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="fullName"></strong>?</p>
+                <p class="modal-texto">Tem certeza que deseja excluir o lote <strong data-mostrar="lotCode"></strong>?</p>
 
                 <div class="form-rodape">
                     <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
@@ -212,4 +226,3 @@
 
 </body>
 </html>
-
