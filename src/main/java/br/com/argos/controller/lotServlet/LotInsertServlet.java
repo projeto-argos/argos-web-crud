@@ -1,15 +1,12 @@
-
 package br.com.argos.controller.lotServlet;
 
 import br.com.argos.model.Lot;
 import br.com.argos.service.LotService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -26,7 +23,7 @@ public class LotInsertServlet extends HttpServlet {
         lotService = new LotService();
     }
 
-    // EXIBE FORMULÁRIO DE CADASTRO
+    // EXIBE FORMULÁRIO
     @Override
     protected void doGet(
             HttpServletRequest request,
@@ -38,7 +35,7 @@ public class LotInsertServlet extends HttpServlet {
         ).forward(request, response);
     }
 
-    // PROCESSA FORMULÁRIO DE CADASTRO
+    // PROCESSA FORMULÁRI
     @Override
     protected void doPost(
             HttpServletRequest request,
@@ -48,13 +45,11 @@ public class LotInsertServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         try {
-            // RECEBE O ID DO REBANHO
             String herdIdString =
                     request.getParameter("herdId");
 
             UUID herdId = UUID.fromString(herdIdString);
 
-            // RECEBE OS DADOS DO LOTE
             String headCountString =
                     request.getParameter("headCount");
 
@@ -94,16 +89,12 @@ public class LotInsertServlet extends HttpServlet {
 
             // REDIRECIONA
             response.sendRedirect(
-                    request.getContextPath() + "/lots"
-            );
+                    request.getContextPath() + "/lots");
 
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/lots/lots.jsp"
-            ).forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/lots/lots.jsp").forward(request, response);
         }
     }
 }
