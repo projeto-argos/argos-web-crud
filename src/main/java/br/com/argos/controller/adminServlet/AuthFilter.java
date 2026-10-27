@@ -10,12 +10,11 @@ import java.io.IOException;
 /**
  * {@code AuthFilter} é um filtro de autenticação que restringe o acesso
  * a rotas da aplicação apenas para administradores logados.
+ * tem sessão com o atributo {@code "usuarioLogado"}, gravado pelo LoginServlet.
+ * Quem não tem é redirecionado para {@code /login}.
  * <p>
- * e verifica se há uma sessão ativa com o atributo {@code "adminLoggedIn"} presente.
- * Caso contrário, o usuário é redirecionado para a página inicial ({@code index.jsp}).
- * </p>
- * */
-@WebFilter(urlPatterns = {"/admin/*", "/home", "/users/*", "/properties/*", "/animals/*", "/lots/*", "/herds/*"})
+ */
+@WebFilter(urlPatterns = {"/home", "/admins/*", "/users/*", "/properties/*", "/animals/*", "/lots/*", "/herds/*", "/lookup"})
 public class AuthFilter implements Filter {
 
     @Override
@@ -27,12 +26,16 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-        boolean adminLoggedIn = (session != null && session.getAttribute("adminLoggedIn") != null);
+        boolean loggedIn = (session != null && session.getAttribute("usuarioLogado") != null);
 
-        if (adminLoggedIn) {
+        if (loggedIn) {
+            // impede o navegador de guardar a tela em cache
+            resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            resp.setHeader("Pragma", "no-cache");
+            resp.setDateHeader("Expires", 0);
             chain.doFilter(request, response);
         } else {
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
         }
     }
 
