@@ -30,6 +30,16 @@ public class Address {
         this.zipCode = zipCode;
     }
 
+    public Address(UUID idAddress, Integer number, String complement, String street, String city, String state, String zipCode) {
+        this.idAddress = idAddress;
+        this.number = number;
+        this.complement = complement;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+    }
+
     public Address(UUID idAddress, Integer number, String complement, String street, String city, String state, String zipCode, LocalDateTime updatedAt, boolean active) {
         this.idAddress = idAddress;
         this.number = number;
