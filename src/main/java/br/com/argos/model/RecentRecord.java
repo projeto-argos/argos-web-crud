@@ -30,7 +30,7 @@ public class RecentRecord {
         return updatedAt;
     }
 
-    /** Data já no formato dd/MM/yyyy, para a JSP só exibir (o EL do JSP não formata LocalDateTime). */
+    /** Data já no formato dd/MM/yyyy, para a JSP só exibir. */
     public String getFormattedDate() {
         return updatedAt == null ? "-" : updatedAt.format(DATE_FORMAT);
     }
