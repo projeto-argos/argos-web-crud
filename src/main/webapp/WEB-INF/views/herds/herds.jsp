@@ -43,15 +43,17 @@
     </jsp:include>
 
     <main class="conteudo">
-
-        <c:if test="${not empty mensagem}">
-            <div class="toast ${tipoMensagem == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
-                <span class="toast-icone"><i class="fa-solid ${tipoMensagem == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
-                <div class="toast-texto">
-                    <strong><c:out value="${mensagem}"/></strong>
-                    <c:if test="${not empty detalheMensagem}">
-                        <p><c:out value="${detalheMensagem}"/></p>
-                    </c:if>
+        <c:set var="textoMensagem" value="${not empty mensagem ? mensagem : erro}"/>
+        <c:set var="tipoAviso" value="${not empty erro or tipoMensagem == 'erro' or tipoMensagem == 'error' ? 'erro' : tipoMensagem}"/>
+        <c:if test="${not empty textoMensagem}">
+            <div class="toast ${tipoAviso == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${tipoAviso == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+                <div class="toast-texto"><strong><c:out value="${textoMensagem}"/></strong>
+                    <c:if test="${not empty detalheMensagem}"><p><c:out value="${detalheMensagem}"/></p></c:if>
+                </div>
+                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </c:if>
                 </div>
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -61,10 +63,7 @@
 
             <div class="painel-topo">
                 <h1>Rebanhos cadastrados</h1>
-
-                <%-- FILTROS (futuro): o botão "Filtrar" do Figma entra aqui, antes do botão de novo registro --%>
-
-                <button type="button" class="btn btn-escuro"
+<button type="button" class="btn btn-escuro"
                         data-abrir="modalHerd" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Rebanho" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo rebanho
@@ -129,7 +128,18 @@
                 <p id="infoPaginas" aria-live="polite"></p>
                 <div class="paginacao">
                     <button type="button" class="btn btn-contorno" id="btnAnterior">Anterior</button>
-                    <button type="button" class="btn btn-escuro" id="btnProxima">Próxima</button>
+                    <c:set var="filtrando" value="${not empty param.name or not empty param.breed or not empty param.purpose or not empty param.propertyId}"/>
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+                    <form method="get" action="${ctx}/PATH">
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-breed">Ra?a</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${param.breed}'/>"/></div>
+                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${param.purpose}'/>"/></div>
+                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${param.propertyId == property.idProperty ? 'selected' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
+                        <div class="filtro-acoes"><a href="${ctx}/herds" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                    </form>
+                </details>
+                <button type="button" class="btn btn-escuro" id="btnProxima">Próxima</button>
                 </div>
             </div>
 
@@ -150,17 +160,18 @@
                         <div class="campo">
                             <label for="campoNome">Nome</label>
                             <input type="text" id="campoNome" name="name" placeholder="ex: Rebanho Alvorada"
-                                   required maxlength="120" autocomplete="off">
+                                   required maxlength="60" autocomplete="off">
                         </div>
                         <div class="campo">
                             <label for="campoRaca">Raça</label>
                             <input type="text" id="campoRaca" name="breed" placeholder="ex: Hereford"
-                                   required maxlength="60" autocomplete="off">
+                                   required maxlength="40" autocomplete="off">
                         </div>
                         <div class="campo">
                             <label for="campoFinalidade">Finalidade</label>
-                            <input type="text" id="campoFinalidade" name="purpose" placeholder="ex: Corte"
-                                   required maxlength="60" autocomplete="off">
+                            <select id="campoFinalidade" name="purpose" required>
+                                <option value="Beef">Bovinos de corte (Beef)</option>
+                            </select>
                         </div>
                         <div class="campo">
                             <label for="campoQuantidade">Quantidade de cabeças</label>

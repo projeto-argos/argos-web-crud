@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<c:set var="erroLogin" value="${not empty error ? error : erro}"/>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -62,7 +63,7 @@
 
             <div class="campo">
                 <label for="senha">Senha</label>
-                <div class="campo_caixa ${not empty error ? 'erro' : ''}">
+                <div class="campo_caixa ${not empty error or not empty erro ? 'erro' : ''}">
                     <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm-7-2a2 2 0 0 1 4 0v2h-4V7Z" fill="currentColor"/></svg>
                     <input type="password" id="senha" name="password" placeholder="Sua senha" autocomplete="current-password" required>
                     <button type="button" class="btn_olho" id="btnOlho" aria-label="Mostrar senha">
@@ -72,7 +73,7 @@
                 </div>
             </div>
 
-            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${error}"/></p>
+            <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${erroLogin}"/></p>
 
             <button type="submit" class="btn_entrar" id="btnEntrar">Entrar</button>
 

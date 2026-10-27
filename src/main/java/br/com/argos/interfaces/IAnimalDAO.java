@@ -14,6 +14,9 @@ public interface IAnimalDAO extends GenericDAO<Animal, UUID> {
      */
     Animal findByEarTag(String earTag);
 
+    /** Busca um animal pela etiqueta dentro do lote informado. */
+    Animal findAnyByEarTagAndBatch(String earTag, UUID idBatch);
+
     /**
      * Busca os animais ativos associados ao lote informado.
      *

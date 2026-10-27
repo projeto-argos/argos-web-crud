@@ -42,15 +42,17 @@
     </jsp:include>
 
     <main class="conteudo">
-
-        <c:if test="${not empty mensagem}">
-            <div class="toast ${tipoMensagem == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
-                <span class="toast-icone"><i class="fa-solid ${tipoMensagem == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
-                <div class="toast-texto">
-                    <strong><c:out value="${mensagem}"/></strong>
-                    <c:if test="${not empty detalheMensagem}">
-                        <p><c:out value="${detalheMensagem}"/></p>
-                    </c:if>
+        <c:set var="textoMensagem" value="${not empty mensagem ? mensagem : erro}"/>
+        <c:set var="tipoAviso" value="${not empty erro or tipoMensagem == 'erro' or tipoMensagem == 'error' ? 'erro' : tipoMensagem}"/>
+        <c:if test="${not empty textoMensagem}">
+            <div class="toast ${tipoAviso == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${tipoAviso == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+                <div class="toast-texto"><strong><c:out value="${textoMensagem}"/></strong>
+                    <c:if test="${not empty detalheMensagem}"><p><c:out value="${detalheMensagem}"/></p></c:if>
+                </div>
+                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </c:if>
                 </div>
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -61,6 +63,17 @@
             <div class="painel-topo">
                 <h1>Admins cadastrados</h1>
 
+                <c:set var="filtrando" value="${not empty param.fullName or not empty param.cpf or not empty param.email or not empty param.phone}"/>
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+                    <form method="get" action="${ctx}/PATH">
+                            <div class="campo"><label for="filtro-fullName">Nome completo</label><input type="text" id="filtro-fullName" name="fullName" value="<c:out value='${param.fullName}'/>"/></div>
+                            <div class="campo"><label for="filtro-cpf">CPF</label><input type="text" id="filtro-cpf" name="cpf" value="<c:out value='${param.cpf}'/>"/></div>
+                            <div class="campo"><label for="filtro-email">E-mail</label><input type="text" id="filtro-email" name="email" value="<c:out value='${param.email}'/>"/></div>
+                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
+                        <div class="filtro-acoes"><a href="${ctx}/admins" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                    </form>
+                </details>
                 <button type="button" class="btn btn-escuro"
                         data-abrir="modalAdmin" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Admin" data-botao="Cadastrar">

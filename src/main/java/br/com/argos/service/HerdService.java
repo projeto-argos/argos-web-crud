@@ -114,12 +114,12 @@ public class HerdService {
     private void validateHerd(Herd herd) {
 
         // OBRIGATÓRIOS
-        if (herd.getName() == null) {
+        if (herd.getName() == null || herd.getName().isBlank()) {
             throw new RequiredFieldException("name");
         }
 
-        if (herd.getName().length() > 100) {
-            throw new ValidationException("Name cannot exceed 100 characters");
+        if (herd.getName().length() > 60) {
+            throw new ValidationException("Name cannot exceed 60 characters");
         }
 
         if (herd.getPropertyId() == null) {
@@ -131,12 +131,12 @@ public class HerdService {
         }
 
         // OPCIONAIS
-        if (herd.getBreed() != null && herd.getBreed().length() > 50) {
-            throw new ValidationException("Breed cannot exceed 50 characters");
+        if (herd.getBreed() != null && herd.getBreed().length() > 40) {
+            throw new ValidationException("Breed cannot exceed 40 characters");
         }
 
-        if (herd.getPurpose() != null && herd.getPurpose().length() > 50) {
-            throw new ValidationException("Purpose cannot exceed 50 characters");
+        if (herd.getPurpose() == null || !DEFAULT_PURPOSE.equalsIgnoreCase(herd.getPurpose())) {
+            throw new ValidationException("Purpose must be Beef");
         }
     }
 }

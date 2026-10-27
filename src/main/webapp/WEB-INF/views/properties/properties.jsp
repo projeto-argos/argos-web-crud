@@ -43,15 +43,17 @@
     </jsp:include>
 
     <main class="conteudo">
-
-        <c:if test="${not empty erro or not empty mensagem}">
-            <div class="toast ${(tipoMensagem == 'erro' or not empty erro) ? 'toast-erro' : 'toast-sucesso'}" role="status">
-                <span class="toast-icone"><i class="fa-solid ${(tipoMensagem == 'erro' or not empty erro) ? 'fa-exclamation' : 'fa-check'}"></i></span>
-                <div class="toast-texto">
-                    <strong><c:out value="${not empty erro ? erro : mensagem}"/></strong>
-                    <c:if test="${not empty detalheMensagem}">
-                        <p><c:out value="${detalheMensagem}"/></p>
-                    </c:if>
+        <c:set var="textoMensagem" value="${not empty mensagem ? mensagem : erro}"/>
+        <c:set var="tipoAviso" value="${not empty erro or tipoMensagem == 'erro' or tipoMensagem == 'error' ? 'erro' : tipoMensagem}"/>
+        <c:if test="${not empty textoMensagem}">
+            <div class="toast ${tipoAviso == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${tipoAviso == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+                <div class="toast-texto"><strong><c:out value="${textoMensagem}"/></strong>
+                    <c:if test="${not empty detalheMensagem}"><p><c:out value="${detalheMensagem}"/></p></c:if>
+                </div>
+                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </c:if>
                 </div>
                 <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -64,36 +66,17 @@
 
                 <div class="painel-acoes">
 
-                    <c:set var="filtrando"
-                           value="${not empty param.name or not empty param.cnpj
-                                or not empty param.phone}"/>
-
-                    <details class="filtro ${filtrando ? 'filtro-ativo' : ''}" ${filtrando ? 'open' : ''}>
-                        <summary>Filtrar</summary>
-
-                        <form method="get" action="${ctx}/properties">
-                            <div class="campo">
-                                <label for="filtroNome">Nome da Propriedade</label>
-                                <input type="text" id="filtroNome" name="name" placeholder="Ex.: Fazenda Feliz"
-                                       value="<c:out value='${param.name}'/>">
-                            </div>
-                            <div class="campo">
-                                <label for="filtroCnpj">CNPJ</label>
-                                <input type="text" id="filtroCnpj" name="cnpj" placeholder="Ex.: 12345678901232"
-                                       value="<c:out value='${param.cnpj}'/>">
-                            </div>
-                            <div class="campo">
-                                <label for="filtroTelefone">Telefone</label>
-                                <input type="text" id="filtroTelefone" name="phone" placeholder="Ex.: 11999999999"
-                                       value="<c:out value='${param.phone}'/>">
-                            </div>
-                            <div class="filtro-acoes">
-                                <a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a>
-                                <button type="submit" class="btn-pilula">Aplicar filtro</button>
-                            </div>
-                        </form>
-                    </details>
-
+                    <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.idUser}"/>
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+                    <form method="get" action="${ctx}/PATH">
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${param.cnpj}'/>"/></div>
+                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
+                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-idUser">Usu?rio</label><select id="filtro-idUser" name="idUser"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.idUser == user.idUser ? 'selected' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
+                        <div class="filtro-acoes"><a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                    </form>
+                </details>
                 <button type="button" class="btn btn-escuro"
                         data-abrir="modalPropriedade" data-acao="criar" data-action="${urlInserir}"
                         data-titulo="Cadastrar Propriedade" data-botao="Cadastrar">

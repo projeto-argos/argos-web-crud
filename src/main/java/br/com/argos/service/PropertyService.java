@@ -9,6 +9,7 @@ import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Validador;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -109,6 +110,8 @@ public class PropertyService {
         List<UUID> userIds = property.getUserIds() == null
                 ? new ArrayList<>()
                 : new ArrayList<>(property.getUserIds());
+        userIds.removeIf(Objects::isNull);
+        userIds = new ArrayList<>(new LinkedHashSet<>(userIds));
 
         return new Property(
                 property.getIdProperty(),

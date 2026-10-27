@@ -33,9 +33,15 @@ public class AddressService {
     }
 
     public void create(Address address) {
+        createAndReturnId(address);
+    }
+
+    public UUID createAndReturnId(Address address) {
         Address normalized = normalizeAddress(address);
         validateAddress(normalized);
         addressDAO.insert(normalized);
+        address.setIdAddress(normalized.getIdAddress());
+        return normalized.getIdAddress();
     }
 
     public Address findById(UUID id) {

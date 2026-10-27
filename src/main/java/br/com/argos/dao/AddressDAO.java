@@ -36,7 +36,12 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             stmt.setString(5, address.getZipCode());
             stmt.setString(6, address.getComplement());
 
-            stmt.executeUpdate();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new DataAccessException("Address insert did not return an ID.");
+                }
+                address.setIdAddress(rs.getObject("id_address", UUID.class));
+            }
 
         } catch (SQLException e) {
             throw new DataAccessException("Error inserting address.", e);

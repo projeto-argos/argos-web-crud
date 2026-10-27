@@ -27,19 +27,31 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 VALUES (?, ?, ?, ?, now()) RETURNING id_property
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setString(1, property.getName());
-            stmt.setString(2, property.getCnpj());
-            stmt.setString(3, property.getPhone());
-            stmt.setObject(4, property.getAddressId());
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    property.setIdProperty(
-                            rs.getObject("id_property", UUID.class));
+                stmt.setString(1, property.getName());
+                stmt.setString(2, property.getCnpj());
+                stmt.setString(3, property.getPhone());
+                stmt.setObject(4, property.getAddressId());
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (!rs.next()) {
+                        throw new DataAccessException("Property insert did not return an ID.");
+                    }
+                    property.setIdProperty(rs.getObject("id_property", UUID.class));
                 }
+
+                replaceUserLinks(conn, property.getIdProperty(), property.getUserIds());
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
@@ -62,7 +74,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             stmt.setObject(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? mapProperty(rs) : null;
+                return rs.next() ? mapProperty(conn, rs) : null;
             }
 
         } catch (SQLException e) {
@@ -88,7 +100,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                properties.add(mapProperty(rs));
+                properties.add(mapProperty(conn, rs));
             }
 
             return properties;
@@ -117,7 +129,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    properties.add(mapProperty(rs));
+                    properties.add(mapProperty(conn, rs));
                 }
             }
 
@@ -151,7 +163,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    properties.add(mapProperty(rs));
+                    properties.add(mapProperty(conn, rs));
                 }
             }
 
@@ -176,18 +188,29 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 WHERE id_property = ? AND active = true
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setString(1, property.getName());
-            stmt.setString(2, property.getCnpj());
-            stmt.setString(3, property.getPhone());
-            stmt.setObject(4, property.getAddressId());
-            stmt.setObject(5, property.getIdProperty());
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            if (stmt.executeUpdate() == 0) {
-                throw new DataAccessException(
-                        "Property not found: " + property.getIdProperty());
+                stmt.setString(1, property.getName());
+                stmt.setString(2, property.getCnpj());
+                stmt.setString(3, property.getPhone());
+                stmt.setObject(4, property.getAddressId());
+                stmt.setObject(5, property.getIdProperty());
+
+                if (stmt.executeUpdate() == 0) {
+                    throw new DataAccessException("Property not found: " + property.getIdProperty());
+                }
+
+                replaceUserLinks(conn, property.getIdProperty(), property.getUserIds());
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
@@ -246,7 +269,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
     }
 
 //    MAPPER
-    private Property mapProperty(ResultSet rs) throws SQLException {
+    private Property mapProperty(Connection conn, ResultSet rs) throws SQLException {
         UUID idProperty = rs.getObject("id_property", UUID.class);
         UUID addressId = rs.getObject("id_address", UUID.class);
 
@@ -259,8 +282,44 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
         java.time.LocalDateTime updatedAt =
                 timestamp == null ? null : timestamp.toLocalDateTime();
 
-        List<UUID> userIds = new ArrayList<>();
+        List<UUID> userIds = findUserIds(conn, idProperty);
 
         return new Property(idProperty, addressId, userIds, name, phone, cnpj, updatedAt, active);
+    }
+
+    private List<UUID> findUserIds(Connection conn, UUID propertyId) throws SQLException {
+        String sql = "SELECT id_user FROM user_property WHERE id_property = ? ORDER BY id_user";
+        List<UUID> userIds = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, propertyId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    userIds.add(rs.getObject("id_user", UUID.class));
+                }
+            }
+        }
+        return userIds;
+    }
+
+    private void replaceUserLinks(Connection conn, UUID propertyId, List<UUID> userIds) throws SQLException {
+        try (PreparedStatement delete = conn.prepareStatement(
+                "DELETE FROM user_property WHERE id_property = ?")) {
+            delete.setObject(1, propertyId);
+            delete.executeUpdate();
+        }
+
+        if (userIds == null || userIds.isEmpty()) {
+            return;
+        }
+
+        try (PreparedStatement insert = conn.prepareStatement(
+                "INSERT INTO user_property (id_property, id_user) VALUES (?, ?)")) {
+            for (UUID userId : userIds) {
+                insert.setObject(1, propertyId);
+                insert.setObject(2, userId);
+                insert.addBatch();
+            }
+            insert.executeBatch();
+        }
     }
 }

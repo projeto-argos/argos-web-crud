@@ -46,15 +46,17 @@
 </jsp:include>
 
 <main class="conteudo">
-
-    <c:if test="${not empty mensagem}">
-        <div class="toast ${tipoMensagem == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
-            <span class="toast-icone"><i class="fa-solid ${tipoMensagem == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
-            <div class="toast-texto">
-                <strong><c:out value="${mensagem}"/></strong>
-                <c:if test="${not empty detalheMensagem}">
-                    <p><c:out value="${detalheMensagem}"/></p>
-                </c:if>
+        <c:set var="textoMensagem" value="${not empty mensagem ? mensagem : erro}"/>
+        <c:set var="tipoAviso" value="${not empty erro or tipoMensagem == 'erro' or tipoMensagem == 'error' ? 'erro' : tipoMensagem}"/>
+        <c:if test="${not empty textoMensagem}">
+            <div class="toast ${tipoAviso == 'erro' ? 'toast-erro' : 'toast-sucesso'}" role="status">
+                <span class="toast-icone"><i class="fa-solid ${tipoAviso == 'erro' ? 'fa-exclamation' : 'fa-check'}"></i></span>
+                <div class="toast-texto"><strong><c:out value="${textoMensagem}"/></strong>
+                    <c:if test="${not empty detalheMensagem}"><p><c:out value="${detalheMensagem}"/></p></c:if>
+                </div>
+                <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </c:if>
             </div>
             <button type="button" class="toast-fechar" aria-label="Fechar aviso"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -64,10 +66,7 @@
 
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
-
-            <%-- FILTROS (futuro): o botão "Filtrar" do Figma entra aqui, antes do botão de novo registro --%>
-
-            <button type="button" class="btn btn-escuro"
+<button type="button" class="btn btn-escuro"
                     data-abrir="modalAnimal" data-acao="criar" data-action="${urlInserir}"
                     data-titulo="Cadastrar Animal" data-botao="Cadastrar">
                 <i class="fa-solid fa-plus"></i> Novo animal
@@ -136,6 +135,16 @@
             <p id="infoPaginas" aria-live="polite"></p>
             <div class="paginacao">
                 <button type="button" class="btn btn-contorno" id="btnAnterior">Anterior</button>
+                <c:set var="filtrando" value="${not empty param.earTag or not empty param.batchId or not empty param.exceptionReason}"/>
+                <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
+                    <summary>Filtrar</summary>
+                    <form method="get" action="${ctx}/PATH">
+                            <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${param.earTag}'/>"/></div>
+                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-batchId">Lote</label><select id="filtro-batchId" name="batchId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.batchId == lot.idLot ? 'selected' : ''}><c:out value="${lot.code}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exce??o</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
+                        <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
+                    </form>
+                </details>
                 <button type="button" class="btn btn-escuro" id="btnProxima">Próxima</button>
             </div>
         </div>
