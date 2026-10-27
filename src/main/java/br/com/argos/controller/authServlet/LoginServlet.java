@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         request.getRequestDispatcher(
-                "/WEB-INF/views/login.jsp"
+                "/WEB-INF/views/auth/login.jsp"
         ).forward(request, response);
     }
 
@@ -64,7 +64,7 @@ public class LoginServlet extends HttpServlet {
                     "Informe o e-mail e a senha."
             );
 
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
 
             return;
         }
@@ -98,7 +98,7 @@ public class LoginServlet extends HttpServlet {
         } catch (ValidationException e) {
             // EXIBE ERRO DE AUTENTICAÇÃO
             request.setAttribute("erro", "E-mail ou senha inválidos.");
-            request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
 
         } catch (Exception e) {
             // TRATA ERROS INESPERADOS
