@@ -34,7 +34,6 @@ public class UserDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-
                 // EXCLUI USUÁRIO
                 UUID id = UUID.fromString(idParam);
                 userService.delete(id);
@@ -44,7 +43,6 @@ public class UserDeleteServlet extends HttpServlet {
                 throw new ServletException("Erro ao excluir usuário", e);
             }
         }
-
         // REDIRECIONA
         response.sendRedirect(request.getContextPath() + "/users");
     }
