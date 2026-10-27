@@ -68,9 +68,9 @@
                         <label for="filtro-category">Categoria</label>
                         <select id="filtro-category" name="category">
                             <option value="">Todas</option>
-                            <option value="CRIA" ${param.category == 'CRIA' ? 'selected' : ''}>CRIA</option>
-                            <option value="RECRIA" ${param.category == 'RECRIA' ? 'selected' : ''}>RECRIA</option>
-                            <option value="ENGORDA" ${param.category == 'ENGORDA' ? 'selected' : ''}>ENGORDA</option>
+                            <option value="BREEDING" ${param.category == 'BREEDING' ? 'selected' : ''}>Cria</option>
+                            <option value="REARING" ${param.category == 'REARING' ? 'selected' : ''}>Recria</option>
+                            <option value="FATTENING" ${param.category == 'FATTENING' ? 'selected' : ''}>Engorda</option>
                         </select>
                     </div>
                     <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${param.headCount}'/>"/></div>
@@ -106,7 +106,14 @@
                 <c:forEach var="lot" items="${lots}">
                     <tr class="linha">
                         <td><c:out value="${lot.lotCode}"/></td>
-                        <td><c:out value="${lot.category}"/></td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${lot.category == 'BREEDING'}">Cria</c:when>
+                                <c:when test="${lot.category == 'REARING'}">Recria</c:when>
+                                <c:when test="${lot.category == 'FATTENING'}">Engorda</c:when>
+                                <c:otherwise><c:out value="${lot.category}"/></c:otherwise>
+                            </c:choose>
+                        </td>
                         <td><c:out value="${lot.headCount}"/></td>
                         <td><c:out value="${lot.openDate}"/></td>
                         <td class="col-acoes">
@@ -163,15 +170,15 @@
                     <div class="campo">
                         <label for="campoCodigo">Código do Lote</label>
                         <input type="text" id="campoCodigo" name="lotCode" placeholder="ex: LOTE-001"
-                               required maxlength="50" autocomplete="off">
+                               required maxlength="20" autocomplete="off">
                     </div>
                     <div class="campo">
                         <label for="campoCategoria">Categoria</label>
                         <select id="campoCategoria" name="category" required>
                             <option value="" disabled selected>Selecione a categoria</option>
-                            <option value="CRIA">CRIA</option>
-                            <option value="RECRIA">RECRIA</option>
-                            <option value="ENGORDA">ENGORDA</option>
+                            <option value="BREEDING">Cria</option>
+                            <option value="REARING">Recria</option>
+                            <option value="FATTENING">Engorda</option>
                         </select>
                     </div>
                     <div class="campo">
