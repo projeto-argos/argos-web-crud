@@ -2,8 +2,10 @@ package br.com.argos.controller.propertyServlet;
 
 import br.com.argos.model.Address;
 import br.com.argos.model.Property;
+import br.com.argos.model.User;
 import br.com.argos.service.AddressService;
 import br.com.argos.service.PropertyService;
+import br.com.argos.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,20 +22,27 @@ public class PropertyInsertServlet extends HttpServlet {
     // ATRIBUTOS
     private PropertyService propertyService;
     private AddressService addressService;
+    private UserService userService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         propertyService = new PropertyService();
         addressService = new AddressService();
+        userService = new UserService();
     }
 
-    // EXIBE FORMULÁRIO DE CADASTRO
+    // EXIBE FORMULÁRIO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
+
+        // BUSCA TODOS OS USUÁRIOS
+        List<User> allUsers = userService.findAll();
+        request.setAttribute("allUsers", allUsers);
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/properties/properties.jsp"
         ).forward(request, response);
@@ -59,8 +68,6 @@ public class PropertyInsertServlet extends HttpServlet {
             String cnpj =
                     request.getParameter("cnpj");
 
-
-            // IDS DOS USUÁRIOS
             String[] userIdsString =
                     request.getParameterValues("userIds");
 
@@ -71,7 +78,6 @@ public class PropertyInsertServlet extends HttpServlet {
                     String userIdString = userIdsString[i];
 
                     if (userIdString != null && !userIdString.isBlank()) {
-
                         UUID userId = UUID.fromString(userIdString.trim());
 
                         if (!userIds.contains(userId)) {
@@ -81,7 +87,6 @@ public class PropertyInsertServlet extends HttpServlet {
                 }
             }
 
-
             // RECEBE DADOS DO ENDEREÇO
             String numberString =
                     request.getParameter("number");
@@ -89,7 +94,7 @@ public class PropertyInsertServlet extends HttpServlet {
             Integer number = null;
 
             if (numberString != null &&
-                            !numberString.isBlank()) {
+                    !numberString.isBlank()) {
                 number = Integer.valueOf(numberString);
             }
 
@@ -120,7 +125,6 @@ public class PropertyInsertServlet extends HttpServlet {
 
             UUID addressId =
                     addressService.createAndReturnId(newAddress);
-
 
             // CADASTRA PROPRIEDADE
             Property newProperty = new Property(
