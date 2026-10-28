@@ -13,7 +13,7 @@ public class LogoutServlet extends HttpServlet {
 
     // PROCESSA LOGOUT
     @Override
-    protected void doPost(
+    protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {

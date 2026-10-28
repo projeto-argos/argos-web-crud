@@ -49,11 +49,12 @@ public class PropertyUpdateServlet extends HttpServlet {
                 if (property != null) {
                     Address address = addressService.findById(property.getAddressId());
 
-                    // BUSCA USUÁRIOS VINCULADOS
+                    List<User> allUsers = userService.findAll();
                     List<User> users = new ArrayList<>();
 
                     for (UUID userId : property.getUserIds()) {
                         User user = userService.findById(userId);
+
                         if (user != null) {
                             users.add(user);
                         }
@@ -61,7 +62,7 @@ public class PropertyUpdateServlet extends HttpServlet {
                     request.setAttribute("property", property);
                     request.setAttribute("address", address);
                     request.setAttribute("users", users);
-
+                    request.setAttribute("allUsers", allUsers);
                     request.getRequestDispatcher(
                             "/WEB-INF/views/properties/properties.jsp"
                     ).forward(request, response);
@@ -97,7 +98,6 @@ public class PropertyUpdateServlet extends HttpServlet {
             String cnpj =
                     request.getParameter("cnpj");
 
-
             String[] userIdsString =
                     request.getParameterValues("userIds");
 
@@ -116,7 +116,6 @@ public class PropertyUpdateServlet extends HttpServlet {
                     }
                 }
             }
-
             // RECEBE OS DADOS DO ENDEREÇO
             String numberString =
                     request.getParameter("number");
@@ -143,13 +142,11 @@ public class PropertyUpdateServlet extends HttpServlet {
             String zipCode =
                     request.getParameter("zipCode");
 
-            // PEGA ID DE ENDERECO
             Property property =
                     propertyService.findById(idProperty);
 
             UUID addressId =
                     property.getAddressId();
-
 
             // ATUALIZA O ENDEREÇO
             Address addressToUpdate = new Address(
