@@ -51,7 +51,7 @@
         <form class="form_login" id="formLogin" method="post" action="${pageContext.request.contextPath}/login">
 
             <h1 class="form_titulo">BEM-VINDO DE VOLTA!</h1>
-            <p class="form_subtitulo">Faça login para continuar</p>
+            <p class="form_subtitulo">Faça login como administrador para continuar</p>
 
             <div class="campo">
                 <label for="email">E-mail</label>

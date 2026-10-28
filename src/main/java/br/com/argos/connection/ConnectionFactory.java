@@ -1,42 +1,71 @@
 package br.com.argos.connection;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionFactory{
+public class ConnectionFactory {
 
-    // CRIA LUGAR PRO .ENV
-    private static final Properties env = new Properties();
+    private static final HikariDataSource HIKARI_DATA_SOURCE;
 
-    // ENCONTRA E ARMAZENA O .ENV
     static {
-        try (InputStream input = ConnectionFactory.class.getClassLoader().getResourceAsStream(".env")) {
-            if (input != null) {
-                env.load(input);
+        Properties env = new Properties();
+
+        // Carrega o arquivo .env a partir da pasta src/main/resources
+        try (InputStream input = ConnectionFactory.class
+                .getClassLoader()
+                .getResourceAsStream(".env")) {
+
+            if (input == null) {
+                throw new IllegalStateException("Arquivo .env não encontrado no classpath (src/main/resources).");
             }
+            env.load(input);
+
         } catch (Exception e) {
-            throw new RuntimeException("Error loading the .env file", e);
+            throw new ExceptionInInitializerError("Erro ao carregar configurações do .env: " + e.getMessage());
         }
+
+        HikariConfig config = new HikariConfig();
+
+        config.setDriverClassName("org.postgresql.Driver");
+        config.setJdbcUrl(env.getProperty("DB_URL"));
+        config.setUsername(env.getProperty("DB_USER"));
+        config.setPassword(env.getProperty("DB_PASSWORD"));
+
+        // Tamanho do Pool
+        config.setMinimumIdle(3);
+        config.setMaximumPoolSize(10);
+
+        // Timeouts
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setLeakDetectionThreshold(60000);
+
+        config.addDataSourceProperty("tcpKeepAlive", "true");
+
+        config.addDataSourceProperty("reWriteBatchedInserts", "true");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+        HIKARI_DATA_SOURCE = new HikariDataSource(config);
     }
 
-    // FAZ A CONEXÃO COM O BANCO DE DADOS
+    private ConnectionFactory() {
+    }
+
     public static Connection getConnection() throws SQLException {
+        return HIKARI_DATA_SOURCE.getConnection();
+    }
 
-        // FORÇA O REGISTRO EXPLICITO DO DRIVE
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Driver do PostgreSQL não encontrado!", e);
+    public static void closePool() {
+        if (HIKARI_DATA_SOURCE != null && !HIKARI_DATA_SOURCE.isClosed()) {
+            HIKARI_DATA_SOURCE.close();
         }
-
-
-        return DriverManager.getConnection(
-                env.getProperty("DB_URL"),
-                env.getProperty("DB_USER"),
-                env.getProperty("DB_PASSWORD")
-        );
     }
 }

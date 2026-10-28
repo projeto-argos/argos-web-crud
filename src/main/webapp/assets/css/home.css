@@ -102,11 +102,11 @@ html.dark .card-total-icone {
 }
 
 .home-tabela .tabela thead th {
-    background: #fff;
+    background-color: #fff;
 }
 
 html.dark .home-tabela .tabela thead th {
-    background: var(--campo-fundo);
+    background-color: var(--campo-fundo);
 }
 
 /*  Boas-vindas  */
