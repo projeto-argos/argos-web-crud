@@ -178,7 +178,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
     // SOFT DELETE
     @Override
     public void delete(UUID id) {
-        String sql = "UPDATE admin SET active = FALSE, updated_at = now() WHERE id_admin = ?";
+        String sql = "UPDATE admin SET active = FALSE, updated_at = now() WHERE id_admin = ? AND active = true";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

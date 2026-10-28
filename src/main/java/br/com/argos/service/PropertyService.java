@@ -94,12 +94,12 @@ public class PropertyService {
         propertyDAO.delete(id);
     }
 
-    public int deleteByUser(UUID userId) {
+    public int removeUserLinks(UUID userId) {
         if (userId == null) {
             throw new RequiredFieldException("userId");
         }
 
-        return propertyDAO.deleteByUser(userId);
+        return propertyDAO.removeUserLinks(userId);
     }
 
     private Property normalizeProperty(Property property) {
@@ -128,8 +128,7 @@ public class PropertyService {
     private void validateProperty(Property property) {
 
 //          OBRIGATÓRIOS
-        if (property.getName() == null
-                || property.getName().isBlank()) {
+        if (property.getName() == null || property.getName().isBlank()) {
             throw new RequiredFieldException("name");
         }
 
@@ -143,13 +142,11 @@ public class PropertyService {
         }
 
 //        OPTCIONAIS
-        if (property.getCnpj() != null
-                && !Validador.cnpjValido(property.getCnpj())) {
+        if (property.getCnpj() != null && !Validador.cnpjValido(property.getCnpj())) {
             throw new ValidationException("Invalid CNPJ");
         }
 
-        if (property.getPhone() != null
-                && !Validador.telefoneValido(property.getPhone())) {
+        if (property.getPhone() != null && !Validador.telefoneValido(property.getPhone())) {
             throw new ValidationException("Invalid phone");
         }
     }

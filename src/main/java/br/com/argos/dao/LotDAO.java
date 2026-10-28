@@ -1,4 +1,3 @@
-
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;

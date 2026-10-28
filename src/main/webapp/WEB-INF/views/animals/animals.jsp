@@ -1,4 +1,4 @@
-﻿<%--
+<%--
     Created by IntelliJ IDEA.
     User: Murilo Paiva
     Date: 17/09/2026
@@ -32,12 +32,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
     <link rel="stylesheet" href="${ctx}/assets/css/tables.css">
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
+    <script src="${ctx}/assets/js/filtro.js" defer></script>
 </head>
 <body>
 
@@ -63,13 +65,13 @@
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
             <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.earTag or not empty param.batchId or not empty param.exceptionReason}"/>
+                <c:set var="filtrando" value="${not empty param.earTag or not empty param.lotId or not empty param.exceptionReason}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/animals">
                             <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${param.earTag}'/>"/></div>
-                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-batchId">Lote</label><select id="filtro-batchId" name="batchId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.batchId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
-                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceÃ§Ã£o</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
+                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
                         <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -93,10 +95,10 @@
                     <th>Brinco</th>
                     <th>Peso (kg)</th>
                     <th>Data de nascimento</th>
-                    <th>Data inÃ­cio exceÃ§Ã£o</th>
-                    <th>Data fim exceÃ§Ã£o</th>
-                    <th>Motivo exceÃ§Ã£o</th>
-                    <th class="col-acoes">AÃ§Ãµes</th>
+                    <th>Data início exceção</th>
+                    <th>Data fim exceção</th>
+                    <th>Motivo exceção</th>
+                    <th class="col-acoes">Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -121,7 +123,7 @@
                                     data-birth-date="<c:out value='${animal.birthDate}'/>"
                                     data-exception-start-date="<c:out value='${animal.exceptionStartDate}'/>"
                                     data-exception-end-date="<c:out value='${animal.exceptionEndDate}'/>"
-                                    data-batch-id="<c:out value='${animal.batchId}'/>">
+                                    data-lot-id="<c:out value='${animal.lotId}'/>">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir animal"
@@ -145,7 +147,7 @@
             <p id="infoPaginas" aria-live="polite"></p>
             <div class="paginacao">
                 <button type="button" class="btn btn-contorno" id="btnAnterior">Anterior</button>
-                <button type="button" class="btn btn-escuro" id="btnProxima">PrÃ³xima</button>
+                <button type="button" class="btn btn-escuro" id="btnProxima">Próxima</button>
             </div>
         </div>
 
@@ -170,7 +172,7 @@
                     </div>
                     <div class="campo">
                         <label for="campoLote">Lote</label>
-                        <select id="campoLote" name="batchId" required><option value="">Selecione</option><c:if test="${not empty lots}"><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></option></c:forEach></c:if></select>
+                        <select id="campoLote" name="lotId" required><option value="">Selecione</option><c:if test="${not empty lots}"><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></option></c:forEach></c:if></select>
                     </div>
                     <div class="campo">
                         <label for="campoPeso">Peso</label>
@@ -178,13 +180,13 @@
                                required min="0" step="0.01" inputmode="decimal" autocomplete="off">
                     </div>
                     <div class="campo largura-total">
-                        <label for="campoMotivo">Motivo exceÃ§Ã£o</label>
+                        <label for="campoMotivo">Motivo exceção</label>
                         <input type="text" id="campoMotivo" name="exceptionReason" placeholder="ex: Parainfluenza Bovino (PI-3)"
                                maxlength="120" autocomplete="off">
                     </div>
                     <div class="campo largura-total">
-                        <label for="campoObservacoes">ObservaÃ§Ãµes</label>
-                        <input type="text" id="campoObservacoes" name="notes" placeholder="ex: VÃ­rus destrÃ³i pulmÃµes de bezerros."
+                        <label for="campoObservacoes">Observações</label>
+                        <input type="text" id="campoObservacoes" name="notes" placeholder="ex: Vírus destrói pulmões de bezerros."
                                maxlength="255" autocomplete="off">
                     </div>
                     <div class="campo">
@@ -192,7 +194,7 @@
                         <input type="date" id="campoNascimento" name="birthDate" required>
                     </div>
                     <div class="campo">
-                        <label for="campoInicioExcecao">Data inÃ­cio exceÃ§Ã£o</label>
+                        <label for="campoInicioExcecao">Data início exceção</label>
                         <input type="date" id="campoInicioExcecao" name="exceptionStartDate">
                     </div>
                     <div class="campo">

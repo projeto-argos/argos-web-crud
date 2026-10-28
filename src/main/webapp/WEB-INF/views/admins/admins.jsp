@@ -28,12 +28,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
     <link rel="stylesheet" href="${ctx}/assets/css/tables.css">
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
+    <script src="${ctx}/assets/js/filtro.js" defer></script>
 </head>
 <body>
 
@@ -60,6 +62,7 @@
                 <h1>Admins cadastrados</h1>
 
                 <c:set var="filtrando" value="${not empty param.fullName or not empty param.cpf or not empty param.email or not empty param.phone}"/>
+                <div class="painel-acoes">
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/admins">
@@ -75,6 +78,7 @@
                         data-titulo="Cadastrar Admin" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo admin
                 </button>
+                </div>
             </div>
 
             <div class="busca">

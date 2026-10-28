@@ -28,5 +28,5 @@ public interface IPropertyDAO extends GenericDAO<Property, UUID> {
      * @param userId identificador do usuário
      * @return quantidade de registros afetados
      */
-    int deleteByUser(UUID userId);
+    int removeUserLinks(UUID userId);
 }

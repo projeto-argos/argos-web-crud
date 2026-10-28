@@ -209,23 +209,39 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // SOFT DELETE
     @Override
     public void delete(UUID id){
-        String sql = """
+
+        String deleteLinks = """
+                DELETE FROM "USER" WHERE id_user = ?;
+                """;
+
+        String deactivateUser = """
             UPDATE "USER" SET active = FALSE, updated_at = now() WHERE id_user = ? AND active = true
             """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
+            conn.setAutoCommit(false);
 
-            stmt.setObject(1, id);
+            try {
+                try (PreparedStatement stmt = conn.prepareStatement(deleteLinks)) {
+                    stmt.setObject(1, id);
+                    stmt.executeUpdate();
+                }
 
-            int rowsAffected = stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(deactivateUser)) {
+                    stmt.setObject(1, id);
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("User not found " + id);
+                    }
+                }
+                conn.commit();
 
-            if (rowsAffected == 0) {
-                throw new DataAccessException("User not found " + id);
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+
             }
-
         } catch (SQLException e) {
-            throw new DataAccessException("Error deactivating user: " + id, e);
+            throw new  DataAccessException("Error deactivating user: "+ id, e);
         }
     }
 

@@ -52,6 +52,10 @@
         <h1>Bem-vindo à gestão de dados administrativos do ARGOS!</h1>
         <p>Registre, altere, delete e veja todos os dados.<br>Como podemos ajudar você hoje?</p>
 
+        <a class="btn-entrar" href="${ctx}/home">
+            Entrar <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
         <img class="mascote" src="${ctx}/assets/img/mascote-boas-vindas.png" alt="Mascote do ARGOS acenando">
 
     </section>

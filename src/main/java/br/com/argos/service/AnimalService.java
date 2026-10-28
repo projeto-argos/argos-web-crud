@@ -142,11 +142,11 @@ public class AnimalService {
             throw new ValidationException("End date cannot be before start date");
         }
 
-        if (animal.getBatchId() == null) {
+        if (animal.getLotId() == null) {
             throw new ValidationException("Batch ID cannot be null");
         }
 
-        Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getBatchId());
+        Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getLotId());
         if (existing != null){
             boolean sameAnimal = !newAnimal && animal.getIdAnimal().equals(existing.getIdAnimal());
             if (!sameAnimal){
@@ -160,7 +160,7 @@ public class AnimalService {
         if (animal == null) {
             throw new ValidationException("Animal cannot be null");
         }
-        return new Animal(animal.getIdAnimal(), animal.getBatchId(), animal.getOriginBatchId(),
+        return new Animal(animal.getIdAnimal(), animal.getLotId(), animal.getOriginLotId(),
                 animal.getWeight(), Normalizer.text(animal.getEarTag()), Normalizer.text(animal.getNotes()),
                 Normalizer.text(animal.getExceptionReason()), animal.getExceptionStartDate(),
                 animal.getExceptionEndDate(), animal.getBirthDate(), animal.getUpdatedAt(),

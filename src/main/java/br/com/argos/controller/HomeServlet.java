@@ -32,7 +32,7 @@ public class HomeServlet extends HttpServlet {
             request.setAttribute("summary", summary);
 
             request.getRequestDispatcher(
-                    "/WEB-INF/views/home.jsp"
+                    "/WEB-INF/views/home/home.jsp"
             ).forward(request, response);
 
         } catch (Exception e) {

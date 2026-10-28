@@ -29,7 +29,7 @@
             <li><a href="${pageContext.request.contextPath}/users" class="${param.ativo == 'user' ? 'active' : ''}"><i class="fa-solid fa-user icon"></i><span class="text">Usuário</span></a></li>
             <li><a href="${pageContext.request.contextPath}/properties" class="${param.ativo == 'propriedade' ? 'active' : ''}"><i class="fa-solid fa-location-dot icon"></i><span class="text">Propriedade</span></a></li>
             <li><a href="${pageContext.request.contextPath}/animals" class="${param.ativo == 'animal' ? 'active' : ''}"><i class="fa-solid fa-cow icon"></i><span class="text">Animal</span></a></li>
-            <li><a href="${pageContext.request.contextPath}/suppliers" class="${param.ativo == 'supplier' ? 'active' : ''}"><i class="fa-solid fa-handshake icon"></i><span class="text">Fornecedor</span></a></li>
+            <li><a href="${pageContext.request.contextPath}/lots" class="${param.ativo == 'lot' ? 'active' : ''}"><i class="fa-solid fa-handshake icon"></i><span class="text">Lote</span></a></li>
             <li><a href="${pageContext.request.contextPath}/herds" class="${param.ativo == 'rebanho' ? 'active' : ''}"><i class="fa-solid fa-people-group icon"></i><span class="text">Rebanho</span></a></li>
             <li><a href="${pageContext.request.contextPath}/admins" class="${param.ativo == 'admin' ? 'active' : ''}"><i class="fa-solid fa-user-gear icon"></i><span class="text">Admin</span></a></li>
         </ul>
@@ -43,7 +43,7 @@
                     <span class="switch"></span>
                 </button>
             </li>
-            <li><a href="${pageContext.request.contextPath}/logout"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text">Sair</span></a></li>
+            <li><a href="${pageContext.request.contextPath}/login"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text">Sair</span></a></li>
         </ul>
     </div>
 </nav>
