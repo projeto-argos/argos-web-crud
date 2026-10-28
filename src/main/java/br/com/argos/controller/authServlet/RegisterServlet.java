@@ -1,26 +1,26 @@
+
 package br.com.argos.controller.authServlet;
 
-import br.com.argos.model.Admin;
-import br.com.argos.service.AdminService;
-
+import br.com.argos.model.User;
+import br.com.argos.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
+import java.time.LocalDate;
 
 @WebServlet(name = "RegisterServlet", value = "/register")
 public class RegisterServlet extends HttpServlet {
 
     // ATRIBUTO
-    private AdminService adminService;
+    private UserService userService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
-        adminService = new AdminService();
+        userService = new UserService();
     }
 
     // EXIBE O FORMULÁRIO DE CADASTRO
@@ -29,7 +29,6 @@ public class RegisterServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
         request.getRequestDispatcher(
                 "/WEB-INF/views/register.jsp"
         ).forward(request, response);
@@ -45,7 +44,7 @@ public class RegisterServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         try {
-            // RECEBE OS DADOS DO FORMULÁRIO
+            // RECEBE OS DADOS
             String fullName =
                     request.getParameter("fullName");
 
@@ -58,21 +57,34 @@ public class RegisterServlet extends HttpServlet {
             String phone =
                     request.getParameter("phone");
 
+            String role =
+                    request.getParameter("role");
+
             String password =
                     request.getParameter("password");
 
+            String birthDateParameter =
+                    request.getParameter("birthDate");
 
-            // CRIA ADMIN
-            Admin newAdmin = new Admin(
+            LocalDate birthDate = null;
+
+            if (birthDateParameter != null &&
+                    !birthDateParameter.isBlank()) {
+                birthDate = LocalDate.parse(birthDateParameter);
+            }
+
+            // CADASTRA USUÁRIO
+            User newUser = new User(
                     fullName,
                     cpf,
                     email,
                     phone,
-                    password
+                    role,
+                    password,
+                    birthDate
             );
 
-            // CADASTRA O ADMINISTRADOR
-            adminService.create(newAdmin);
+            userService.create(newUser);
 
             // REDIRECIONA PARA O LOGIN
             response.sendRedirect(
