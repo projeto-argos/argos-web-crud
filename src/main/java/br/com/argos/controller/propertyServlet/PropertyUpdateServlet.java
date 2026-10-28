@@ -153,6 +153,7 @@ public class PropertyUpdateServlet extends HttpServlet {
 
             // ATUALIZA O ENDEREÇO
             Address addressToUpdate = new Address(
+                    addressId,
                     number,
                     complement,
                     street,
