@@ -1,8 +1,8 @@
-
 package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.exceptions.ValidationException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IPropertyDAO;
 import br.com.argos.model.Property;
@@ -149,8 +149,11 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 FROM property p
                 INNER JOIN user_property up
                     ON up.id_property = p.id_property
+                INNER JOIN "USER" u 
+                    ON u.id_user = up.id_user
                 WHERE up.id_user = ?
                   AND p.active = true
+                  AND u.active = true
                 ORDER BY p.name
                 """;
 
@@ -244,16 +247,9 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
 //    DELETE BY USER
     @Override
-    public int deleteByUser(UUID userId) {
+    public int removeUserLinks(UUID userId) {
         String sql = """
-                UPDATE property
-                SET active = false, updated_at = now()
-                WHERE active = true
-                  AND id_property IN (
-                      SELECT id_property
-                      FROM user_property
-                      WHERE id_user = ?
-                  )
+                DELETE FROM user_property WHERE id_user = ?
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -302,6 +298,8 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
     }
 
     private void replaceUserLinks(Connection conn, UUID propertyId, List<UUID> userIds) throws SQLException {
+        validateUserLinks(conn, userIds);
+
         try (PreparedStatement delete = conn.prepareStatement(
                 "DELETE FROM user_property WHERE id_property = ?")) {
             delete.setObject(1, propertyId);
@@ -320,6 +318,35 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 insert.addBatch();
             }
             insert.executeBatch();
+        }
+    }
+
+    private void validateUserLinks(Connection conn, List<UUID> userIds) throws SQLException {
+
+        if (userIds == null || userIds.isEmpty()) {
+            return;
+        }
+
+        String sql = """
+        SELECT COUNT(*) FROM "USER" WHERE id_user = ? AND active = true
+        """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (UUID userId : userIds) {
+                if (userId == null) {
+                    throw new ValidationException("User ID cannot be null.");
+                }
+
+                stmt.setObject(1, userId);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    rs.next();
+
+                    if (rs.getInt(1) == 0) {
+                        throw new ValidationException("User not found or inactive: " + userId);
+                    }
+                }
+            }
         }
     }
 }
