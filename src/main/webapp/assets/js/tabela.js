@@ -38,22 +38,45 @@ function limparTexto(texto) {
     return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
-// Desenha a tabela (busca + página atual)
+const CAMPOS_EXATOS = ["propertyId", "lotId", "category", "role"];
+const CAMPOS_NUMEROS = ["cpf", "cnpj", "phone", "zipCode"];
+
+function linhaPassaNosFiltros(linha, parametros) {
+    const botao = linha.querySelector(".btn-editar");
+    if (!botao) {
+        return true;
+    }
+
+    for (const [nome, valorFiltro] of parametros) {
+        const filtro = valorFiltro.trim();
+        const valorLinha = botao.dataset[nome];
+
+        if (filtro === "" || valorLinha === undefined) {
+            continue;
+        }
+
+        if (CAMPOS_EXATOS.includes(nome)) {
+            if (valorLinha !== filtro) {
+                return false;
+            }
+        } else if (CAMPOS_NUMEROS.includes(nome)) {
+            if (!valorLinha.replace(/\D/g, "").includes(filtro.replace(/\D/g, ""))) {
+                return false;
+            }
+        } else if (!limparTexto(valorLinha).includes(limparTexto(filtro))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function mostrarTabela() {
     const busca = limparTexto(campoBusca.value);
     const parametros = new URLSearchParams(window.location.search);
-    const filtroNome = limparTexto(parametros.get("name") || "");
-    const filtroCnpj = (parametros.get("cnpj") || "").replace(/\D/g, "");
-    const filtroTelefone = (parametros.get("phone") || "").replace(/\D/g, "");
 
     const encontradas = todasAsLinhas.filter(function (linha) {
-        const nome = limparTexto(linha.dataset.filterName || "");
-        const cnpj = (linha.dataset.filterCnpj || "").replace(/\D/g, "");
-        const telefone = (linha.dataset.filterPhone || "").replace(/\D/g, "");
         return limparTexto(linha.textContent).includes(busca)
-            && (!filtroNome || nome.includes(filtroNome))
-            && (!filtroCnpj || cnpj.includes(filtroCnpj))
-            && (!filtroTelefone || telefone.includes(filtroTelefone));
+            && linhaPassaNosFiltros(linha, parametros);
     });
 
     const totalPaginas = Math.max(1, Math.ceil(encontradas.length / LINHAS_POR_PAGINA));
