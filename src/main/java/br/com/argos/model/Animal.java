@@ -9,8 +9,8 @@ public class Animal {
 
     // ATRIBUTOS
     private UUID idAnimal;
-    private UUID batchId;
-    private UUID originBatchId;
+    private UUID lotId;
+    private UUID originLotId;
     private BigDecimal weight;
     private String earTag;
     private String notes;
@@ -26,9 +26,9 @@ public class Animal {
     public Animal() {
     }
 
-    public Animal(UUID batchId, UUID originBatchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean clearedForSlaughter) {
-        this.batchId = batchId;
-        this.originBatchId = originBatchId;
+    public Animal(UUID lotId, UUID originLotId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean clearedForSlaughter) {
+        this.lotId = lotId;
+        this.originLotId = originLotId;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
@@ -39,10 +39,10 @@ public class Animal {
         this.clearedForSlaughter = clearedForSlaughter;
     }
 
-    public Animal(UUID idAnimal, UUID batchId, UUID originBatchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean clearedForSlaughter) {
+    public Animal(UUID idAnimal, UUID lotId, UUID originLotId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, boolean clearedForSlaughter) {
         this.idAnimal = idAnimal;
-        this.batchId = batchId;
-        this.originBatchId = originBatchId;
+        this.lotId = lotId;
+        this.originLotId = originLotId;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
@@ -53,10 +53,10 @@ public class Animal {
         this.clearedForSlaughter = clearedForSlaughter;
     }
 
-    public Animal(UUID idAnimal, UUID batchId, UUID originBatchId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
+    public Animal(UUID idAnimal, UUID lotId, UUID originLotId, BigDecimal weight, String earTag, String notes, String exceptionReason, LocalDate exceptionStartDate, LocalDate exceptionEndDate, LocalDate birthDate, LocalDateTime updatedAt, boolean active, boolean clearedForSlaughter) {
         this.idAnimal = idAnimal;
-        this.batchId = batchId;
-        this.originBatchId = originBatchId;
+        this.lotId = lotId;
+        this.originLotId = originLotId;
         this.weight = weight;
         this.earTag = earTag;
         this.notes = notes;
@@ -74,12 +74,12 @@ public class Animal {
         return idAnimal;
     }
 
-    public UUID getBatchId() {
-        return batchId;
+    public UUID getLotId() {
+        return lotId;
     }
 
-    public UUID getOriginBatchId() {
-        return originBatchId;
+    public UUID getOriginLotId() {
+        return originLotId;
     }
 
     public BigDecimal getWeight() {
@@ -127,12 +127,12 @@ public class Animal {
         this.idAnimal = idAnimal;
     }
 
-    public void setBatchId(UUID batchId) {
-        this.batchId = batchId;
+    public void setLotId(UUID lotId) {
+        this.lotId = lotId;
     }
 
-    public void setOriginBatchId(UUID originBatchId) {
-        this.originBatchId = originBatchId;
+    public void setOriginLotId(UUID originLotId) {
+        this.originLotId = originLotId;
     }
 
     public void setWeight(BigDecimal weight) {
@@ -180,8 +180,8 @@ public class Animal {
     public String toString() {
         return "Animal{" +
                 "idAnimal=" + idAnimal +
-                ", batchId=" + batchId +
-                ", originBatchId=" + originBatchId +
+                ", lotId=" + lotId +
+                ", originLotId=" + originLotId +
                 ", weight=" + weight +
                 ", earTag='" + earTag + '\'' +
                 ", notes='" + notes + '\'' +
