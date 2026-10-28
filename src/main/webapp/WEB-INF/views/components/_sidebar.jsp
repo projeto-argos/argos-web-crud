@@ -43,7 +43,7 @@
                     <span class="switch"></span>
                 </button>
             </li>
-            <li><a href="${pageContext.request.contextPath}/logout"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text">Sair</span></a></li>
+            <li><a href="${pageContext.request.contextPath}/login"><i class="fa-solid fa-right-from-bracket icon"></i><span class="text">Sair</span></a></li>
         </ul>
     </div>
 </nav>

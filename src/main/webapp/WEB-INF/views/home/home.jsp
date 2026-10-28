@@ -65,12 +65,12 @@
             <p class="card-total-numero"><c:out value="${summary.totalAnimals}" default="0"/></p>
         </a>
 
-        <a class="card-total" href="${ctx}/suppliers">
+        <a class="card-total" href="${ctx}/lots">
             <div class="card-total-topo">
-                <span class="card-total-rotulo">Total de fornecedores</span>
+                <span class="card-total-rotulo">Total de lotes</span>
                 <span class="card-total-icone"><i class="fa-solid fa-handshake"></i></span>
             </div>
-            <p class="card-total-numero"><c:out value="${summary.totalSuppliers}" default="0"/></p>
+            <p class="card-total-numero"><c:out value="${summary.totalLots}" default="0"/></p>
         </a>
 
         <a class="card-total" href="${ctx}/herds">

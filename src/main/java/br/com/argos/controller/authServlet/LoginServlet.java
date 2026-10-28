@@ -83,7 +83,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("usuarioLogado", loggedUser);
 
             response.sendRedirect(
-                    request.getContextPath() + "/home");
+                    request.getContextPath() + "/welcome");
 
         } catch (ValidationException e) {
             request.setAttribute("erro", "E-mail ou senha inválidos.");

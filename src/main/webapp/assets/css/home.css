@@ -1,9 +1,3 @@
-/* =====================================================================
-   home.css - telas "Página inicial" (home.jsp) e "Boas-vindas" (welcome.jsp)
-   Usa as variáveis de sidebar.css e tables.css (cores, fontes, modo escuro).
-   Carregar DEPOIS de sidebar.css e tables.css.
-   ===================================================================== */
-
 :root {
     --card-fundo: #FFFFFF;
     --card-sombra: 0 6px 14px rgba(6, 65, 47, 0.12);
@@ -17,7 +11,7 @@ html.dark {
     --card-sombra: 0 6px 14px rgba(0, 0, 0, 0.45);
 }
 
-/* ---------- Página inicial ---------- */
+/*  Página inicial  */
 .home-titulo {
     margin: 8px 0 28px;
     font-family: var(--fonte-titulo);
@@ -107,7 +101,15 @@ html.dark .card-total-icone {
     min-width: 560px;
 }
 
-/* ---------- Boas-vindas ---------- */
+.home-tabela .tabela thead th {
+    background: #fff;
+}
+
+html.dark .home-tabela .tabela thead th {
+    background: var(--campo-fundo);
+}
+
+/*  Boas-vindas  */
 .conteudo.conteudo-cheio {
     padding: 0;
 }
@@ -163,7 +165,7 @@ html.dark .card-total-icone {
     width: auto;
 }
 
-/* ---------- Telas menores ---------- */
+/*  Telas menores  */
 @media (max-width: 1000px) {
     .cards-grade {
         grid-template-columns: repeat(2, 1fr);

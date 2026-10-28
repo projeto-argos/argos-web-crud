@@ -65,12 +65,12 @@
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
             <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.earTag or not empty param.batchId or not empty param.exceptionReason}"/>
+                <c:set var="filtrando" value="${not empty param.earTag or not empty param.lotId or not empty param.exceptionReason}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/animals">
                             <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${param.earTag}'/>"/></div>
-                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-batchId">Lote</label><select id="filtro-batchId" name="batchId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.batchId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
+                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
                             <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
                         <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
@@ -123,7 +123,7 @@
                                     data-birth-date="<c:out value='${animal.birthDate}'/>"
                                     data-exception-start-date="<c:out value='${animal.exceptionStartDate}'/>"
                                     data-exception-end-date="<c:out value='${animal.exceptionEndDate}'/>"
-                                    data-batch-id="<c:out value='${animal.batchId}'/>">
+                                    data-lot-id="<c:out value='${animal.lotId}'/>">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir animal"
@@ -172,7 +172,7 @@
                     </div>
                     <div class="campo">
                         <label for="campoLote">Lote</label>
-                        <select id="campoLote" name="batchId" required><option value="">Selecione</option><c:if test="${not empty lots}"><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></option></c:forEach></c:if></select>
+                        <select id="campoLote" name="lotId" required><option value="">Selecione</option><c:if test="${not empty lots}"><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></option></c:forEach></c:if></select>
                     </div>
                     <div class="campo">
                         <label for="campoPeso">Peso</label>

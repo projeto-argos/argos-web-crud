@@ -60,10 +60,10 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.setBoolean(7, animal.isClearedForSlaughter());
             stmt.setString(8, animal.getNotes());
 
-            stmt.setObject(9, animal.getBatchId());
+            stmt.setObject(9, animal.getLotId());
 
-            if (animal.getOriginBatchId() != null) {
-                stmt.setObject(10, animal.getOriginBatchId());
+            if (animal.getOriginLotId() != null) {
+                stmt.setObject(10, animal.getOriginLotId());
             } else {
                 stmt.setNull(10, Types.OTHER);
             }
@@ -125,7 +125,6 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
 
     @Override
     public Animal findAnyByEarTagAndBatch(String earTag, UUID idBatch) {
-        // A restrição UNIQUE do schema inclui também registros inativos.
         String sql = "SELECT * FROM animal WHERE ear_tag = ? AND id_lot = ?";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -225,10 +224,10 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.setBoolean(7, animal.isClearedForSlaughter());
             stmt.setString(8, animal.getNotes());
 
-            stmt.setObject(9, animal.getBatchId());
+            stmt.setObject(9, animal.getLotId());
 
-            if (animal.getOriginBatchId() != null) {
-                stmt.setObject(10, animal.getOriginBatchId());
+            if (animal.getOriginLotId() != null) {
+                stmt.setObject(10, animal.getOriginLotId());
             } else {
                 stmt.setNull(10, Types.OTHER);
             }
