@@ -1,7 +1,9 @@
 package br.com.argos.controller.animalServlet;
 
 import br.com.argos.service.AnimalService;
+import br.com.argos.service.LotService;
 import br.com.argos.model.Animal;
+import br.com.argos.model.Lot;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,18 +12,21 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "AnimalUpdateServlet", value = "/animals/edit")
 public class AnimalUpdateServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private AnimalService animalService;
+    private LotService lotService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         animalService = new AnimalService();
+        lotService = new LotService();
     }
 
     // EXIBE FORMULÁRIO DE EDIÇÃO
@@ -39,7 +44,10 @@ public class AnimalUpdateServlet extends HttpServlet {
                 Animal animal = animalService.findById(id);
 
                 if (animal != null) {
+                    List<Lot> lots = lotService.findAll();
+
                     request.setAttribute("animal", animal);
+                    request.setAttribute("lots", lots);
                     request.getRequestDispatcher(
                             "/WEB-INF/views/animals/animals.jsp"
                     ).forward(request, response);
@@ -69,54 +77,56 @@ public class AnimalUpdateServlet extends HttpServlet {
             String earTag =
                     request.getParameter("earTag");
 
-            String weightStr =
-                    request.getParameter("weight");
+            String weightString = request.getParameter("weight");
 
             BigDecimal weight = null;
 
-            if (weightStr != null &&
-                            !weightStr.isBlank()) {
-                weight = new BigDecimal(weightStr);
+            if (weightString != null &&
+                    !weightString.isBlank()) {
+                weight = new BigDecimal(weightString);
             }
 
-            String birthDateStr =
+            String birthDateString =
                     request.getParameter("birthDate");
-
             LocalDate birthDate = null;
 
-            if (birthDateStr != null &&
-                            !birthDateStr.isBlank()) {
-                birthDate = LocalDate.parse(birthDateStr);
+
+            if (birthDateString != null &&
+                    !birthDateString.isBlank()) {
+                birthDate = LocalDate.parse(birthDateString);
             }
 
             String exceptionReason =
                     request.getParameter("exceptionReason");
 
-            String exceptionStartDateStr =
+            String exceptionStartDateString =
                     request.getParameter("exceptionStartDate");
 
             LocalDate exceptionStartDate = null;
 
-            if (exceptionStartDateStr != null &&
-                            !exceptionStartDateStr.isBlank()) {
-                exceptionStartDate = LocalDate.parse(exceptionStartDateStr);
+            if (exceptionStartDateString != null &&
+                    !exceptionStartDateString.isBlank()) {
+                exceptionStartDate =
+                        LocalDate.parse(exceptionStartDateString);
             }
 
-            String exceptionEndDateStr =
+            String exceptionEndDateString =
                     request.getParameter("exceptionEndDate");
 
             LocalDate exceptionEndDate = null;
 
-            if (exceptionEndDateStr != null &&
-                            !exceptionEndDateStr.isBlank()) {
-                exceptionEndDate = LocalDate.parse(exceptionEndDateStr);
+            if (exceptionEndDateString != null &&
+                    !exceptionEndDateString.isBlank()) {
+                exceptionEndDate =
+                        LocalDate.parse(exceptionEndDateString);
             }
 
-            String clearedForSlaughterParam =
+            String clearedForSlaughterString =
                     request.getParameter("clearedForSlaughter");
 
-            boolean clearedForSlaughter = clearedForSlaughterParam != null &&
-                    clearedForSlaughterParam.equals("true");
+            boolean clearedForSlaughter =
+                    clearedForSlaughterString != null &&
+                            clearedForSlaughterString.equals("true");
 
             String notes =
                     request.getParameter("notes");
@@ -127,7 +137,7 @@ public class AnimalUpdateServlet extends HttpServlet {
             UUID lotId = null;
 
             if (lotIdString != null &&
-                            !lotIdString.isBlank()) {
+                    !lotIdString.isBlank()) {
                 lotId = UUID.fromString(lotIdString);
             }
 
@@ -137,7 +147,7 @@ public class AnimalUpdateServlet extends HttpServlet {
             UUID originLotId = null;
 
             if (originLotIdString != null &&
-                            !originLotIdString.isBlank()) {
+                    !originLotIdString.isBlank()) {
                 originLotId = UUID.fromString(originLotIdString);
             }
 
@@ -159,7 +169,9 @@ public class AnimalUpdateServlet extends HttpServlet {
             animalService.update(animalToUpdate);
 
             // REDIRECIONA
-            response.sendRedirect(request.getContextPath() + "/animals");
+            response.sendRedirect(
+                    request.getContextPath() + "/animals"
+            );
 
         } catch (Exception e) {
             // TRATA ERRO
