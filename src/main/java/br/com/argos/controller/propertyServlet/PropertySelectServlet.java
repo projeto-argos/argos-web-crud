@@ -2,14 +2,15 @@ package br.com.argos.controller.propertyServlet;
 
 import br.com.argos.model.Address;
 import br.com.argos.model.Property;
+import br.com.argos.model.User;
 import br.com.argos.service.AddressService;
 import br.com.argos.service.PropertyService;
+import br.com.argos.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +23,23 @@ public class PropertySelectServlet extends HttpServlet {
     // ATRIBUTOS
     private PropertyService propertyService;
     private AddressService addressService;
+    private UserService userService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         propertyService = new PropertyService();
         addressService = new AddressService();
+        userService = new UserService();
     }
 
-    // EXIBE FORMULÁRIO
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
         try {
-            // LISTAR
+            // LISTAR PROPRIEDADES
             List<Property> properties = propertyService.findAll();
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
@@ -56,8 +58,13 @@ public class PropertySelectServlet extends HttpServlet {
                     }
                 }
             }
+
+            // LISTAR USUÁRIOS
+            List<User> users = userService.findAll();
             request.setAttribute("properties", properties);
             request.setAttribute("propertyAddresses", propertyAddresses);
+            request.setAttribute("users", users);
+            request.setAttribute("allUsers", users);
 
             request.getRequestDispatcher(
                     "/WEB-INF/views/properties/properties.jsp"
