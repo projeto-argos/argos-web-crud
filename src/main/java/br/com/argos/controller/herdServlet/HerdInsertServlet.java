@@ -1,13 +1,16 @@
 package br.com.argos.controller.herdServlet;
 
 import br.com.argos.service.HerdService;
+import br.com.argos.service.PropertyService;
 import br.com.argos.model.Herd;
+import br.com.argos.model.Property;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "HerdInsertServlet", value = "/herds/register")
@@ -15,11 +18,13 @@ public class HerdInsertServlet extends HttpServlet {
 
     // ATRIBUTOS
     private HerdService herdService;
+    private PropertyService propertyService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         herdService = new HerdService();
+        propertyService = new PropertyService();
     }
 
     // EXIBE FORMULÁRIO
@@ -28,6 +33,11 @@ public class HerdInsertServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
+
+        // BUSCA TODAS AS PROPRIEDADES
+        List<Property> properties = propertyService.findAll();
+        request.setAttribute("properties", properties);
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/herds/herds.jsp"
         ).forward(request, response);
@@ -35,7 +45,7 @@ public class HerdInsertServlet extends HttpServlet {
 
     // PROCESSA FORMULÁRIO
     @Override
-    protected void doPost(
+    protected void doPost (
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -59,9 +69,8 @@ public class HerdInsertServlet extends HttpServlet {
             Integer headCount = null;
 
             if (headCountString != null &&
-                            !headCountString.isBlank()) {
-                headCount =
-                        Integer.valueOf(headCountString);
+                    !headCountString.isBlank()) {
+                headCount = Integer.valueOf(headCountString);
             }
 
             String propertyIdString =
@@ -70,9 +79,8 @@ public class HerdInsertServlet extends HttpServlet {
             UUID propertyId = null;
 
             if (propertyIdString != null &&
-                            !propertyIdString.isBlank()) {
-                propertyId =
-                        UUID.fromString(propertyIdString);
+                    !propertyIdString.isBlank()) {
+                propertyId = UUID.fromString(propertyIdString);
             }
 
             // CADASTRA REBANHO
