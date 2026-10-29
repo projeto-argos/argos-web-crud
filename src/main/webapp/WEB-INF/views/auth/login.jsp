@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Murilo Paiva
+  Date: 17/09/2026
+  Time: 12:02
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="erroLogin" value="${not empty error ? error : erro}"/>
@@ -34,8 +41,10 @@
         <a class="brand" href="${pageContext.request.contextPath}/login"><img src="${pageContext.request.contextPath}/assets/img/Logo Deitada clara.svg" alt="Argos"></a>
     </div>
 
+    <p class="slogan_login">Gestão de pecuária e de medicamentos aplicados em bovinos</p>
+
     <div class="personagem_login">
-        <img src="${pageContext.request.contextPath}/assets/img/mascote-login.svg" alt="Mascote do ARGOS">
+        <img src="${pageContext.request.contextPath}/assets/img/mascote-login.webp" alt="Mascote do ARGOS" width="600" height="958">
     </div>
 
     <div class="arvore_login">
