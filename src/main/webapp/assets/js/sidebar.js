@@ -23,7 +23,8 @@ if (lerPreferencia("argos-sidebar") === "fechada") {
 }
 
 window.addEventListener("pageshow", (e) => {
-    if (e.persisted) {
+    const nav = performance.getEntriesByType("navigation")[0];
+    if (e.persisted || (nav && nav.type === "back_forward")) {
         location.reload();
     }
 });
