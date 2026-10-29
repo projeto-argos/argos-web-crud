@@ -13,7 +13,7 @@ import java.util.List;
 @WebServlet(name = "UserSelectServlet", value = "/users")
 public class UserSelectServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private UserService userService;
 
     // CICLO DE VIDA DO SERVLET

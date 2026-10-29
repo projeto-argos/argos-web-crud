@@ -1,7 +1,9 @@
 package br.com.argos.controller.lotServlet;
 
-import br.com.argos.service.LotService;
+import br.com.argos.model.Herd;
 import br.com.argos.model.Lot;
+import br.com.argos.service.HerdService;
+import br.com.argos.service.LotService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "LotUpdateServlet", value = "/lots/edit")
@@ -16,11 +19,13 @@ public class LotUpdateServlet extends HttpServlet {
 
     // ATRIBUTOS
     private LotService lotService;
+    private HerdService herdService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         lotService = new LotService();
+        herdService = new HerdService();
     }
 
     // EXIBE FORMULÁRIO DE EDIÇÃO
@@ -38,6 +43,9 @@ public class LotUpdateServlet extends HttpServlet {
                 Lot lot = lotService.findById(id);
 
                 if (lot != null) {
+                    List<Herd> herds = herdService.findAll();
+
+                    request.setAttribute("herds", herds);
                     request.setAttribute("lot", lot);
                     request.getRequestDispatcher(
                             "/WEB-INF/views/lots/lots.jsp"
@@ -62,11 +70,13 @@ public class LotUpdateServlet extends HttpServlet {
 
         try {
             // RECEBE DADOS
-            UUID idLot =
-                    UUID.fromString(request.getParameter("idLot"));
+            UUID idLot = UUID.fromString(
+                    request.getParameter("idLot")
+            );
 
-            UUID herdId =
-                    UUID.fromString(request.getParameter("herdId"));
+            UUID herdId = UUID.fromString(
+                    request.getParameter("herdId")
+            );
 
             String headCountString =
                     request.getParameter("headCount");
@@ -79,6 +89,7 @@ public class LotUpdateServlet extends HttpServlet {
 
             String lotCode =
                     request.getParameter("lotCode");
+
 
             String openDateString =
                     request.getParameter("openDate");

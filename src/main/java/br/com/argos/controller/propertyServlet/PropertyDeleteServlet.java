@@ -50,7 +50,7 @@ public class PropertyDeleteServlet extends HttpServlet {
                     // EXCLUI A PROPRIEDADE
                     propertyService.delete(idProperty);
 
-                    // EXCLUI O ENDEREÇO ASSOCIADO
+                    // EXCLUI O ENDEREÇO
                     if (addressId != null) {
                         addressService.delete(addressId);
                     }

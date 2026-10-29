@@ -61,34 +61,23 @@ public class LoginServlet extends HttpServlet {
                     password == null ||
                     password.isBlank()) {
                 request.setAttribute("erro", "Informe o e-mail e a senha.");
-                request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp"
+                request.getRequestDispatcher(
+                        "/WEB-INF/views/auth/login.jsp"
                         ).forward(request, response);
                 return;
             }
 
-            Admin admin = adminService.authenticate(email, password);
+            adminService.authenticate(email, password);
+            request.getSession(true);
 
-            // ENCERRA E CRIA SESSAO
-            HttpSession previousSession = request.getSession(false);
-            if (previousSession != null) {
-                previousSession.invalidate();
-            }
-            HttpSession session = request.getSession(true);
-
-            // Armazena os dados do administrador autenticado.
-            Map<String, String> loggedUser = new HashMap<>();
-            loggedUser.put("id", admin.getIdAdmin().toString());
-            loggedUser.put("name", admin.getFullName());
-            loggedUser.put("type", "ADMIN");
-            session.setAttribute("usuarioLogado", loggedUser);
-
+            // REDIRECIONA
             response.sendRedirect(
                     request.getContextPath() + "/welcome");
 
         } catch (ValidationException e) {
+            // TRATA ERRO
             request.setAttribute("erro", "E-mail ou senha inválidos.");
-            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp")
-                    .forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
         }
     }
 }

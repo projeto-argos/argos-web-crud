@@ -52,7 +52,9 @@ public class PropertyUpdateServlet extends HttpServlet {
                     List<User> allUsers = userService.findAll();
                     List<User> users = new ArrayList<>();
 
-                    for (UUID userId : property.getUserIds()) {
+                    List<UUID> userIds = property.getUserIds();
+                    for (int i = 0; i < userIds.size(); i++) {
+                        UUID userId = userIds.get(i);
                         User user = userService.findById(userId);
 
                         if (user != null) {
@@ -105,9 +107,11 @@ public class PropertyUpdateServlet extends HttpServlet {
 
             if (userIdsString != null) {
                 for (int i = 0; i < userIdsString.length; i++) {
-                    String userIdString = userIdsString[i];
+                    String userIdString =
+                            userIdsString[i];
 
-                    if (userIdString != null && !userIdString.isBlank()) {
+                    if (userIdString != null &&
+                            !userIdString.isBlank()) {
                         UUID userId = UUID.fromString(userIdString.trim());
 
                         if (!userIds.contains(userId)) {

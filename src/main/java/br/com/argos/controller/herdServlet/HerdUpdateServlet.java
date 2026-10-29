@@ -1,25 +1,30 @@
 package br.com.argos.controller.herdServlet;
 
 import br.com.argos.service.HerdService;
+import br.com.argos.service.PropertyService;
 import br.com.argos.model.Herd;
+import br.com.argos.model.Property;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "HerdUpdateServlet", value = "/herds/edit")
 public class HerdUpdateServlet extends HttpServlet {
 
-    // ATRIBUTO
+    // ATRIBUTOS
     private HerdService herdService;
+    private PropertyService propertyService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         herdService = new HerdService();
+        propertyService = new PropertyService();
     }
 
     // EXIBE FORMULÁRIO DE EDIÇÃO
@@ -37,7 +42,10 @@ public class HerdUpdateServlet extends HttpServlet {
                 Herd herd = herdService.findById(id);
 
                 if (herd != null) {
+                    List<Property> properties = propertyService.findAll();
+
                     request.setAttribute("herd", herd);
+                    request.setAttribute("properties", properties);
                     request.getRequestDispatcher(
                             "/WEB-INF/views/herds/herds.jsp"
                     ).forward(request, response);
@@ -79,9 +87,8 @@ public class HerdUpdateServlet extends HttpServlet {
             Integer headCount = null;
 
             if (headCountParam != null &&
-                            !headCountParam.isBlank()) {
-                headCount =
-                        Integer.valueOf(headCountParam);
+                    !headCountParam.isBlank()) {
+                headCount = Integer.valueOf(headCountParam);
             }
 
             String propertyIdParam =
@@ -90,9 +97,8 @@ public class HerdUpdateServlet extends HttpServlet {
             UUID propertyId = null;
 
             if (propertyIdParam != null &&
-                            !propertyIdParam.isBlank()) {
-                propertyId =
-                        UUID.fromString(propertyIdParam);
+                    !propertyIdParam.isBlank()) {
+                propertyId = UUID.fromString(propertyIdParam);
             }
 
             // ATUALIZA REBANHO

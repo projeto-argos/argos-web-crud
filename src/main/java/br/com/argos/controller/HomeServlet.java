@@ -34,7 +34,6 @@ public class HomeServlet extends HttpServlet {
             request.getRequestDispatcher(
                     "/WEB-INF/views/home/home.jsp"
             ).forward(request, response);
-
         } catch (Exception e) {
             // TRATA ERRO
             throw new ServletException("Erro ao carregar a página inicial.", e);

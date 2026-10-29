@@ -1,7 +1,9 @@
 package br.com.argos.controller.animalServlet;
 
 import br.com.argos.service.AnimalService;
+import br.com.argos.service.LotService;
 import br.com.argos.model.Animal;
+import br.com.argos.model.Lot;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "AnimalInsertServlet", value = "/animals/register")
@@ -17,11 +20,13 @@ public class AnimalInsertServlet extends HttpServlet {
 
     // ATRIBUTOS
     private AnimalService animalService;
+    private LotService lotService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         animalService = new AnimalService();
+        lotService = new LotService();
     }
 
     // EXIBE FORMULÁRIO
@@ -30,6 +35,11 @@ public class AnimalInsertServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
+
+        // BUSCA TODOS OS LOTES
+        List<Lot> lots = lotService.findAll();
+        request.setAttribute("lots", lots);
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/animals/animals.jsp"
         ).forward(request, response);
@@ -55,7 +65,7 @@ public class AnimalInsertServlet extends HttpServlet {
             BigDecimal weight = null;
 
             if (weightString != null &&
-                            !weightString.isBlank()) {
+                    !weightString.isBlank()) {
                 weight = new BigDecimal(weightString);
             }
 
@@ -65,7 +75,7 @@ public class AnimalInsertServlet extends HttpServlet {
             LocalDate birthDate = null;
 
             if (birthDateString != null &&
-                            !birthDateString.isBlank()) {
+                    !birthDateString.isBlank()) {
                 birthDate = LocalDate.parse(birthDateString);
             }
 
@@ -78,8 +88,9 @@ public class AnimalInsertServlet extends HttpServlet {
             LocalDate exceptionStartDate = null;
 
             if (exceptionStartDateString != null &&
-                            !exceptionStartDateString.isBlank()) {
-                exceptionStartDate = LocalDate.parse(exceptionStartDateString);
+                    !exceptionStartDateString.isBlank()) {
+                exceptionStartDate =
+                        LocalDate.parse(exceptionStartDateString);
             }
 
             String exceptionEndDateString =
@@ -88,13 +99,17 @@ public class AnimalInsertServlet extends HttpServlet {
             LocalDate exceptionEndDate = null;
 
             if (exceptionEndDateString != null &&
-                            !exceptionEndDateString.isBlank()) {
-                exceptionEndDate = LocalDate.parse(exceptionEndDateString);
+                    !exceptionEndDateString.isBlank()) {
+                exceptionEndDate =
+                        LocalDate.parse(exceptionEndDateString);
             }
 
+            String clearedForSlaughterString =
+                    request.getParameter("clearedForSlaughter");
+
             boolean clearedForSlaughter =
-                    request.getParameter("clearedForSlaughter") != null &&
-                    request.getParameter("clearedForSlaughter").equals("true");
+                    clearedForSlaughterString != null &&
+                            clearedForSlaughterString.equals("true");
 
             String notes =
                     request.getParameter("notes");
@@ -105,7 +120,7 @@ public class AnimalInsertServlet extends HttpServlet {
             UUID lotId = null;
 
             if (lotIdString != null &&
-                            !lotIdString.isBlank()) {
+                    !lotIdString.isBlank()) {
                 lotId = UUID.fromString(lotIdString);
             }
 
@@ -115,7 +130,7 @@ public class AnimalInsertServlet extends HttpServlet {
             UUID originLotId = null;
 
             if (originLotIdString != null &&
-                            !originLotIdString.isBlank()) {
+                    !originLotIdString.isBlank()) {
                 originLotId = UUID.fromString(originLotIdString);
             }
 
