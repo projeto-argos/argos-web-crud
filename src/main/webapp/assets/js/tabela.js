@@ -35,10 +35,11 @@ document.querySelectorAll(".telefone").forEach(function (celula) {
 
 //  Busca
 function limparTexto(texto) {
-    return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 const CAMPOS_EXATOS = ["propertyId", "lotId", "category", "role", "clearedForSlaughter"];
+const CAMPOS_LISTA = ["userIds"];
 const CAMPOS_NUMEROS = ["cpf", "cnpj", "phone", "zipCode"];
 
 function linhaPassaNosFiltros(linha, parametros) {
@@ -55,7 +56,11 @@ function linhaPassaNosFiltros(linha, parametros) {
             continue;
         }
 
-        if (CAMPOS_EXATOS.includes(nome)) {
+        if (CAMPOS_LISTA.includes(nome)) {
+            if (!valorLinha.split(",").includes(filtro)) {
+                return false;
+            }
+        } else if (CAMPOS_EXATOS.includes(nome)) {
             if (valorLinha !== filtro) {
                 return false;
             }
