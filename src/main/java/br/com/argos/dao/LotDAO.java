@@ -236,6 +236,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
     }
 
     // SOFT DELETE BY ID
+    // Inativa o lote e, na mesma transacao, seus animais, aplicacoes e periodos de carencia.
     @Override
     public void delete(UUID id) {
         String sql = """
@@ -244,24 +245,36 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
                 WHERE id_lot = ? AND active = TRUE
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, id);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateLotChildren(conn, CascadeInactivation.LOTS_BY_ID, id);
 
-            int rowsAffected = stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, id);
 
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Lot not found: " + id);
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Lot not found: " + id);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error deactivating lot: " + id, e);
+            throw new DataAccessException("Error deactivating lot: " + id, e);
         }
     }
 
     // SOFT DELETE ALL LOTS OF A HERD
+    // Tambem inativa animais, aplicacoes e periodos de carencia desses lotes.
     @Override
     public void deleteByHerd(UUID idHerd) {
         String sql = """
@@ -270,15 +283,28 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
                 WHERE id_herd = ? AND active = TRUE
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, idHerd);
-            stmt.executeUpdate();
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateLotChildren(conn, CascadeInactivation.LOTS_BY_HERD, idHerd);
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, idHerd);
+                    stmt.executeUpdate();
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
+            }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error deactivating lots of herd: " + idHerd, e);
+            throw new DataAccessException("Error deactivating lots of herd: " + idHerd, e);
         }
     }
 

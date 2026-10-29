@@ -230,18 +230,37 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 WHERE id_property = ? AND active = true
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, id);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateHerdChildren(conn, CascadeInactivation.HERDS_BY_PROPERTY, id);
 
-            if (stmt.executeUpdate() == 0) {
-                throw new DataAccessException("Property not found: " + id);
+                try (PreparedStatement stmt = conn.prepareStatement(
+                        "UPDATE herd SET active = false, updated_at = now() WHERE active = true AND id_property = ?")) {
+                    stmt.setObject(1, id);
+                    stmt.executeUpdate();
+                }
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, id);
+
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Property not found: " + id);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error deleting property: " + id, e);
+            throw new DataAccessException("Error deleting property: " + id, e);
         }
     }
 
@@ -284,7 +303,13 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
     }
 
     private List<UUID> findUserIds(Connection conn, UUID propertyId) throws SQLException {
-        String sql = "SELECT id_user FROM user_property WHERE id_property = ? ORDER BY id_user";
+        String sql = """
+                SELECT up.id_user
+                FROM user_property up
+                INNER JOIN "USER" u ON u.id_user = up.id_user
+                WHERE up.id_property = ? AND u.active = true
+                ORDER BY up.id_user
+                """;
         List<UUID> userIds = new ArrayList<>();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, propertyId);

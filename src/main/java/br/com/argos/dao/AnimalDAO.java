@@ -248,19 +248,37 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     // SOFT DELETE
     @Override
     public void delete(UUID id) {
+        String withdrawals = """
+                UPDATE withdrawal_period SET active = FALSE, updated_at = now() WHERE id_animal = ? AND active = true
+                """;
         String sql = """
                 UPDATE animal SET active = FALSE, updated_at = now() WHERE id_animal = ? AND active = true
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, id);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement stmt = conn.prepareStatement(withdrawals)) {
+                    stmt.setObject(1, id);
+                    stmt.executeUpdate();
+                }
 
-            int rowsAffected = stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, id);
 
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Animal not found " + id);
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Animal not found " + id);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
@@ -271,19 +289,39 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
     // SOFT DELETE BY EAR TAG
     @Override
     public void deleteByEarTag(String earTag) {
+        String withdrawals = """
+                UPDATE withdrawal_period SET active = FALSE, updated_at = now()
+                WHERE active = true
+                  AND id_animal IN (SELECT id_animal FROM animal WHERE ear_tag = ? AND active = true)
+                """;
         String sql = """
                 UPDATE animal SET active = FALSE, updated_at = now() WHERE ear_tag = ? AND active = true
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setString(1, earTag);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement stmt = conn.prepareStatement(withdrawals)) {
+                    stmt.setString(1, earTag);
+                    stmt.executeUpdate();
+                }
 
-            int rowsAffected = stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setString(1, earTag);
 
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Animal not found with ear tag " + earTag);
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Animal not found with ear tag " + earTag);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
