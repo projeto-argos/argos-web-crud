@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="argos" uri="/WEB-INF/argos.tld" %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="urlInserir" value="${ctx}/lots/register"/>
@@ -102,6 +103,7 @@
                     <th>Categoria</th>
                     <th>Quantidade de cabeças</th>
                     <th>Data de abertura</th>
+                    <th>Última atualização</th>
                     <th class="col-acoes">Ações</th>
                 </tr>
                 </thead>
@@ -120,6 +122,7 @@
                         </td>
                         <td><c:out value="${lot.headCount}"/></td>
                         <td><c:out value="${lot.openDate}"/></td>
+                        <td class="col-data"><c:out value="${argos:formatDateTime(lot.updatedAt)}"/></td>
                         <td class="col-acoes">
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar lote"
                                     data-abrir="modalLote" data-acao="editar" data-action="${urlAtualizar}"
@@ -143,7 +146,7 @@
                 </c:forEach>
 
                 <tr class="linha-vazia" id="linhaVazia" hidden>
-                    <td colspan="5">Nenhum resultado encontrado.</td>
+                    <td colspan="6">Nenhum resultado encontrado.</td>
                 </tr>
                 </tbody>
             </table>

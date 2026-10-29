@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="argos" uri="/WEB-INF/argos.tld" %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="urlInserir" value="${ctx}/users/register"/>
@@ -126,6 +127,9 @@
                     <th>CPF</th>
                     <th>Email</th>
                     <th>Cargo</th>
+                    <th>Data de nascimento</th>
+                    <th>Telefone</th>
+                    <th>Última atualização</th>
                     <th class="col-acoes">Ações</th>
                 </tr>
                 </thead>
@@ -137,6 +141,9 @@
                         <td class="cpf"><c:out value="${user.cpf}"/></td>
                         <td><c:out value="${user.email}"/></td>
                         <td><c:out value="${user.role}"/></td>
+                        <td class="col-data"><c:out value="${argos:formatDate(user.birthDate)}"/></td>
+                        <td class="telefone col-data"><c:out value="${user.phone}"/></td>
+                        <td class="col-data"><c:out value="${argos:formatDateTime(user.updatedAt)}"/></td>
                         <td class="col-acoes">
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar usuário"
                                     data-abrir="modalUser" data-acao="editar" data-action="${urlAtualizar}"
@@ -161,7 +168,7 @@
                 </c:forEach>
 
                 <tr class="linha-vazia" id="linhaVazia" hidden>
-                    <td colspan="5">Nenhum resultado encontrado.</td>
+                    <td colspan="8">Nenhum resultado encontrado.</td>
                 </tr>
                 </tbody>
             </table>

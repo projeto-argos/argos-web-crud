@@ -65,13 +65,14 @@
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
             <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.earTag or not empty param.lotId or not empty param.exceptionReason}"/>
+                <c:set var="filtrando" value="${not empty param.earTag or not empty param.lotId or not empty param.exceptionReason or not empty param.clearedForSlaughter}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/animals">
                             <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${param.earTag}'/>"/></div>
                             <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
                             <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
+                            <div class="campo"><label for="filtro-clearedForSlaughter">Liberado para abate</label><select id="filtro-clearedForSlaughter" name="clearedForSlaughter"><option value="">Todos</option><option value="true" ${param.clearedForSlaughter == 'true' ? 'selected="selected"' : ''}>Sim</option><option value="false" ${param.clearedForSlaughter == 'false' ? 'selected="selected"' : ''}>Não</option></select></div>
                         <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -98,6 +99,9 @@
                     <th>Data início exceção</th>
                     <th>Data fim exceção</th>
                     <th>Motivo exceção</th>
+                    <th>Observações</th>
+                    <th>Liberado para abate</th>
+                    <th>Última atualização</th>
                     <th class="col-acoes">Ações</th>
                 </tr>
                 </thead>
@@ -110,7 +114,14 @@
                         <td><c:out value="${argos:formatDate(animal.birthDate)}"/></td>
                         <td><c:out value="${argos:formatDate(animal.exceptionStartDate)}"/></td>
                         <td><c:out value="${argos:formatDate(animal.exceptionEndDate)}"/></td>
-                        <td><c:out value="${animal.exceptionReason}"/></td>
+                        <td class="col-texto"><c:out value="${animal.exceptionReason}"/></td>
+                        <td class="col-texto"><c:out value="${animal.notes}"/></td>
+                        <td>
+                            <span class="selo ${animal.clearedForSlaughter ? 'selo-sim' : 'selo-nao'}">
+                                <c:out value="${animal.clearedForSlaughter ? 'TRUE' : 'FALSE'}"/>
+                            </span>
+                        </td>
+                        <td class="col-data"><c:out value="${argos:formatDateTime(animal.updatedAt)}"/></td>
                         <td class="col-acoes">
                             <button type="button" class="btn-icone btn-editar" title="Editar" aria-label="Editar animal"
                                     data-abrir="modalAnimal" data-acao="editar" data-action="${urlAtualizar}"
@@ -123,7 +134,9 @@
                                     data-birth-date="<c:out value='${animal.birthDate}'/>"
                                     data-exception-start-date="<c:out value='${animal.exceptionStartDate}'/>"
                                     data-exception-end-date="<c:out value='${animal.exceptionEndDate}'/>"
-                                    data-lot-id="<c:out value='${animal.lotId}'/>">
+                                    data-lot-id="<c:out value='${animal.lotId}'/>"
+                                    data-origin-lot-id="<c:out value='${animal.originLotId}'/>"
+                                    data-cleared-for-slaughter="<c:out value='${animal.clearedForSlaughter}'/>">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                             <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir animal"
@@ -137,7 +150,7 @@
                 </c:forEach>
 
                 <tr class="linha-vazia" id="linhaVazia" hidden>
-                    <td colspan="7">Nenhum resultado encontrado.</td>
+                    <td colspan="10">Nenhum resultado encontrado.</td>
                 </tr>
                 </tbody>
             </table>
@@ -163,6 +176,7 @@
 
             <form method="post" action="${urlInserir}">
                 <input type="hidden" name="idAnimal" value="">
+                <input type="hidden" name="originLotId" value="">
 
                 <div class="form-grade">
                     <div class="campo">
@@ -178,6 +192,13 @@
                         <label for="campoPeso">Peso</label>
                         <input type="number" id="campoPeso" name="weight" placeholder="ex: 400.00"
                                required min="0" step="0.01" inputmode="decimal" autocomplete="off">
+                    </div>
+                    <div class="campo">
+                        <label for="campoAbate">Liberado para abate</label>
+                        <select id="campoAbate" name="clearedForSlaughter">
+                            <option value="false">Não</option>
+                            <option value="true">Sim</option>
+                        </select>
                     </div>
                     <div class="campo largura-total">
                         <label for="campoMotivo">Motivo exceção</label>

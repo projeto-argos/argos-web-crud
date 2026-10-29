@@ -284,3 +284,52 @@ body {
     display: flex;
     gap: 8px;
 }
+
+
+/* a tabela rola para o lado. */
+.tabela tbody td {
+    white-space: nowrap;
+}
+
+/* Textos longos podem quebrar de linha */
+.tabela tbody td.col-texto {
+    white-space: normal;
+    min-width: 240px;
+}
+
+/* Selo TRUE / FALSE */
+.selo {
+    display: inline-block;
+    min-width: 84px;
+    padding: 8px 14px;
+    border: 1px solid;
+    border-radius: 10px;
+    font-family: var(--fonte-titulo);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.selo-sim {
+    background: #CDEBC9;
+    border-color: var(--verde-claro);
+    color: var(--verde-escuro);
+}
+
+.selo-nao {
+    background: #F2CDB9;
+    border-color: #7F411A;
+    color: #7F411A;
+}
+
+html.dark .selo-sim {
+    background: #1F3A2F;
+    color: var(--verde-claro);
+}
+
+html.dark .selo-nao {
+    background: #3A241A;
+    border-color: rgba(227, 164, 122, 0.6);
+    color: #E3A47A;
+}

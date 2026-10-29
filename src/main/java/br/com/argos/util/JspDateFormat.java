@@ -10,7 +10,7 @@ import java.util.Date;
 /** Formatação de datas Java Time para exibição nas JSPs. */
 public final class JspDateFormat {
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     private JspDateFormat() { }
 
