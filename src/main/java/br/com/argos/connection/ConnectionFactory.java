@@ -36,28 +36,27 @@ public class ConnectionFactory {
         config.setUsername(env.getProperty("DB_USER"));
         config.setPassword(env.getProperty("DB_PASSWORD"));
 
-        // Tamanho do Pool
-        config.setMinimumIdle(3);
-        config.setMaximumPoolSize(10);
+        // Pool de tamanho fixo
+        config.setMaximumPoolSize(8);
+        config.setMinimumIdle(8);
 
-        // Timeouts
+        // Timeouts e Segurança
         config.setConnectionTimeout(30000);
-        config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
         config.setLeakDetectionThreshold(60000);
 
-        config.addDataSourceProperty("tcpKeepAlive", "true");
+        config.setPoolName("HikariTomcatPool");
 
+        config.addDataSourceProperty("tcpKeepAlive", "true");
         config.addDataSourceProperty("reWriteBatchedInserts", "true");
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
         HIKARI_DATA_SOURCE = new HikariDataSource(config);
     }
 
     private ConnectionFactory() {
     }
+
+    public static void init(){}
 
     public static Connection getConnection() throws SQLException {
         return HIKARI_DATA_SOURCE.getConnection();
