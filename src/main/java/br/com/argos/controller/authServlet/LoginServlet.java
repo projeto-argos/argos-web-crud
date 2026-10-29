@@ -67,8 +67,18 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
-            adminService.authenticate(email, password);
-            request.getSession(true);
+            // CRIA SESSAO
+            Admin admin = adminService.authenticate(email, password);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute("admin", admin);
+
+            // ADMIN LOGADO
+            Map<String, String> loggedUser = new HashMap<>();
+            loggedUser.put("id", admin.getIdAdmin().toString());
+            loggedUser.put("name", admin.getFullName());
+            loggedUser.put("type", "ADMIN");
+            session.setAttribute("usuarioLogado", loggedUser);
 
             // REDIRECIONA
             response.sendRedirect(
