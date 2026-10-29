@@ -1,4 +1,3 @@
-
 package br.com.argos.controller.authServlet;
 
 import br.com.argos.model.User;
