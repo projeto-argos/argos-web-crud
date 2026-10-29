@@ -38,7 +38,7 @@ function limparTexto(texto) {
     return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
-const CAMPOS_EXATOS = ["propertyId", "lotId", "category", "role"];
+const CAMPOS_EXATOS = ["propertyId", "lotId", "category", "role", "clearedForSlaughter"];
 const CAMPOS_NUMEROS = ["cpf", "cnpj", "phone", "zipCode"];
 
 function linhaPassaNosFiltros(linha, parametros) {
