@@ -39,7 +39,7 @@ public class PropertySelectServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         try {
-            // LISTAR PROPRIEDADES
+            // LISTA PROPRIEDADES COM ENDEREÇO E USUARIO
             List<Property> properties = propertyService.findAll();
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
@@ -51,15 +51,10 @@ public class PropertySelectServlet extends HttpServlet {
                     Address address = addressService.findById(addressId);
 
                     if (address != null) {
-                        propertyAddresses.put(
-                                property.getIdProperty(),
-                                address
-                        );
+                        propertyAddresses.put(property.getIdProperty(), address);
                     }
                 }
             }
-
-            // LISTAR USUÁRIOS
             List<User> users = userService.findAll();
             request.setAttribute("properties", properties);
             request.setAttribute("propertyAddresses", propertyAddresses);
