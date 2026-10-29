@@ -260,7 +260,8 @@ body{
 
     .area_form{
         grid-column: 1;
-        padding: 2.2rem 1.4rem 3rem;
+        align-items: start;
+        padding: 2rem 1.4rem 3rem;
     }
 }
 
