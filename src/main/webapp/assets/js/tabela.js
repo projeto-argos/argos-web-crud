@@ -33,6 +33,14 @@ document.querySelectorAll(".telefone").forEach(function (celula) {
 });
 
 
+let filtrosAplicados = new URLSearchParams(window.location.search);
+
+function aplicarFiltros(parametros) {
+    filtrosAplicados = parametros;
+    paginaAtual = 1;
+    mostrarTabela();
+}
+
 //  Busca
 function limparTexto(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -77,7 +85,7 @@ function linhaPassaNosFiltros(linha, parametros) {
 
 function mostrarTabela() {
     const busca = limparTexto(campoBusca.value);
-    const parametros = new URLSearchParams(window.location.search);
+    const parametros = filtrosAplicados;
 
     const encontradas = todasAsLinhas.filter(function (linha) {
         return limparTexto(linha.textContent).includes(busca)
