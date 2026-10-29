@@ -7,6 +7,12 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%-- Botão do menu no celular --%>
+<button type="button" class="menu-mobile" aria-label="Abrir menu" aria-expanded="false">
+    <i class="fa-solid fa-bars"></i>
+</button>
+<div class="sidebar-fundo"></div>
+
 <nav class="sidebar">
     <header>
         <img class="logo-completo"
@@ -20,6 +26,10 @@
         <button type="button" class="toggle"
                 aria-label="Abrir ou fechar menu">
             <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <button type="button" class="menu-fechar" aria-label="Fechar menu">
+            <i class="fa-solid fa-xmark"></i>
         </button>
     </header>
 
