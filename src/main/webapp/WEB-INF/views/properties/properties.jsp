@@ -64,14 +64,14 @@
 
                 <div class="painel-acoes">
 
-                    <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.idUser}"/>
+                    <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.userIds}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/properties">
                             <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
                             <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${param.cnpj}'/>"/></div>
                             <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
-                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-idUser">Usuário</label><select id="filtro-idUser" name="idUser"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.idUser == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
+                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-userIds">Usuário</label><select id="filtro-userIds" name="userIds"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.userIds == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -120,7 +120,8 @@
                                             data-city="<c:out value='${propertyAddresses[property.idProperty].city}'/>"
                                             data-state="<c:out value='${propertyAddresses[property.idProperty].state}'/>"
                                             data-zip-code="<c:out value='${propertyAddresses[property.idProperty].zipCode}'/>"
-                                            data-complement="<c:out value='${propertyAddresses[property.idProperty].complement}'/>">
+                                            data-complement="<c:out value='${propertyAddresses[property.idProperty].complement}'/>"
+                                            data-user-ids="<c:forEach var='uid' items='${property.userIds}' varStatus='st'><c:out value='${uid}'/><c:if test='${not st.last}'>,</c:if></c:forEach>">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button type="button" class="btn-icone btn-excluir" title="Excluir" aria-label="Excluir propriedade"
@@ -161,11 +162,17 @@
                 <form method="post" action="${urlInserir}">
                     <input type="hidden" name="idProperty" value="">
 
-                    <c:forEach var="propertyItem" items="${properties}"><c:forEach var="userId" items="${propertyItem.userIds}"><input type="hidden" name="userIds" value="<c:out value='${userId}'/>" data-property-user-ids="<c:out value='${propertyItem.idProperty}'/>" disabled></c:forEach></c:forEach>
                     <div class="form-grade">
-                        <div class="campo" data-so-cadastro>
-                            <label for="campoUsuarios">Usuários vinculados</label>
-                            <select id="campoUsuarios" name="userIds" multiple><c:if test="${not empty users}"><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>"><c:out value="${user.fullName}"/></option></c:forEach></c:if></select>
+                        <div class="campo">
+                            <label for="campoNome">Nome</label>
+                            <input type="text" id="campoNome" name="name" placeholder="ex: Recanto do Vale"
+                                   required maxlength="120" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="campoTelefone">Telefone</label>
+                            <input type="tel" id="campoTelefone" name="phone" placeholder="ex: 11999999999"
+                                   required inputmode="numeric" maxlength="11" pattern="\d{10,11}"
+                                   title="DDD + número, só números (10 ou 11 dígitos)" autocomplete="off">
                         </div>
                         <div class="campo">
                             <label for="campoCnpj">CNPJ</label>
@@ -174,22 +181,48 @@
                                    title="Digite os 14 números do CNPJ, sem pontos, barra e traço" autocomplete="off">
                         </div>
                         <div class="campo">
-                            <label for="campoTelefone">Telefone</label>
-                            <input type="tel" id="campoTelefone" name="phone" placeholder="ex: 11999999999"
-                                   required inputmode="numeric" maxlength="11" pattern="\d{10,11}"
-                                   title="DDD + número, só números (10 ou 11 dígitos)" autocomplete="off">
+                            <label for="campoCep">CEP</label>
+                            <input type="text" id="campoCep" name="zipCode" placeholder="ex: 14000000"
+                                   inputmode="numeric" maxlength="8" pattern="\d{8}"
+                                   title="Digite os 8 números do CEP, sem traço" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="campoEstado">Estado</label>
+                            <input type="text" id="campoEstado" name="state" placeholder="ex: SP"
+                                   maxlength="2" pattern="[A-Za-z]{2}" title="Sigla do estado, 2 letras" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="campoCidade">Cidade</label>
+                            <input type="text" id="campoCidade" name="city" placeholder="ex: Ribeirão Preto"
+                                   maxlength="100" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="campoRua">Rua</label>
+                            <input type="text" id="campoRua" name="street" placeholder="ex: Estrada do Vale"
+                                   maxlength="150" autocomplete="off">
+                        </div>
+                        <div class="campo">
+                            <label for="campoNumero">Número</label>
+                            <input type="number" id="campoNumero" name="number" placeholder="ex: 120" min="0">
                         </div>
                         <div class="campo largura-total">
-                            <label for="campoNome">Nome</label>
-                            <input type="text" id="campoNome" name="name" placeholder="ex: Recanto do Vale"
-                                   required maxlength="120" autocomplete="off">
+                            <label for="campoComplemento">Complemento</label>
+                            <input type="text" id="campoComplemento" name="complement" placeholder="ex: Km 12, portão azul"
+                                   autocomplete="off">
                         </div>
-                        <div class="campo largura-total"><label for="campoRua">Rua</label><input type="text" id="campoRua" name="street" maxlength="150"></div>
-                        <div class="campo"><label for="campoNumero">Número</label><input type="number" id="campoNumero" name="number" min="0"></div>
-                        <div class="campo"><label for="campoCidade">Cidade</label><input type="text" id="campoCidade" name="city" maxlength="100"></div>
-                        <div class="campo"><label for="campoEstado">UF</label><input type="text" id="campoEstado" name="state" maxlength="2" pattern="[A-Za-z]{2}"></div>
-                        <div class="campo"><label for="campoCep">CEP</label><input type="text" id="campoCep" name="zipCode" maxlength="8" inputmode="numeric" pattern="\d{8}"></div>
-                        <div class="campo largura-total"><label for="campoComplemento">Complemento</label><input type="text" id="campoComplemento" name="complement"></div>
+                    </div>
+
+                    <h3 class="form-secao">Usuário</h3>
+                    <div class="form-grade">
+                        <div class="campo largura-total">
+                            <label for="campoUsuario">Usuário</label>
+                            <select id="campoUsuario" name="userIds" required>
+                                <option value="">Selecione</option>
+                                <c:forEach var="user" items="${users}">
+                                    <option value="<c:out value='${user.idUser}'/>"><c:out value="${user.fullName}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-rodape">
