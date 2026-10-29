@@ -57,3 +57,5 @@
         </ul>
     </div>
 </nav>
+
+<jsp:include page="/WEB-INF/views/components/_carregamento.jsp"/>
