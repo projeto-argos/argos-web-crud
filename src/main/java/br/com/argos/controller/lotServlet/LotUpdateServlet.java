@@ -58,6 +58,7 @@ public class LotUpdateServlet extends HttpServlet {
         }
         response.sendRedirect(request.getContextPath() + "/lots");
     }
+
     // PROCESSA A ATUALIZAÇÃO
     @Override
     protected void doPost(
