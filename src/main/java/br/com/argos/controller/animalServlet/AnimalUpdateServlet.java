@@ -77,7 +77,8 @@ public class AnimalUpdateServlet extends HttpServlet {
             String earTag =
                     request.getParameter("earTag");
 
-            String weightString = request.getParameter("weight");
+            String weightString =
+                    request.getParameter("weight");
 
             BigDecimal weight = null;
 
@@ -88,6 +89,7 @@ public class AnimalUpdateServlet extends HttpServlet {
 
             String birthDateString =
                     request.getParameter("birthDate");
+
             LocalDate birthDate = null;
 
 
