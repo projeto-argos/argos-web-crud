@@ -94,6 +94,7 @@
                 <thead>
                 <tr>
                     <th>Brinco</th>
+                    <th>Lote</th>
                     <th>Peso (kg)</th>
                     <th>Data de nascimento</th>
                     <th>Data início exceção</th>
@@ -110,6 +111,7 @@
                 <c:forEach var="animal" items="${animals}">
                     <tr class="linha">
                         <td><c:out value="${animal.earTag}"/></td>
+                        <td><c:forEach var="lot" items="${lots}"><c:if test="${lot.idLot == animal.lotId}"><c:out value="${lot.lotCode}"/></c:if></c:forEach></td>
                         <td><fmt:formatNumber value="${animal.weight}" minFractionDigits="2" maxFractionDigits="2"/></td>
                         <td><c:out value="${argos:formatDate(animal.birthDate)}"/></td>
                         <td><c:out value="${argos:formatDate(animal.exceptionStartDate)}"/></td>
@@ -150,7 +152,7 @@
                 </c:forEach>
 
                 <tr class="linha-vazia" id="linhaVazia" hidden>
-                    <td colspan="10">Nenhum resultado encontrado.</td>
+                    <td colspan="11">Nenhum resultado encontrado.</td>
                 </tr>
                 </tbody>
             </table>

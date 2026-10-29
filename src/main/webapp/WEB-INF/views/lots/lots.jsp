@@ -62,12 +62,23 @@
         <div class="painel-topo">
             <h1>Lotes cadastrados</h1>
 
-            <c:set var="filtrando" value="${not empty param.lotCode or not empty param.category or not empty param.headCount or not empty param.openDate}"/>
+            <c:set var="filtrando" value="${not empty param.lotCode or not empty param.herdId or not empty param.category or not empty param.headCount or not empty param.openDate}"/>
             <div class="painel-acoes">
             <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                 <summary>Filtrar</summary>
                 <form method="get" action="${ctx}/lots">
                     <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${param.lotCode}'/>"/></div>
+                    <c:if test="${not empty herds}">
+                        <div class="campo">
+                            <label for="filtro-herdId">Rebanho</label>
+                            <select id="filtro-herdId" name="herdId">
+                                <option value="">Todos</option>
+                                <c:forEach var="herd" items="${herds}">
+                                    <option value="<c:out value='${herd.idHerd}'/>" ${param.herdId == herd.idHerd ? 'selected' : ''}><c:out value="${herd.name}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </c:if>
                     <div class="campo">
                         <label for="filtro-category">Categoria</label>
                         <select id="filtro-category" name="category">
@@ -100,6 +111,7 @@
                 <thead>
                 <tr>
                     <th>Código lote</th>
+                    <th>Rebanho</th>
                     <th>Categoria</th>
                     <th>Quantidade de cabeças</th>
                     <th>Data de abertura</th>
@@ -112,6 +124,7 @@
                 <c:forEach var="lot" items="${lots}">
                     <tr class="linha">
                         <td><c:out value="${lot.lotCode}"/></td>
+                        <td><c:forEach var="herd" items="${herds}"><c:if test="${herd.idHerd == lot.herdId}"><c:out value="${herd.name}"/></c:if></c:forEach></td>
                         <td>
                             <c:choose>
                                 <c:when test="${lot.category == 'BREEDING'}">Cria</c:when>
@@ -146,7 +159,7 @@
                 </c:forEach>
 
                 <tr class="linha-vazia" id="linhaVazia" hidden>
-                    <td colspan="6">Nenhum resultado encontrado.</td>
+                    <td colspan="7">Nenhum resultado encontrado.</td>
                 </tr>
                 </tbody>
             </table>

@@ -38,7 +38,7 @@ function limparTexto(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-const CAMPOS_EXATOS = ["propertyId", "lotId", "category", "role", "clearedForSlaughter"];
+const CAMPOS_EXATOS = ["propertyId", "herdId", "lotId", "category", "role", "clearedForSlaughter"];
 const CAMPOS_LISTA = ["userIds"];
 const CAMPOS_NUMEROS = ["cpf", "cnpj", "phone", "zipCode"];
 

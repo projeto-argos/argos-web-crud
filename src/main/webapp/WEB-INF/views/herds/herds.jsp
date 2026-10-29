@@ -91,6 +91,7 @@
                     <thead>
                         <tr>
                             <th>Nome</th>
+                            <th>Propriedade</th>
                             <th>Raça</th>
                             <th>Finalidade</th>
                             <th>Quantidade de cabeças</th>
@@ -103,6 +104,7 @@
                         <c:forEach var="herd" items="${herds}">
                             <tr class="linha">
                                 <td><c:out value="${herd.name}"/></td>
+                                <td><c:forEach var="property" items="${properties}"><c:if test="${property.idProperty == herd.propertyId}"><c:out value="${property.name}"/></c:if></c:forEach></td>
                                 <td><c:out value="${herd.breed}"/></td>
                                 <td><c:out value="${herd.purpose}"/></td>
                                 <td><c:out value="${herd.headCount}"/></td>
@@ -130,7 +132,7 @@
                         </c:forEach>
 
                         <tr class="linha-vazia" id="linhaVazia" hidden>
-                            <td colspan="6">Nenhum resultado encontrado.</td>
+                            <td colspan="7">Nenhum resultado encontrado.</td>
                         </tr>
                     </tbody>
                 </table>
