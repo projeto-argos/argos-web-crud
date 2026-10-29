@@ -57,6 +57,7 @@ public class HerdUpdateServlet extends HttpServlet {
         }
         response.sendRedirect(request.getContextPath() + "/herds");
     }
+
     // PROCESSA A ATUALIZAÇÃO
     @Override
     protected void doPost(
