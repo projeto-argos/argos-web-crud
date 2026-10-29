@@ -43,7 +43,7 @@ public class AnimalSelectServlet extends HttpServlet {
             ).forward(request, response);
 
         } catch (Exception e) {
-            // TRATA ERRO
+            // ERRO
             throw new ServletException("Erro ao listar animais", e);
         }
     }
