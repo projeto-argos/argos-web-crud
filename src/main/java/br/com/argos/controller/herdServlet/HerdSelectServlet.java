@@ -43,7 +43,7 @@ public class HerdSelectServlet extends HttpServlet {
             ).forward(request, response);
 
         } catch (Exception e) {
-            // TRATA ERRO
+            // ERRO
             throw new ServletException("Erro ao listar rebanhos", e);
         }
     }
