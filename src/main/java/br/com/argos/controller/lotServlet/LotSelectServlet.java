@@ -10,7 +10,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "LotSelectServlet", value = "/lots")
 public class LotSelectServlet extends HttpServlet {
@@ -33,9 +37,55 @@ public class LotSelectServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         try {
+            // RECEBE FILTROS
+            String lotCode =
+                    request.getParameter("lotCode");
+
+            String herdId =
+                    request.getParameter("herdId");
+
+            String category =
+                    request.getParameter("category");
+
+            String headCount =
+                    request.getParameter("headCount");
+
+            String openDate =
+                    request.getParameter("openDate");
+
+            // GUARDA OS FILTROS PARA A TELA
+            Map<String, String> filter = new HashMap<>();
+            filter.put("lotCode", lotCode);
+            filter.put("herdId", herdId);
+            filter.put("category", category);
+            filter.put("headCount", headCount);
+            filter.put("openDate", openDate);
+            request.setAttribute("filter", filter);
+
+            LocalDate openDateFilter = null;
+
+            if (openDate != null &&
+                    !openDate.isBlank()) {
+                openDateFilter = LocalDate.parse(openDate);
+            }
+
             // LISTA LOTES E REBANHOS
-            List<Lot> lots = lotService.findAll();
+            List<Lot> lots = lotService.filter(headCount, category, lotCode, openDateFilter);
             List<Herd> herds = herdService.findAll();
+
+            // FILTRA POR REBANHO
+            if (herdId != null && !herdId.isBlank()) {
+                List<Lot> lotsByHerd = new ArrayList<>();
+
+                for (int i = 0; i < lots.size(); i++) {
+                    Lot lot = lots.get(i);
+
+                    if (herdId.equals(String.valueOf(lot.getHerdId()))) {
+                        lotsByHerd.add(lot);
+                    }
+                }
+                lots = lotsByHerd;
+            }
             request.setAttribute("lots", lots);
             request.setAttribute("herds", herds);
 
