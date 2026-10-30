@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "AdminUpdateServlet", value = "/admins/edit")
@@ -79,12 +80,6 @@ public class AdminUpdateServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            // SENHA NOVA PREENCHIDA
-            if (password != null &&
-                    !password.isBlank()) {
-                adminService.changePassword(idAdmin, password);
-            }
-
             // ATUALIZA ADMINISTRADOR
             Admin adminToUpdate = new Admin(
                     idAdmin,
@@ -96,6 +91,23 @@ public class AdminUpdateServlet extends HttpServlet {
 
             adminService.update(adminToUpdate);
 
+            // SENHA NOVA PREENCHIDA
+            if (password != null &&
+                    !password.isBlank()) {
+                try {
+                    adminService.changePassword(idAdmin, password);
+
+                } catch (Exception e) {
+                    // DADOS SALVOS, MAS A SENHA NÃO
+                    request.setAttribute("erro",
+                            "Dados salvos, mas a senha não foi alterada: " + e.getMessage());
+                    List<Admin> admins = adminService.findAll();
+                    request.setAttribute("admins", admins);
+                    request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
+                    return;
+                }
+            }
+
             // REDIRECIONA
             response.sendRedirect(
                     request.getContextPath() + "/admins");
@@ -103,6 +115,8 @@ public class AdminUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<Admin> admins = adminService.findAll();
+            request.setAttribute("admins", admins);
             request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
         }
     }
