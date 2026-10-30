@@ -2,8 +2,8 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
-import br.com.argos.model.Admin;
 import br.com.argos.model.User;
 import br.com.argos.interfaces.IUserDAO;
 
@@ -48,7 +48,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting user: ", e);
+            throw DbErrors.translate("Error inserting user: ", e);
         }
     }
 
@@ -179,7 +179,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating user: ", e);
+            throw DbErrors.translate("Error updating user: ", e);
         }
     }
 

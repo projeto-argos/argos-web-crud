@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IAnimalDAO;
 import br.com.argos.model.Animal;
@@ -71,7 +72,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting animal: ", e);
+            throw DbErrors.translate("Error inserting animal: ", e);
         }
     }
 
@@ -241,7 +242,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating animal: ", e);
+            throw DbErrors.translate("Error updating animal: ", e);
         }
     }
 

@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IPropertyDAO;
@@ -64,7 +65,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting property", e);
+            throw DbErrors.translate("Error inserting property", e);
         }
     }
 
@@ -221,7 +222,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating property", e);
+            throw DbErrors.translate("Error updating property", e);
         }
     }
 

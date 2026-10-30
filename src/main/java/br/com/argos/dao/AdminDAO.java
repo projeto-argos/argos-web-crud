@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.interfaces.IAdminDAO;
@@ -35,7 +36,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting admin: ", e);
+            throw DbErrors.translate("Error inserting admin: ", e);
         }
     }
 
@@ -149,7 +150,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
            }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating admin: ", e);
+            throw DbErrors.translate("Error updating admin: ", e);
 
         }
     }

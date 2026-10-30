@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.ILotDAO;
 import br.com.argos.model.Lot;
@@ -44,7 +45,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting lot.", e);
+            throw DbErrors.translate("Error inserting lot.", e);
         }
     }
 
@@ -230,13 +231,11 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error updating lot: " + lot.getIdLot(), e);
+            throw DbErrors.translate("Error updating lot: " + lot.getIdLot(), e);
         }
     }
 
     // SOFT DELETE BY ID
-    // Inativa o lote e, na mesma transacao, seus animais, aplicacoes e periodos de carencia.
     @Override
     public void delete(UUID id) {
         String sql = """
@@ -274,7 +273,6 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
     }
 
     // SOFT DELETE ALL LOTS OF A HERD
-    // Tambem inativa animais, aplicacoes e periodos de carencia desses lotes.
     @Override
     public void deleteByHerd(UUID idHerd) {
         String sql = """

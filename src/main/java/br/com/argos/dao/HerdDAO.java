@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IHerdDAO;
 import br.com.argos.model.Herd;
@@ -37,7 +38,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting herd: ", e);
+            throw DbErrors.translate("Error inserting herd: ", e);
         }
     }
 
@@ -65,7 +66,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
     @Override
     public List<Herd> findAll() {
-        String sql = "SELECT * FROM HERD WHERE active = true";
+        String sql = "SELECT * FROM HERD WHERE active = true ORDER BY herd_name";
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -156,7 +157,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating herd: ", e);
+            throw DbErrors.translate("Error updating herd: ", e);
         }
     }
 
