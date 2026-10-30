@@ -109,6 +109,10 @@ public class LotInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<Lot> lots = lotService.findAll();
+            List<Herd> herds = herdService.findAll();
+            request.setAttribute("lots", lots);
+            request.setAttribute("herds", herds);
             request.getRequestDispatcher("/WEB-INF/views/lots/lots.jsp").forward(request, response);
         }
     }
