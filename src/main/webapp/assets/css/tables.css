@@ -374,8 +374,34 @@ html.dark .selo-nao {
         padding-right: 12px;
     }
 
+    /* Coluna Ações compacta no celular: botões empilhados, só ~52px de largura
+       (antes eram 104px, quase 1/3 da tela). Continua fixa à direita. */
     .tabela .col-acoes {
-        width: 104px;
+        width: 52px;
+        padding-left: 6px;
+        padding-right: 6px;
+        box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.18);
+    }
+
+    .tabela thead th.col-acoes {
+        font-size: 10px;
+        letter-spacing: 0.02em;
+    }
+
+    .tabela tbody td.col-acoes {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .tabela .col-acoes .btn-icone {
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .tabela .col-acoes .btn-icone + .btn-icone {
+        margin-left: auto;
+        margin-top: 6px;
     }
 
     .painel-rodape {
