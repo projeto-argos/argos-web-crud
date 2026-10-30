@@ -209,9 +209,8 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     // SOFT DELETE
     @Override
     public void delete(UUID id){
-
         String deleteLinks = """
-                DELETE FROM "USER" WHERE id_user = ?;
+                DELETE FROM user_property WHERE id_user = ?
                 """;
 
         String deactivateUser = """

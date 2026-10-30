@@ -165,15 +165,27 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
     public void delete(UUID id) {
         String sql = "UPDATE HERD SET active = FALSE, updated_at = now() WHERE id_herd = ? AND active = true";
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, id);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateHerdChildren(conn, CascadeInactivation.HERDS_BY_ID, id);
 
-            int rowsAffected = stmt.executeUpdate();
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, id);
 
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Herd not found " + id);
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Herd not found " + id);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
@@ -186,11 +198,27 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
     public int deleteByProperty(UUID propertyId) {
         String sql = "UPDATE HERD SET active = FALSE, updated_at = now() WHERE id_property = ? AND active = true";
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, propertyId);
-            return stmt.executeUpdate();
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateHerdChildren(conn, CascadeInactivation.HERDS_BY_PROPERTY, propertyId);
+
+                int rows;
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, propertyId);
+                    rows = stmt.executeUpdate();
+                }
+
+                conn.commit();
+                return rows;
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
+            }
 
         } catch (SQLException e) {
             throw new DataAccessException("Error deleting herds by property: " + propertyId, e);

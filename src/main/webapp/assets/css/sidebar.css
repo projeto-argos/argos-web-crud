@@ -229,3 +229,118 @@ html.sb-fechada .sidebar .mode-btn .switch { display: none; }
 html.sb-fechada .conteudo {
     margin-left: var(--sidebar-fechada);
 }
+
+/*RESPONSIVO */
+.menu-mobile,
+.sidebar .menu-fechar,
+.sidebar-fundo {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .conteudo:not(.conteudo-cheio) {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-mobile {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 8;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 12px;
+        background: var(--sidebar-fundo);
+        color: var(--sidebar-texto);
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-fundo {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 9;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    html.menu-aberto .sidebar-fundo {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .sidebar,
+    html.sb-fechada .sidebar {
+        width: min(var(--sidebar-aberta), 85vw);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    html.menu-aberto .sidebar {
+        transform: translateX(0);
+        box-shadow: 8px 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    html.sb-fechada .sidebar .logo-completo { display: block; }
+    html.sb-fechada .sidebar .logo-icone    { display: none; }
+
+    html.sb-fechada .sidebar li .text {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    html.sb-fechada .sidebar .mode-btn .switch {
+        display: block;
+    }
+
+    .sidebar .toggle {
+        display: none;
+    }
+
+    .sidebar header {
+        justify-content: flex-start;
+        padding-left: 8px;
+    }
+
+    .sidebar .logo-completo {
+        width: 140px;
+    }
+
+    .sidebar .menu-fechar {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 50%;
+        background: rgba(244, 241, 235, 0.15);
+        color: var(--sidebar-texto);
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .conteudo,
+    html.sb-fechada .conteudo {
+        margin-left: 0;
+    }
+
+    .conteudo:not(.conteudo-cheio),
+    html.sb-fechada .conteudo:not(.conteudo-cheio) {
+        padding: 72px 14px 24px;
+    }
+}

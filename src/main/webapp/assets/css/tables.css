@@ -333,3 +333,53 @@ html.dark .selo-nao {
     border-color: rgba(227, 164, 122, 0.6);
     color: #E3A47A;
 }
+
+
+/* RESPONSIVO*/
+.painel-acoes {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .painel {
+        padding: 18px 14px;
+        border-radius: 18px;
+    }
+
+    .painel-topo {
+        margin-bottom: 14px;
+    }
+
+    .painel-topo h1 {
+        font-size: 22px;
+    }
+
+    .painel-acoes {
+        width: 100%;
+    }
+
+    .painel-acoes .btn-escuro {
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .tabela {
+        min-width: 640px;
+    }
+
+    .tabela thead th,
+    .tabela tbody td {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .tabela .col-acoes {
+        width: 104px;
+    }
+
+    .painel-rodape {
+        justify-content: center;
+        text-align: center;
+    }
+}

@@ -141,6 +141,11 @@ public class PropertyService {
             throw new RequiredFieldException("addressId");
         }
 
+        // toda propriedade precisa de pelo menos um usuário
+        if (property.getUserIds() == null || property.getUserIds().isEmpty()) {
+            throw new RequiredFieldException("userIds");
+        }
+
 //        OPTCIONAIS
         if (property.getCnpj() != null && !Validador.cnpjValido(property.getCnpj())) {
             throw new ValidationException("Invalid CNPJ");

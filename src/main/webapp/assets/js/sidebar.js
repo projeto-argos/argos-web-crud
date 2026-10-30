@@ -18,7 +18,11 @@ if (lerPreferencia("argos-modo") === "escuro") {
     html.classList.add("dark");
 }
 
-if (lerPreferencia("argos-sidebar") === "fechada") {
+const preferenciaSidebar = lerPreferencia("argos-sidebar");
+
+if (preferenciaSidebar === "fechada") {
+    html.classList.add("sb-fechada");
+} else if (preferenciaSidebar === null && window.innerWidth < 1100) {
     html.classList.add("sb-fechada");
 }
 
@@ -43,6 +47,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     atualizarTextoModo();
+
+    // Menu do celular
+    const botaoMenu = document.querySelector(".menu-mobile");
+    const botaoFecharMenu = document.querySelector(".sidebar .menu-fechar");
+    const fundoMenu = document.querySelector(".sidebar-fundo");
+
+    function abrirMenu(abrir) {
+        html.classList.toggle("menu-aberto", abrir);
+
+        if (botaoMenu) {
+            botaoMenu.setAttribute("aria-expanded", abrir ? "true" : "false");
+        }
+    }
+
+    if (botaoMenu) {
+        botaoMenu.addEventListener("click", () => {
+            abrirMenu(!html.classList.contains("menu-aberto"));
+        });
+    }
+
+    if (botaoFecharMenu) {
+        botaoFecharMenu.addEventListener("click", () => abrirMenu(false));
+    }
+
+    if (fundoMenu) {
+        fundoMenu.addEventListener("click", () => abrirMenu(false));
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            abrirMenu(false);
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 768) {
+            abrirMenu(false);
+        }
+    });
 
     if (botaoToggle) {
         botaoToggle.addEventListener("click", () => {

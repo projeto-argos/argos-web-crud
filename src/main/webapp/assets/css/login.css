@@ -236,32 +236,103 @@ body{
 
 .form_rodape a:hover{ text-decoration: underline; }
 
+.slogan_login{ display: none; }
+
 @media (max-width: 900px){
 
+    .login{ grid-template-columns: 40% 1fr; }
+
+    .onda_verde_login{ width: 40%; }
+
+    .logo_login{
+        top: 6%;
+        left: 8%;
+        width: clamp(140px, 22vw, 200px);
+    }
+
+    .personagem_login{
+        left: 2%;
+        right: auto;
+        width: 36%;
+        height: auto;
+        max-width: none;
+    }
+    .personagem_login img{ width: 100%; height: auto; }
+
+    .arvore_login{ width: 220px; }
+
+    .area_form{ padding: 2.5rem 1.6rem; }
+}
+
+@media (max-height: 520px) and (min-width: 641px){
+    .personagem_login{
+        width: auto;
+        height: 78%;
+    }
+    .personagem_login img{ width: auto; height: 100%; }
+}
+
+@media (max-width: 640px){
+
     .login{
+        --topo: 300px;
         grid-template-columns: 1fr;
-        padding-top: 230px;
+        padding-top: var(--topo);
     }
 
     .onda_verde_login{
         width: 100%;
-        height: 230px;
+        height: var(--topo);
+        background: linear-gradient(135deg, #022c1e, #06412f);
+        border-radius: 0 0 50% 50% / 0 0 48px 48px;
     }
+    .onda_verde_login svg{ display: none; }
 
     .logo_login{
-        top: 40px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 180px;
+        top: 30px;
+        left: 24px;
+        transform: none;
+        width: 150px;
     }
 
-    .personagem_login,
-    .arvore_login{ display: none; }
+    .slogan_login{
+        display: block;
+        position: absolute;
+        top: 92px;
+        left: 24px;
+        width: 44%;
+        z-index: 2;
+        font-size: .95rem;
+        line-height: 1.35;
+        color: #dcebe3;
+    }
+
+    .personagem_login{
+        display: block;
+        left: auto;
+        right: 10px;
+        bottom: auto;
+        top: calc(var(--topo) - 262px);
+        width: auto;
+        height: 262px;
+        max-width: none;
+    }
+    .personagem_login img{ width: auto; height: 100%; }
+
+    .arvore_login{
+        display: block;
+        width: 70%;
+        z-index: 1;
+        opacity: .9;
+    }
 
     .area_form{
         grid-column: 1;
-        padding: 2.2rem 1.4rem 3rem;
+        align-items: start;
+        padding: 2.4rem 1.4rem 3rem;
     }
+
+    .form_subtitulo{ margin-bottom: 1.6rem; }
 }
 
 @media (prefers-reduced-motion: reduce){

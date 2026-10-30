@@ -18,6 +18,15 @@ import java.util.UUID;
 
 public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
+    private static final String SELECT_WITH_USERS = """
+            SELECT p.*,
+                   COALESCE(array_agg(u.id_user ORDER BY u.id_user)
+                            FILTER (WHERE u.id_user IS NOT NULL), '{}') AS user_ids
+            FROM property p
+            LEFT JOIN user_property up ON up.id_property = p.id_property
+            LEFT JOIN "USER" u ON u.id_user = up.id_user AND u.active = true
+            """;
+
 //    CREATE
     @Override
     public void insert(Property property) {
@@ -62,10 +71,9 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 //    FIND BY ID
     @Override
     public Property findById(UUID id) {
-        String sql = """
-                SELECT *
-                FROM property
-                WHERE id_property = ? AND active = true
+        String sql = SELECT_WITH_USERS + """
+                WHERE p.id_property = ? AND p.active = true
+                GROUP BY p.id_property
                 """;
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -74,7 +82,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             stmt.setObject(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? mapProperty(conn, rs) : null;
+                return rs.next() ? mapProperty(rs) : null;
             }
 
         } catch (SQLException e) {
@@ -86,11 +94,10 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 //    FIND ALL
     @Override
     public List<Property> findAll() {
-        String sql = """
-                SELECT *
-                FROM property
-                WHERE active = true
-                ORDER BY name
+        String sql = SELECT_WITH_USERS + """
+                WHERE p.active = true
+                GROUP BY p.id_property
+                ORDER BY p.name
                 """;
 
         List<Property> properties = new ArrayList<>();
@@ -100,7 +107,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                properties.add(mapProperty(conn, rs));
+                properties.add(mapProperty(rs));
             }
 
             return properties;
@@ -113,11 +120,10 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 //      FIND BY NAME
     @Override
     public List<Property> findByName(String name) {
-        String sql = """
-                SELECT *
-                FROM property
-                WHERE name ILIKE ? AND active = true
-                ORDER BY name
+        String sql = SELECT_WITH_USERS + """
+                WHERE p.name ILIKE ? AND p.active = true
+                GROUP BY p.id_property
+                ORDER BY p.name
                 """;
 
         List<Property> properties = new ArrayList<>();
@@ -129,7 +135,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    properties.add(mapProperty(conn, rs));
+                    properties.add(mapProperty(rs));
                 }
             }
 
@@ -144,16 +150,14 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 //    FIND BY USER
     @Override
     public List<Property> findByUser(UUID userId) {
-        String sql = """
-                SELECT p.*
-                FROM property p
-                INNER JOIN user_property up
-                    ON up.id_property = p.id_property
-                INNER JOIN "USER" u 
-                    ON u.id_user = up.id_user
-                WHERE up.id_user = ?
-                  AND p.active = true
-                  AND u.active = true
+        String sql = SELECT_WITH_USERS + """
+                WHERE p.active = true
+                  AND p.id_property IN (
+                        SELECT up2.id_property
+                        FROM user_property up2
+                        INNER JOIN "USER" u2 ON u2.id_user = up2.id_user
+                        WHERE up2.id_user = ? AND u2.active = true)
+                GROUP BY p.id_property
                 ORDER BY p.name
                 """;
 
@@ -166,7 +170,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    properties.add(mapProperty(conn, rs));
+                    properties.add(mapProperty(rs));
                 }
             }
 
@@ -230,18 +234,37 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 WHERE id_property = ? AND active = true
                 """;
 
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = ConnectionFactory.getConnection()) {
 
-            stmt.setObject(1, id);
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                CascadeInactivation.inactivateHerdChildren(conn, CascadeInactivation.HERDS_BY_PROPERTY, id);
 
-            if (stmt.executeUpdate() == 0) {
-                throw new DataAccessException("Property not found: " + id);
+                try (PreparedStatement stmt = conn.prepareStatement(
+                        "UPDATE herd SET active = false, updated_at = now() WHERE active = true AND id_property = ?")) {
+                    stmt.setObject(1, id);
+                    stmt.executeUpdate();
+                }
+
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setObject(1, id);
+
+                    if (stmt.executeUpdate() == 0) {
+                        throw new DataAccessException("Property not found: " + id);
+                    }
+                }
+
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error deleting property: " + id, e);
+            throw new DataAccessException("Error deleting property: " + id, e);
         }
     }
 
@@ -265,7 +288,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
     }
 
 //    MAPPER
-    private Property mapProperty(Connection conn, ResultSet rs) throws SQLException {
+    private Property mapProperty(ResultSet rs) throws SQLException {
         UUID idProperty = rs.getObject("id_property", UUID.class);
         UUID addressId = rs.getObject("id_address", UUID.class);
 
@@ -278,23 +301,15 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
         java.time.LocalDateTime updatedAt =
                 timestamp == null ? null : timestamp.toLocalDateTime();
 
-        List<UUID> userIds = findUserIds(conn, idProperty);
-
-        return new Property(idProperty, addressId, userIds, name, phone, cnpj, updatedAt, active);
-    }
-
-    private List<UUID> findUserIds(Connection conn, UUID propertyId) throws SQLException {
-        String sql = "SELECT id_user FROM user_property WHERE id_property = ? ORDER BY id_user";
         List<UUID> userIds = new ArrayList<>();
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, propertyId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    userIds.add(rs.getObject("id_user", UUID.class));
-                }
+        java.sql.Array sqlArray = rs.getArray("user_ids");
+        if (sqlArray != null) {
+            for (Object id : (Object[]) sqlArray.getArray()) {
+                userIds.add((UUID) id);
             }
         }
-        return userIds;
+
+        return new Property(idProperty, addressId, userIds, name, phone, cnpj, updatedAt, active);
     }
 
     private void replaceUserLinks(Connection conn, UUID propertyId, List<UUID> userIds) throws SQLException {

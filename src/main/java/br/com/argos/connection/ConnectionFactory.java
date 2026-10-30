@@ -43,6 +43,7 @@ public class ConnectionFactory {
         // Timeouts e Segurança
         config.setConnectionTimeout(30000);
         config.setMaxLifetime(1800000);
+        config.setKeepaliveTime(120000);
         config.setLeakDetectionThreshold(60000);
 
         config.setPoolName("HikariTomcatPool");
