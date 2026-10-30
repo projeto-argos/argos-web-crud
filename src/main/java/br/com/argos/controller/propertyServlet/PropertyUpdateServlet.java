@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @WebServlet(name = "PropertyUpdateServlet", value = "/properties/edit")
@@ -175,7 +177,14 @@ public class PropertyUpdateServlet extends HttpServlet {
                     cnpj
             );
 
-            propertyService.update(propertyToUpdate);
+            try {
+                propertyService.update(propertyToUpdate);
+
+            } catch (Exception e) {
+                // ENDEREÇO SALVO, MAS A PROPRIEDADE NÃO
+                throw new RuntimeException(
+                        "Endereço atualizado, mas a propriedade não foi salva: " + e.getMessage(), e);
+            }
 
             // REDIRECIONA
             response.sendRedirect(
@@ -184,6 +193,26 @@ public class PropertyUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<Property> properties = propertyService.findAll();
+            Map<UUID, Address> propertyAddresses = new HashMap<>();
+
+            for (int i = 0; i < properties.size(); i++) {
+                Property property = properties.get(i);
+                UUID addressId = property.getAddressId();
+
+                if (addressId != null) {
+                    Address address = addressService.findById(addressId);
+
+                    if (address != null) {
+                        propertyAddresses.put(property.getIdProperty(), address);
+                    }
+                }
+            }
+            List<User> users = userService.findAll();
+            request.setAttribute("properties", properties);
+            request.setAttribute("propertyAddresses", propertyAddresses);
+            request.setAttribute("users", users);
+            request.setAttribute("allUsers", users);
             request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         }
     }
