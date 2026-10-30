@@ -88,8 +88,8 @@ public class AddressService {
 
     private Address normalizeAddress(Address address) {
         if (address == null) {
-            throw new ValidationException("Address cannot be null.");
-        }
+        throw new ValidationException("O endereço não pode ser nulo.");
+    }
 
         String state = text(address.getState());
         String zipCode = text(address.getZipCode());
@@ -109,36 +109,36 @@ public class AddressService {
 
     private void validateAddress(Address address) {
         if (address.getNumber() != null && address.getNumber() < 0) {
-            throw new ValidationException(
-                    "Address number cannot be negative."
-            );
-        }
+        throw new ValidationException(
+                "O número do endereço não pode ser negativo."
+        );
+    }
 
         if (address.getStreet() != null
                 && address.getStreet().length() > 150) {
             throw new ValidationException(
-                    "Street cannot exceed 150 characters."
+                    "A rua não pode exceder 150 caracteres."
             );
         }
 
         if (address.getCity() != null
                 && address.getCity().length() > 100) {
             throw new ValidationException(
-                    "City cannot exceed 100 characters."
+                    "A cidade não pode exceder 100 caracteres."
             );
         }
 
         if (address.getState() != null
                 && !address.getState().matches("[A-Z]{2}")) {
             throw new ValidationException(
-                    "State must contain exactly 2 letters."
+                    "O estado deve conter exatamente 2 letras."
             );
         }
 
         if (address.getZipCode() != null
                 && !address.getZipCode().matches("\\d{8}")) {
             throw new ValidationException(
-                    "ZIP code must contain exactly 8 digits."
+                    "O CEP deve conter exatamente 8 dígitos."
             );
         }
     }
