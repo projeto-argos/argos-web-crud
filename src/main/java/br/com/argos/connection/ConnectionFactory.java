@@ -15,26 +15,33 @@ public class ConnectionFactory {
     static {
         Properties env = new Properties();
 
-        // Carrega o arquivo .env a partir da pasta src/main/resources
         try (InputStream input = ConnectionFactory.class
                 .getClassLoader()
                 .getResourceAsStream(".env")) {
 
-            if (input == null) {
-                throw new IllegalStateException("Arquivo .env não encontrado no classpath (src/main/resources).");
+            if (input != null) {
+                env.load(input);
             }
-            env.load(input);
 
         } catch (Exception e) {
             throw new ExceptionInInitializerError("Erro ao carregar configurações do .env: " + e.getMessage());
         }
 
+        String dbUrl = readSetting("DB_URL", env);
+        String dbUser = readSetting("DB_USER", env);
+        String dbPassword = readSetting("DB_PASSWORD", env);
+
+        if (dbUrl == null || dbUser == null || dbPassword == null) {
+            throw new IllegalStateException(
+                    "Configure DB_URL, DB_USER e DB_PASSWORD (variáveis de ambiente ou arquivo .env).");
+        }
+
         HikariConfig config = new HikariConfig();
 
         config.setDriverClassName("org.postgresql.Driver");
-        config.setJdbcUrl(env.getProperty("DB_URL"));
-        config.setUsername(env.getProperty("DB_USER"));
-        config.setPassword(env.getProperty("DB_PASSWORD"));
+        config.setJdbcUrl(dbUrl);
+        config.setUsername(dbUser);
+        config.setPassword(dbPassword);
 
         // Pool de tamanho fixo
         config.setMaximumPoolSize(8);
@@ -55,6 +62,15 @@ public class ConnectionFactory {
     }
 
     private ConnectionFactory() {
+    }
+
+    /** Lê a configuração da variável de ambiente; se não existir, usa o valor do arquivo .env. */
+    private static String readSetting(String key, Properties env) {
+        String value = System.getenv(key);
+        if (value == null || value.isBlank()) {
+            value = env.getProperty(key);
+        }
+        return (value == null || value.isBlank()) ? null : value;
     }
 
     public static void init(){}
