@@ -48,7 +48,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw DbErrors.translate("Error inserting user: ", e);
+            throw DbErrors.translate("Erro ao cadastrar usuário", e);
         }
     }
 
@@ -72,7 +72,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for user: " + id, e);
+            throw new DataAccessException("Erro ao buscar usuário: " + id, e);
         }
     }
 
@@ -96,7 +96,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             return null;
 
         } catch (SQLException sqle){
-            throw new DataAccessException("Error searching for user by email: " + email, sqle);
+            throw new DataAccessException("Erro ao buscar usuário pelo e-mail: " + email, sqle);
         }
     }
 
@@ -121,7 +121,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for user for authentication", e
+                    "Erro ao buscar usuário para autenticação", e
             );
         }
     }
@@ -141,7 +141,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
                 users.add(mapUser(rs, false));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing users: ", e);
+            throw new DataAccessException("Erro ao listar usuários", e);
         }
 
         return users;
@@ -175,11 +175,11 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("User not found " + user.getIdUser());
+                throw new DataAccessException("Usuário não encontrado: " + user.getIdUser());
             }
 
         } catch (SQLException e) {
-            throw DbErrors.translate("Error updating user: ", e);
+            throw DbErrors.translate("Erro ao atualizar usuário", e);
         }
     }
 
@@ -198,11 +198,11 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("User not found " + id);
+                throw new DataAccessException("Usuário não encontrado: " + id);
             }
 
         } catch (SQLException sqle) {
-            throw new DataAccessException("Error updating user password: ", sqle);
+            throw new DataAccessException("Erro ao atualizar a senha do usuário", sqle);
         }
     }
 
@@ -229,7 +229,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
                 try (PreparedStatement stmt = conn.prepareStatement(deactivateUser)) {
                     stmt.setObject(1, id);
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("User not found " + id);
+                        throw new DataAccessException("Usuário não encontrado: " + id);
                     }
                 }
                 conn.commit();
@@ -240,7 +240,7 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
 
             }
         } catch (SQLException e) {
-            throw new  DataAccessException("Error deactivating user: "+ id, e);
+            throw new  DataAccessException("Erro ao excluir usuário: "+ id, e);
         }
     }
 
@@ -258,11 +258,11 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("User not found with cpf " + cpf);
+                throw new DataAccessException("Usuário não encontrado com o CPF " + cpf);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting user: " + cpf, e);
+            throw new DataAccessException("Erro ao excluir usuário: " + cpf, e);
         }
     }
 

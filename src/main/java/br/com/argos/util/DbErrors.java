@@ -26,6 +26,12 @@ public final class DbErrors {
             if (text.contains("email")) {
                 throw new DataAccessException("Email já registrado.");
             }
+            if (text.contains("ear")) {
+                throw new DataAccessException("Já existe um animal com esse brinco neste lote.");
+            }
+            if (text.contains("lot")) {
+                throw new DataAccessException("Já existe um lote com esse código neste rebanho.");
+            }
             return new ValidationException("Registro já existente.");
         }
         return new DataAccessException(message, e);

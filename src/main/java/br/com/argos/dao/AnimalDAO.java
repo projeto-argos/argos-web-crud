@@ -72,7 +72,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw DbErrors.translate("Error inserting animal: ", e);
+            throw DbErrors.translate("Erro ao cadastrar animal", e);
         }
     }
 
@@ -96,7 +96,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for animal: " + id, e);
+            throw new DataAccessException("Erro ao buscar animal: " + id, e);
         }
     }
 
@@ -120,7 +120,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for animal by eartag: " + earTag, e);
+            throw new DataAccessException("Erro ao buscar animal pelo brinco: " + earTag, e);
         }
     }
 
@@ -135,7 +135,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
                 return rs.next() ? mapAnimal(rs) : null;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for animal by ear tag and lot: " + earTag, e);
+            throw new DataAccessException("Erro ao buscar animal pelo brinco e lote: " + earTag, e);
         }
     }
 
@@ -160,7 +160,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             return animals;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for animal by batch id: " + idBatch, e);
+            throw new DataAccessException("Erro ao buscar animais do lote: " + idBatch, e);
         }
     }
 
@@ -179,7 +179,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
                 animals.add(mapAnimal(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing animals: ", e);
+            throw new DataAccessException("Erro ao listar animais", e);
         }
 
         return animals;
@@ -238,11 +238,11 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Animal not found " + animal.getIdAnimal());
+                throw new DataAccessException("Animal não encontrado: " + animal.getIdAnimal());
             }
 
         } catch (SQLException e) {
-            throw DbErrors.translate("Error updating animal: ", e);
+            throw DbErrors.translate("Erro ao atualizar animal", e);
         }
     }
 
@@ -270,7 +270,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
                     stmt.setObject(1, id);
 
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("Animal not found " + id);
+                        throw new DataAccessException("Animal não encontrado: " + id);
                     }
                 }
 
@@ -283,7 +283,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting animal: " + id, e);
+            throw new DataAccessException("Erro ao excluir animal: " + id, e);
         }
     }
 
@@ -313,7 +313,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
                     stmt.setString(1, earTag);
 
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("Animal not found with ear tag " + earTag);
+                        throw new DataAccessException("Animal não encontrado com o brinco " + earTag);
                     }
                 }
 
@@ -326,7 +326,7 @@ public class AnimalDAO implements GenericDAO<Animal, UUID>, IAnimalDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting animal by ear tag: " + earTag, e);
+            throw new DataAccessException("Erro ao excluir animal pelo brinco: " + earTag, e);
         }
     }
 
