@@ -104,7 +104,7 @@ public class PropertyService {
 
     private Property normalizeProperty(Property property) {
         if (property == null) {
-            throw new ValidationException("Property cannot be null");
+            throw new ValidationException("A propriedade não pode ser nula.");
         }
 
         List<UUID> userIds = property.getUserIds() == null
@@ -133,9 +133,7 @@ public class PropertyService {
         }
 
         if (property.getName().length() > 120) {
-            throw new ValidationException(
-                    "Name cannot exceed 120 characters");
-        }
+            throw new ValidationException("O nome não pode exceder 120 caracteres.");}
 
         if (property.getAddressId() == null) {
             throw new RequiredFieldException("addressId");
@@ -148,11 +146,11 @@ public class PropertyService {
 
 //        OPTCIONAIS
         if (property.getCnpj() != null && !Validador.cnpjValido(property.getCnpj())) {
-            throw new ValidationException("Invalid CNPJ");
+            throw new ValidationException("CNPJ inválido.");
         }
 
         if (property.getPhone() != null && !Validador.telefoneValido(property.getPhone())) {
-            throw new ValidationException("Invalid phone");
+            throw new ValidationException("Telefone inválido.");
         }
     }
 }

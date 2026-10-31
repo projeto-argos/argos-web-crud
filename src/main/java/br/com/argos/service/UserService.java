@@ -31,7 +31,8 @@ public class UserService {
     }
 
     /**
-     * padroniza os dados, valida e grava a senha já em hash.
+     - padroniza os dados, valida e grava a senha já em hash.
+
      */
     public void create(User user) {
         User limpo = normalizeUser(user);
@@ -96,7 +97,7 @@ public class UserService {
             throw new RequiredFieldException("cpf");
         }
         if (!Validador.cpfValido(digits)) {
-            throw new ValidationException("Invalid CPF");
+            throw new ValidationException("CPF inválido");
         }
         userDAO.deleteByCpf(digits);
     }
@@ -111,8 +112,10 @@ public class UserService {
     }
 
     /**
-     * Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-     * mensagem sempre a mesma.
+     - Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
+
+     - mensagem sempre a mesma.
+
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
@@ -125,7 +128,7 @@ public class UserService {
         User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
 
         if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
-            throw new ValidationException("Invalid credentials");
+            throw new ValidationException("Credenciais inválidas");
         }
 
         return user;
@@ -155,11 +158,11 @@ public class UserService {
         int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
 
         if (tamanhoEmBytes > 72){
-            throw new ValidationException("Password exceeds the BCrypt byte limit (72 bytes)");
+            throw new ValidationException("A senha excede o limite de 72 bytes do BCrypt");
         }
 
         if (!Validador.senhaValida(password)) {
-            throw new ValidationException("Password must be 8 to 64 characters");
+            throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
 
@@ -168,7 +171,7 @@ public class UserService {
 
 //        OBRIGATÓRIOS
         if (user == null) {
-            throw new ValidationException("Fill in the required fields.");
+            throw new ValidationException("Preencha os campos obrigatórios.");
         }
 
         if (newUser) {
@@ -179,38 +182,38 @@ public class UserService {
             throw new RequiredFieldException("full_name");
         }
         if (user.getFullName().length() > 120) {
-            throw new ValidationException("The name cannot exceed 120 characters");
+            throw new ValidationException("O nome não pode exceder 120 caracteres");
         }
 
         if (user.getCpf() == null || user.getCpf().isBlank()) {
             throw new RequiredFieldException("cpf");
         }
         if (!Validador.cpfValido(user.getCpf())) {
-            throw new ValidationException("Invalid CPF");
+            throw new ValidationException("CPF inválido");
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new RequiredFieldException("email");
         }
         if (!Validador.emailValido(user.getEmail())) {
-            throw new ValidationException("Invalid email");
+            throw new ValidationException("E-mail inválido");
         }
         if (user.getEmail().length() > 120) {
-            throw new ValidationException("The email cannot exceed 120 characters");
+            throw new ValidationException("O e-mail não pode exceder 120 caracteres");
         }
 
         // OPCIONAIS
         if (user.getPhone() != null && !user.getPhone().isBlank()
                 && !Validador.telefoneValido(user.getPhone())) {
-            throw new ValidationException("Invalid phone number");
+            throw new ValidationException("Número de telefone inválido");
         }
 
         if (user.getBirthDate() != null && user.getBirthDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Birth date cannot be in the future");
+            throw new ValidationException("A data de nascimento não pode ser no futuro");
         }
 
         if (user.getRole() != null && user.getRole().length() > 50) {
-            throw new ValidationException("The role cannot exceed 50 characters");
+            throw new ValidationException("O cargo não pode exceder 50 caracteres");
         }
     }
 }

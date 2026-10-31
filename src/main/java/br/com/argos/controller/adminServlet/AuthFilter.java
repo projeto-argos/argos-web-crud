@@ -14,7 +14,7 @@ import java.util.Map;
  * Quem não tem é redirecionado para {@code /login}.
  * <p>
  */
-@WebFilter(urlPatterns = {"/home", "/welcome", "/admins/*", "/users/*", "/properties/*", "/animals/*", "/lots/*", "/herds/*", "/lookup"})
+@WebFilter(urlPatterns = {"/home", "/welcome", "/admins/*", "/users/*", "/properties/*", "/animals/*", "/lots/*", "/herds/*"})
 public class AuthFilter implements Filter {
 
     @Override
