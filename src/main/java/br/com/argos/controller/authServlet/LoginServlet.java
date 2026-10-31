@@ -71,7 +71,9 @@ public class LoginServlet extends HttpServlet {
             Admin admin = adminService.authenticate(email, password);
 
             HttpSession session = request.getSession(true);
-            session.setAttribute("admin", admin);
+
+            // TROCA O ID DA SESSAO
+            request.changeSessionId();
 
             // ADMIN LOGADO
             Map<String, String> loggedUser = new HashMap<>();
