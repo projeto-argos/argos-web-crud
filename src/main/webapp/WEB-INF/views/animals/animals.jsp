@@ -15,7 +15,6 @@
 <c:set var="urlInserir" value="${ctx}/animals/register"/>
 <c:set var="urlAtualizar" value="${ctx}/animals/edit"/>
 <c:set var="urlExcluir" value="${ctx}/animals/delete"/>
-<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -36,12 +35,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
     <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/pesquisa.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
     <script src="${ctx}/assets/js/filtro.js" defer></script>
+    <script src="${ctx}/assets/js/pesquisa.js" defer></script>
 </head>
 <body>
 
@@ -67,13 +68,13 @@
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
             <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty filtroParam.earTag or not empty filtroParam.lotId or not empty filtroParam.exceptionReason}"/>
+                <c:set var="filtrando" value="${not empty filter.earTag or not empty filter.lotId or not empty filter.exceptionReason}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/animals">
-                            <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${filtroParam.earTag}'/>"/></div>
-                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${filtroParam.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
-                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${filtroParam.exceptionReason}'/>"/></div>
+                            <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${filter.earTag}'/>"/></div>
+                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${filter.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${filter.exceptionReason}'/>"/></div>
                         <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -179,11 +180,18 @@
                     <div class="campo">
                         <label for="campoBrinco">Brinco</label>
                         <input type="text" id="campoBrinco" name="earTag" placeholder="ex: BR-26-0001"
-                               required maxlength="30" autocomplete="off">
+                               required maxlength="20" autocomplete="off">
                     </div>
                     <div class="campo">
                         <label for="campoLote">Lote</label>
-                        <select id="campoLote" name="lotId" required><option value="">Selecione</option><c:if test="${not empty lots}"><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></option></c:forEach></c:if></select>
+                        <div class="pesquisa" data-pesquisa data-name="lotId" data-obrigatorio>
+                            <input type="text" id="campoLote" class="pesquisa-texto" placeholder="Pesquisar lote" aria-label="Lote">
+                            <ul class="pesquisa-lista" hidden>
+                                <c:forEach var="lot" items="${lots}">
+                                    <li data-id="<c:out value='${lot.idLot}'/>"><c:out value="${lot.lotCode}"/></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
                     </div>
                     <div class="campo">
                         <label for="campoPeso">Peso</label>
@@ -208,7 +216,7 @@
                     </div>
                     <div class="campo">
                         <label for="campoInicioExcecao">Data início exceção</label>
-                        <input type="date" id="campoInicioExcecao" name="exceptionStartDate">
+                        <input type="date" id="campoInicioExcecao" name="exceptionStartDate" required>
                     </div>
                     <div class="campo">
                         <label for="campoFimExcecao">Data final da exceção</label>
@@ -244,7 +252,9 @@
         </div>
     </dialog>
 
-</main>
+<jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
+
+    </main>
 
 </body>
 </html>
