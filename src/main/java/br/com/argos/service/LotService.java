@@ -118,7 +118,7 @@ public class LotService {
 
     private Lot normalizeLot(Lot lot) {
         if (lot == null) {
-            throw new ValidationException("Lot cannot be null.");
+            throw new ValidationException("O lote não pode ser nulo.");
         }
 
         String lotCode = text(lot.getLotCode());
@@ -146,9 +146,7 @@ public class LotService {
         }
 
         if (lot.getLotCode().length() > 20) {
-            throw new ValidationException(
-                    "Lot code cannot exceed 20 characters."
-            );
+            throw new ValidationException("O código do lote não pode exceder 20 caracteres.");
         }
 
         if (lot.getCategory() == null) {
@@ -158,9 +156,7 @@ public class LotService {
         validateCategory(lot.getCategory());
 
         if (lot.getHeadCount() != null && lot.getHeadCount() < 0) {
-            throw new ValidationException(
-                    "Head count cannot be negative."
-            );
+            throw new ValidationException("A contagem de cabeças não pode ser negativa.");
         }
     }
 
@@ -168,9 +164,7 @@ public class LotService {
         if (!category.equals("FATTENING")
                 && !category.equals("BREEDING")
                 && !category.equals("REARING")) {
-            throw new ValidationException(
-                    "Category must be FATTENING, BREEDING or REARING."
-            );
+            throw new ValidationException("A categoria deve ser ENGORDA, RECRIA ou CRIA.");
         }
     }
 }

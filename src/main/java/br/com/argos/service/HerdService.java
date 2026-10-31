@@ -119,7 +119,7 @@ public class HerdService {
         }
 
         if (herd.getName().length() > 60) {
-            throw new ValidationException("Name cannot exceed 60 characters");
+            throw new ValidationException("O nome não pode exceder 60 caracteres.");
         }
 
         if (herd.getPropertyId() == null) {
@@ -127,16 +127,16 @@ public class HerdService {
         }
 
         if (herd.getHeadCount() < 0) {
-            throw new ValidationException("Head count cannot be negative");
+            throw new ValidationException("A contagem de cabeças não pode ser negativa.");
         }
 
-        // OPCIONAIS
+// OPCIONAIS
         if (herd.getBreed() != null && herd.getBreed().length() > 40) {
-            throw new ValidationException("Breed cannot exceed 40 characters");
+            throw new ValidationException("A raça não pode exceder 40 caracteres.");
         }
 
         if (herd.getPurpose() == null || !DEFAULT_PURPOSE.equalsIgnoreCase(herd.getPurpose())) {
-            throw new ValidationException("Purpose must be Beef");
+            throw new ValidationException("A finalidade deve ser Corte.");
         }
     }
 }

@@ -73,7 +73,7 @@ public class AnimalService {
 
     public void update(Animal animal){
         if (animal == null){
-            throw new ValidationException("Animal cannot be null");
+            throw new ValidationException("O animal não pode ser nulo.");
         }
         if (animal.getIdAnimal() == null){
             throw new RequiredFieldException("id");
@@ -99,58 +99,58 @@ public class AnimalService {
 
     private void validateAnimal(Animal animal, boolean newAnimal) {
         if (animal == null) {
-            throw new ValidationException("Animal cannot be null");
+            throw new ValidationException("O animal não pode ser nulo.");
         }
 
         if (animal.getEarTag() == null || animal.getEarTag().trim().isEmpty()) {
-            throw new ValidationException("EarTag cannot be null or empty");
+            throw new ValidationException("O brinco não pode ser nulo ou vazio.");
         }
 
         if (animal.getEarTag().trim().length() > 20) {
-            throw new ValidationException("EarTag cannot exceed 20 characters");
+            throw new ValidationException("O brinco não pode exceder 20 caracteres.");
         }
 
         if (animal.getWeight() == null) {
-            throw new ValidationException("Weight cannot be null");
+            throw new ValidationException("O peso não pode ser nulo.");
         }
 
         BigDecimal minLimit = BigDecimal.ZERO;
         BigDecimal maxLimit = new BigDecimal("99999.99");
 
         if (animal.getWeight().compareTo(minLimit) <= 0 || animal.getWeight().compareTo(maxLimit) > 0) {
-            throw new ValidationException("Weight must be greater than 0 and at most 99999.99");
+            throw new ValidationException("O peso deve ser maior que 0 e no máximo 99999.99.");
         }
 
         if (animal.getBirthDate() != null && animal.getBirthDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Birth date cannot be in the future");
+            throw new ValidationException("A data de nascimento não pode estar no futuro.");
         }
 
         if (animal.getExceptionReason() != null && animal.getExceptionReason().length() > 255) {
-            throw new ValidationException("Animal exception reason cannot exceed 255 characters");
+            throw new ValidationException("O motivo da exceção do animal não pode exceder 255 caracteres.");
         }
 
         if (animal.getExceptionStartDate() == null) {
-            throw new ValidationException("Start date cannot be null");
+            throw new ValidationException("A data de início não pode ser nula.");
         }
 
         if (animal.getExceptionStartDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Start date cannot be in the future");
+            throw new ValidationException("A data de início não pode estar no futuro.");
         }
 
         if (animal.getExceptionEndDate() != null
                 && animal.getExceptionEndDate().isBefore(animal.getExceptionStartDate())) {
-            throw new ValidationException("End date cannot be before start date");
+            throw new ValidationException("A data de término não pode ser anterior à data de início.");
         }
 
         if (animal.getLotId() == null) {
-            throw new ValidationException("Batch ID cannot be null");
+            throw new ValidationException("O ID do lote não pode ser nulo.");
         }
 
         Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getLotId());
         if (existing != null){
             boolean sameAnimal = !newAnimal && animal.getIdAnimal().equals(existing.getIdAnimal());
             if (!sameAnimal){
-                throw new ValidationException("Ear tag already registered");
+                throw new ValidationException("O brinco já está cadastrado.");
             }
         }
 
@@ -158,7 +158,7 @@ public class AnimalService {
 
     private Animal normalizeAnimal(Animal animal) {
         if (animal == null) {
-            throw new ValidationException("Animal cannot be null");
+            throw new ValidationException("O animal não pode ser nulo.");
         }
         return new Animal(animal.getIdAnimal(), animal.getLotId(), animal.getOriginLotId(),
                 animal.getWeight(), Normalizer.text(animal.getEarTag()), Normalizer.text(animal.getNotes()),

@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "AdminSelectServlet", value = "/admins")
 public class AdminSelectServlet extends HttpServlet {
@@ -28,8 +30,29 @@ public class AdminSelectServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException{
         try {
+            // RECEBE FILTROS
+            String fullName =
+                    request.getParameter("fullName");
+
+            String cpf =
+                    request.getParameter("cpf");
+
+            String email =
+                    request.getParameter("email");
+
+            String phone =
+                    request.getParameter("phone");
+
+            // GUARDA OS FILTROS PARA A TELA
+            Map<String, String> filter = new HashMap<>();
+            filter.put("fullName", fullName);
+            filter.put("cpf", cpf);
+            filter.put("email", email);
+            filter.put("phone", phone);
+            request.setAttribute("filter", filter);
+
             // LISTAR
-            List<Admin> admins = adminService.findAll();
+            List<Admin> admins = adminService.filter(fullName, cpf, email, phone, null);
             request.setAttribute("admins", admins);
 
             request.getRequestDispatcher(

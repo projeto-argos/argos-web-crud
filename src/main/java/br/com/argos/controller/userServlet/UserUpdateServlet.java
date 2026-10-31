@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "UserUpdateServlet", value = "/users/edit")
@@ -83,12 +84,6 @@ public class UserUpdateServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            // SENHA NOVA PREENCHIDA
-            if (password != null &&
-                    !password.isBlank()) {
-                userService.changePassword(idUser, password);
-            }
-
             String birthDateString =
                     request.getParameter("birthDate");
 
@@ -113,6 +108,23 @@ public class UserUpdateServlet extends HttpServlet {
 
             userService.update(userToUpdate);
 
+            // SENHA NOVA PREENCHIDA
+            if (password != null &&
+                    !password.isBlank()) {
+                try {
+                    userService.changePassword(idUser, password);
+
+                } catch (Exception e) {
+                    // DADOS SALVOS, MAS A SENHA NÃO
+                    request.setAttribute("erro",
+                            "Dados salvos, mas a senha não foi alterada: " + e.getMessage());
+                    List<User> users = userService.findAll();
+                    request.setAttribute("users", users);
+                    request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
+                    return;
+                }
+            }
+
             // REDIRECIONA
             response.sendRedirect(
                     request.getContextPath() + "/users");
@@ -120,6 +132,8 @@ public class UserUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<User> users = userService.findAll();
+            request.setAttribute("users", users);
             request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         }
     }

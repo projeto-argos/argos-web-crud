@@ -44,7 +44,7 @@ public class HomeService {
      */
     public HomeSummary getSummary(int recentLimit) {
         if (recentLimit <= 0) {
-            throw new ValidationException("The limit must be greater than zero.");
+            throw new ValidationException("O limite deve ser maior do que zero.");
         }
 
         List<User> users = userService.findAll();

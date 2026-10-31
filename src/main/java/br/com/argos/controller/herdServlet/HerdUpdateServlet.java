@@ -120,6 +120,10 @@ public class HerdUpdateServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<Herd> herds = herdService.findAll();
+            List<Property> properties = propertyService.findAll();
+            request.setAttribute("herds", herds);
+            request.setAttribute("properties", properties);
             request.getRequestDispatcher("/WEB-INF/views/herds/herds.jsp").forward(request, response);
         }
     }

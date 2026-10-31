@@ -157,6 +157,10 @@ public class AnimalInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<Animal> animals = animalService.findAll();
+            List<Lot> lots = lotService.findAll();
+            request.setAttribute("animals", animals);
+            request.setAttribute("lots", lots);
             request.getRequestDispatcher("/WEB-INF/views/animals/animals.jsp").forward(request, response);
         }
     }

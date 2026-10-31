@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,48 @@ public class PropertySelectServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
         try {
+            // RECEBE FILTROS
+            String name =
+                    request.getParameter("name");
+
+            String cnpj =
+                    request.getParameter("cnpj");
+
+            String phone =
+                    request.getParameter("phone");
+
+            String userIds =
+                    request.getParameter("userIds");
+
+            // GUARDA OS FILTROS PARA A TELA
+            Map<String, String> filter = new HashMap<>();
+            filter.put("name", name);
+            filter.put("cnpj", cnpj);
+            filter.put("phone", phone);
+            filter.put("userIds", userIds);
+            request.setAttribute("filter", filter);
+
             // LISTA PROPRIEDADES COM ENDEREÇO E USUARIO
-            List<Property> properties = propertyService.findAll();
+            List<Property> properties = propertyService.filter(name, cnpj, phone);
+
+            // FILTRA POR USUÁRIO
+            if (userIds != null && !userIds.isBlank()) {
+                List<Property> propertiesByUser = new ArrayList<>();
+
+                for (int i = 0; i < properties.size(); i++) {
+                    Property property = properties.get(i);
+                    List<UUID> propertyUserIds = property.getUserIds();
+
+                    for (int j = 0; j < propertyUserIds.size(); j++) {
+                        if (userIds.equals(String.valueOf(propertyUserIds.get(j)))) {
+                            propertiesByUser.add(property);
+                            break;
+                        }
+                    }
+                }
+                properties = propertiesByUser;
+            }
+
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
             for (int i = 0; i < properties.size(); i++) {

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 @WebServlet(name = "UserInsertServlet", value = "/users/register")
 public class UserInsertServlet extends HttpServlet {
@@ -93,6 +94,8 @@ public class UserInsertServlet extends HttpServlet {
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
+            List<User> users = userService.findAll();
+            request.setAttribute("users", users);
             request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         }
     }

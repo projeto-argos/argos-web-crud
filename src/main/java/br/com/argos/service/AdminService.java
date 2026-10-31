@@ -94,7 +94,7 @@ public class AdminService {
             throw new RequiredFieldException("cpf");
         }
         if (!Validador.cpfValido(digits)) {
-            throw new ValidationException("Invalid CPF");
+            throw new ValidationException("CPF inválido.");
         }
         adminDAO.deleteByCpf(digits);
     }
@@ -123,7 +123,7 @@ public class AdminService {
         Admin admin = adminDAO.findByEmailForAuthentication(Normalizer.email(email));
 
         if (admin == null || !admin.isActive() || !BCrypt.checkpw(password, admin.getPassword())) {
-            throw new ValidationException("Invalid credentials");
+            throw new ValidationException("Credenciais inválidas.");
         }
 
         return admin;
@@ -152,11 +152,11 @@ public class AdminService {
         int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
 
         if (tamanhoEmBytes > 72){
-            throw new ValidationException("Password exceeds the BCrypt byte limit (72 bytes)");
+            throw new ValidationException("A senha excede o limite de bytes do BCrypt (72 bytes)");
         }
 
         if (!Validador.senhaValida(password)) {
-            throw new ValidationException("Password must be 8 to 64 characters");
+            throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
 
@@ -165,7 +165,7 @@ public class AdminService {
 
 //        OBRIGATÓRIOS
         if (admin == null) {
-            throw new ValidationException("Fill in the required fields.");
+            throw new ValidationException("Preencha os campos obrigatórios.");
         }
 
         if (newAdmin) {
@@ -176,30 +176,30 @@ public class AdminService {
             throw new RequiredFieldException("full_name");
         }
         if (admin.getFullName().length() > 120) {
-            throw new ValidationException("The name cannot exceed 120 characters.");
+            throw new ValidationException("O nome não pode exceder 120 caracteres.");
         }
 
         if (admin.getCpf() == null || admin.getCpf().isBlank()) {
             throw new RequiredFieldException("cpf");
         }
         if (!Validador.cpfValido(admin.getCpf())) {
-            throw new ValidationException("Invalid CPF.");
+            throw new ValidationException("CPF inválido.");
         }
 
         if (admin.getEmail() == null || admin.getEmail().isBlank()) {
             throw new RequiredFieldException("email");
         }
         if (!Validador.emailValido(admin.getEmail())) {
-            throw new ValidationException("Invalid email.");
+            throw new ValidationException("E-mail inválido.");
         }
         if (admin.getEmail().length() > 120) {
-            throw new ValidationException("The email cannot exceed 120 characters.");
+            throw new ValidationException("O e-mail não pode exceder 120 caracteres.");
         }
 
-        // OPCIONAIS
+// OPCIONAIS
         if (admin.getPhone() != null && !admin.getPhone().isBlank()
                 && !Validador.telefoneValido(admin.getPhone())) {
-            throw new ValidationException("Invalid phone.");
+            throw new ValidationException("Telefone inválido.");
         }
     }
 }
