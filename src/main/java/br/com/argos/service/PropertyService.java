@@ -41,7 +41,7 @@ public class PropertyService {
 
     public Property findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         return propertyDAO.findById(id);
@@ -61,7 +61,7 @@ public class PropertyService {
 
     public List<Property> findByName(String name) {
         if (name == null || name.isBlank()) {
-            throw new RequiredFieldException("name");
+            throw new RequiredFieldException("nome");
         }
 
         return propertyDAO.findByName(name.trim());
@@ -69,7 +69,7 @@ public class PropertyService {
 
     public List<Property> findByUser(UUID userId) {
         if (userId == null) {
-            throw new RequiredFieldException("userId");
+            throw new RequiredFieldException("usuário");
         }
 
         return propertyDAO.findByUser(userId);
@@ -79,7 +79,7 @@ public class PropertyService {
         Property normalized = normalizeProperty(property);
 
         if (normalized.getIdProperty() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         validateProperty(normalized);
@@ -88,7 +88,7 @@ public class PropertyService {
 
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         propertyDAO.delete(id);
@@ -96,7 +96,7 @@ public class PropertyService {
 
     public int removeUserLinks(UUID userId) {
         if (userId == null) {
-            throw new RequiredFieldException("userId");
+            throw new RequiredFieldException("usuário");
         }
 
         return propertyDAO.removeUserLinks(userId);
@@ -129,19 +129,19 @@ public class PropertyService {
 
 //          OBRIGATÓRIOS
         if (property.getName() == null || property.getName().isBlank()) {
-            throw new RequiredFieldException("name");
+            throw new RequiredFieldException("nome");
         }
 
         if (property.getName().length() > 120) {
             throw new ValidationException("O nome não pode exceder 120 caracteres.");}
 
         if (property.getAddressId() == null) {
-            throw new RequiredFieldException("addressId");
+            throw new RequiredFieldException("endereço");
         }
 
         // toda propriedade precisa de pelo menos um usuário
         if (property.getUserIds() == null || property.getUserIds().isEmpty()) {
-            throw new RequiredFieldException("userIds");
+            throw new RequiredFieldException("usuários");
         }
 
 //        OPTCIONAIS

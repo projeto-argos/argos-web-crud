@@ -46,7 +46,7 @@ public class UserService {
 
     public User findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         return userDAO.findById(id);
     }
@@ -67,7 +67,7 @@ public class UserService {
 
     public User findByEmail(String email){
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         return userDAO.findByEmail(Normalizer.email(email));
     }
@@ -77,7 +77,7 @@ public class UserService {
         User limpo = normalizeUser(user);
         validateUser(limpo, false);
         if (limpo.getIdUser() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         userDAO.update(limpo);
     }
@@ -85,7 +85,7 @@ public class UserService {
     /** Desativa o usuário (soft delete) */
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         userDAO.delete(id);
     }
@@ -93,7 +93,7 @@ public class UserService {
     public void deleteByCpf(String cpf) {
         String digits = onlyDigits(cpf);
         if (digits == null) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
         if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido");
@@ -104,7 +104,7 @@ public class UserService {
     /** Troca a senha */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         validatePassword(newPassword);
         userDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
@@ -117,10 +117,10 @@ public class UserService {
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
@@ -150,7 +150,7 @@ public class UserService {
     /** Regras da senha em texto puro  */
     private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
@@ -177,21 +177,21 @@ public class UserService {
         }
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {
-            throw new RequiredFieldException("full_name");
+            throw new RequiredFieldException("nome completo");
         }
         if (user.getFullName().length() > 120) {
             throw new ValidationException("O nome não pode exceder 120 caracteres");
         }
 
         if (user.getCpf() == null || user.getCpf().isBlank()) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
         if (!Validator.isValidCpf(user.getCpf())) {
             throw new ValidationException("CPF inválido");
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         if (!Validator.isValidEmail(user.getEmail())) {
             throw new ValidationException("E-mail inválido");
