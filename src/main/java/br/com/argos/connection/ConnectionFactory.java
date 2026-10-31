@@ -58,6 +58,10 @@ public class ConnectionFactory {
         config.addDataSourceProperty("tcpKeepAlive", "true");
         config.addDataSourceProperty("reWriteBatchedInserts", "true");
 
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
         HIKARI_DATA_SOURCE = new HikariDataSource(config);
     }
 
