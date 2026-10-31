@@ -81,6 +81,7 @@ public class LoginServlet extends HttpServlet {
             loggedUser.put("name", admin.getFullName());
             loggedUser.put("type", "ADMIN");
             session.setAttribute("usuarioLogado", loggedUser);
+            session.setAttribute("idAdminLogado", admin.getIdAdmin());
 
             // REDIRECIONA
             response.sendRedirect(
