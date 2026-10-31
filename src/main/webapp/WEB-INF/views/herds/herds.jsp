@@ -13,8 +13,6 @@
 <c:set var="urlInserir" value="${ctx}/herds/register"/>
 <c:set var="urlAtualizar" value="${ctx}/herds/edit"/>
 <c:set var="urlExcluir" value="${ctx}/herds/delete"/>
-<%-- Os campos do filtro só usam os parâmetros de uma consulta (GET). Num erro de cadastro/edição (POST) os parâmetros
-     são do pop-up e não devem aparecer no filtro. --%>
 <c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
