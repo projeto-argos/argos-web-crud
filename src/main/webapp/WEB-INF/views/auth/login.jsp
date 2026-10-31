@@ -20,6 +20,8 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="${pageContext.request.contextPath}/assets/img/logo-tipo.svg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -84,6 +86,7 @@
 
             <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${erroLogin}"/></p>
 
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFub9l8SIz9aiVuZ"></div>
             <button type="submit" class="btn_entrar" id="btnEntrar">Entrar</button>
 
         </form>
