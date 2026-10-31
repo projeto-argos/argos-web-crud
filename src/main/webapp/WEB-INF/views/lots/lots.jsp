@@ -13,6 +13,9 @@
 <c:set var="urlInserir" value="${ctx}/lots/register"/>
 <c:set var="urlAtualizar" value="${ctx}/lots/edit"/>
 <c:set var="urlExcluir" value="${ctx}/lots/delete"/>
+<%-- Os campos do filtro só usam os parâmetros de uma consulta (GET). Num erro de cadastro/edição (POST) os parâmetros
+     são do pop-up e não devem aparecer no filtro. --%>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -62,19 +65,19 @@
         <div class="painel-topo">
             <h1>Lotes cadastrados</h1>
 
-            <c:set var="filtrando" value="${not empty param.lotCode or not empty param.herdId or not empty param.category or not empty param.headCount or not empty param.openDate}"/>
+            <c:set var="filtrando" value="${not empty filtroParam.lotCode or not empty filtroParam.herdId or not empty filtroParam.category or not empty filtroParam.headCount or not empty filtroParam.openDate}"/>
             <div class="painel-acoes">
             <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                 <summary>Filtrar</summary>
                 <form method="get" action="${ctx}/lots">
-                    <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${param.lotCode}'/>"/></div>
+                    <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${filtroParam.lotCode}'/>"/></div>
                     <c:if test="${not empty herds}">
                         <div class="campo">
                             <label for="filtro-herdId">Rebanho</label>
                             <select id="filtro-herdId" name="herdId">
                                 <option value="">Todos</option>
                                 <c:forEach var="herd" items="${herds}">
-                                    <option value="<c:out value='${herd.idHerd}'/>" ${param.herdId == herd.idHerd ? 'selected' : ''}><c:out value="${herd.name}"/></option>
+                                    <option value="<c:out value='${herd.idHerd}'/>" ${filtroParam.herdId == herd.idHerd ? 'selected' : ''}><c:out value="${herd.name}"/></option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -83,13 +86,13 @@
                         <label for="filtro-category">Categoria</label>
                         <select id="filtro-category" name="category">
                             <option value="">Todas</option>
-                            <option value="BREEDING" ${param.category == 'BREEDING' ? 'selected' : ''}>Cria</option>
-                            <option value="REARING" ${param.category == 'REARING' ? 'selected' : ''}>Recria</option>
-                            <option value="FATTENING" ${param.category == 'FATTENING' ? 'selected' : ''}>Engorda</option>
+                            <option value="BREEDING" ${filtroParam.category == 'BREEDING' ? 'selected' : ''}>Cria</option>
+                            <option value="REARING" ${filtroParam.category == 'REARING' ? 'selected' : ''}>Recria</option>
+                            <option value="FATTENING" ${filtroParam.category == 'FATTENING' ? 'selected' : ''}>Engorda</option>
                         </select>
                     </div>
-                    <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${param.headCount}'/>"/></div>
-                    <div class="campo"><label for="filtro-openDate">Data de abertura</label><input type="date" id="filtro-openDate" name="openDate" value="<c:out value='${param.openDate}'/>"/></div>
+                    <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${filtroParam.headCount}'/>"/></div>
+                    <div class="campo"><label for="filtro-openDate">Data de abertura</label><input type="date" id="filtro-openDate" name="openDate" value="<c:out value='${filtroParam.openDate}'/>"/></div>
                     <div class="filtro-acoes"><a href="${ctx}/lots" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                 </form>
             </details>

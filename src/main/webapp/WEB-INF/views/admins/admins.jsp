@@ -13,6 +13,7 @@
 <c:set var="urlInserir" value="${ctx}/admins/register"/>
 <c:set var="urlAtualizar" value="${ctx}/admins/edit"/>
 <c:set var="urlExcluir" value="${ctx}/admins/delete"/>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -62,15 +63,15 @@
             <div class="painel-topo">
                 <h1>Admins cadastrados</h1>
 
-                <c:set var="filtrando" value="${not empty param.fullName or not empty param.cpf or not empty param.email or not empty param.phone}"/>
+                <c:set var="filtrando" value="${not empty filtroParam.fullName or not empty filtroParam.cpf or not empty filtroParam.email or not empty filtroParam.phone}"/>
                 <div class="painel-acoes">
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/admins">
-                            <div class="campo"><label for="filtro-fullName">Nome completo</label><input type="text" id="filtro-fullName" name="fullName" value="<c:out value='${param.fullName}'/>"/></div>
-                            <div class="campo"><label for="filtro-cpf">CPF</label><input type="text" id="filtro-cpf" name="cpf" value="<c:out value='${param.cpf}'/>"/></div>
-                            <div class="campo"><label for="filtro-email">E-mail</label><input type="text" id="filtro-email" name="email" value="<c:out value='${param.email}'/>"/></div>
-                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
+                            <div class="campo"><label for="filtro-fullName">Nome completo</label><input type="text" id="filtro-fullName" name="fullName" value="<c:out value='${filtroParam.fullName}'/>"/></div>
+                            <div class="campo"><label for="filtro-cpf">CPF</label><input type="text" id="filtro-cpf" name="cpf" value="<c:out value='${filtroParam.cpf}'/>"/></div>
+                            <div class="campo"><label for="filtro-email">E-mail</label><input type="text" id="filtro-email" name="email" value="<c:out value='${filtroParam.email}'/>"/></div>
+                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${filtroParam.phone}'/>"/></div>
                         <div class="filtro-acoes"><a href="${ctx}/admins" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>

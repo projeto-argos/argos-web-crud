@@ -13,6 +13,9 @@
 <c:set var="urlInserir" value="${ctx}/herds/register"/>
 <c:set var="urlAtualizar" value="${ctx}/herds/edit"/>
 <c:set var="urlExcluir" value="${ctx}/herds/delete"/>
+<%-- Os campos do filtro só usam os parâmetros de uma consulta (GET). Num erro de cadastro/edição (POST) os parâmetros
+     são do pop-up e não devem aparecer no filtro. --%>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -62,14 +65,14 @@
             <div class="painel-topo">
                 <h1>Rebanhos cadastrados</h1>
 <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.name or not empty param.breed or not empty param.purpose or not empty param.propertyId}"/>
+                <c:set var="filtrando" value="${not empty filtroParam.name or not empty filtroParam.breed or not empty filtroParam.purpose or not empty filtroParam.propertyId}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/herds">
-                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
-                            <div class="campo"><label for="filtro-breed">Raça</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${param.breed}'/>"/></div>
-                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${param.purpose}'/>"/></div>
-                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${param.propertyId == property.idProperty ? 'selected="selected"' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${filtroParam.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-breed">Raça</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${filtroParam.breed}'/>"/></div>
+                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${filtroParam.purpose}'/>"/></div>
+                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${filtroParam.propertyId == property.idProperty ? 'selected="selected"' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/herds" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>

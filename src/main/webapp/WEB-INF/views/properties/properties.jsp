@@ -13,6 +13,9 @@
 <c:set var="urlInserir" value="${ctx}/properties/register"/>
 <c:set var="urlAtualizar" value="${ctx}/properties/edit"/>
 <c:set var="urlExcluir" value="${ctx}/properties/delete"/>
+<%-- Os campos do filtro só usam os parâmetros de uma consulta (GET). Num erro de cadastro/edição (POST) os parâmetros
+     são do pop-up e não devem aparecer no filtro. --%>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -64,14 +67,14 @@
 
                 <div class="painel-acoes">
 
-                    <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.userIds}"/>
+                    <c:set var="filtrando" value="${not empty filtroParam.name or not empty filtroParam.cnpj or not empty filtroParam.phone or not empty filtroParam.userIds}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/properties">
-                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
-                            <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${param.cnpj}'/>"/></div>
-                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
-                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-userIds">Usuário</label><select id="filtro-userIds" name="userIds"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.userIds == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${filtroParam.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${filtroParam.cnpj}'/>"/></div>
+                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${filtroParam.phone}'/>"/></div>
+                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-userIds">Usuário</label><select id="filtro-userIds" name="userIds"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${filtroParam.userIds == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>

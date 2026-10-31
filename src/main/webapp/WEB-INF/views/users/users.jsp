@@ -13,6 +13,7 @@
 <c:set var="urlInserir" value="${ctx}/users/register"/>
 <c:set var="urlAtualizar" value="${ctx}/users/edit"/>
 <c:set var="urlExcluir" value="${ctx}/users/delete"/>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -65,9 +66,9 @@
             <div class="painel-acoes">
 
                 <c:set var="filtrando"
-                       value="${not empty param.fullName or not empty param.cpf
-                     or not empty param.email or not empty param.phone
-                     or not empty param.role}"/>
+                       value="${not empty filtroParam.fullName or not empty filtroParam.cpf
+                     or not empty filtroParam.email or not empty filtroParam.phone
+                     or not empty filtroParam.role}"/>
 
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
@@ -76,27 +77,27 @@
                         <div class="campo">
                             <label for="filtroNome">Nome completo</label>
                             <input type="text" id="filtroNome" name="fullName" placeholder="Ex.: João Silva"
-                                   value="<c:out value='${param.fullName}'/>">
+                                   value="<c:out value='${filtroParam.fullName}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroCpf">CPF</label>
                             <input type="text" id="filtroCpf" name="cpf" placeholder="Ex.: 12345678901"
-                                   value="<c:out value='${param.cpf}'/>">
+                                   value="<c:out value='${filtroParam.cpf}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroEmail">E-mail</label>
                             <input type="text" id="filtroEmail" name="email" placeholder="Ex.: joao@email.com"
-                                   value="<c:out value='${param.email}'/>">
+                                   value="<c:out value='${filtroParam.email}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroTelefone">Telefone</label>
                             <input type="text" id="filtroTelefone" name="phone" placeholder="Ex.: 11999999999"
-                                   value="<c:out value='${param.phone}'/>">
+                                   value="<c:out value='${filtroParam.phone}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroCargo">Cargo</label>
                             <input type="text" id="filtroCargo" name="role" placeholder="Ex.: Administrador"
-                                   value="<c:out value='${param.role}'/>">
+                                   value="<c:out value='${filtroParam.role}'/>">
                         </div>
 
                         <div class="filtro-acoes">

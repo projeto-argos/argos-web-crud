@@ -15,6 +15,9 @@
 <c:set var="urlInserir" value="${ctx}/animals/register"/>
 <c:set var="urlAtualizar" value="${ctx}/animals/edit"/>
 <c:set var="urlExcluir" value="${ctx}/animals/delete"/>
+<%-- Os campos do filtro só usam os parâmetros de uma consulta (GET). Num erro de cadastro/edição (POST) os parâmetros
+     são do pop-up e não devem aparecer no filtro. --%>
+<c:set var="filtroParam" value="${pageContext.request.method == 'GET' ? param : null}"/>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -65,13 +68,13 @@
         <div class="painel-topo">
             <h1>Animais cadastrados</h1>
             <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.earTag or not empty param.lotId or not empty param.exceptionReason}"/>
+                <c:set var="filtrando" value="${not empty filtroParam.earTag or not empty filtroParam.lotId or not empty filtroParam.exceptionReason}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/animals">
-                            <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${param.earTag}'/>"/></div>
-                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${param.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
-                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${param.exceptionReason}'/>"/></div>
+                            <div class="campo"><label for="filtro-earTag">Brinco</label><input type="text" id="filtro-earTag" name="earTag" value="<c:out value='${filtroParam.earTag}'/>"/></div>
+                            <c:if test="${not empty lots}"><div class="campo"><label for="filtro-lotId">Lote</label><select id="filtro-lotId" name="lotId"><option value="">Todos</option><c:forEach var="lot" items="${lots}"><option value="<c:out value='${lot.idLot}'/>" ${filtroParam.lotId == lot.idLot ? 'selected="selected"' : ''}><c:out value="${lot.lotCode}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-exceptionReason">Motivo da exceção</label><input type="text" id="filtro-exceptionReason" name="exceptionReason" value="<c:out value='${filtroParam.exceptionReason}'/>"/></div>
                         <div class="filtro-acoes"><a href="${ctx}/animals" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
