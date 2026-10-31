@@ -4,7 +4,7 @@ import br.com.argos.dao.AdminDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
-import br.com.argos.util.Validador;
+import br.com.argos.util.Validator;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.exceptions.RequiredFieldException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -34,7 +34,7 @@ public class AdminService {
      * O admin nasce sempre ativo.
      */
     public void create(Admin admin) {
-        Admin limpo = normalizarAdmin(admin);
+        Admin limpo = normalizeAdmin(admin);
         validarAdmin(limpo, true);
 
         String hash = BCrypt.hashpw(limpo.getPassword(), BCrypt.gensalt());
@@ -72,7 +72,7 @@ public class AdminService {
 
     /** Atualiza os dados cadastrais */
     public void update(Admin admin) {
-        Admin limpo = normalizarAdmin(admin);
+        Admin limpo = normalizeAdmin(admin);
         validarAdmin(limpo, false);
         if (limpo.getIdAdmin() == null) {
             throw new RequiredFieldException("id");
@@ -93,7 +93,7 @@ public class AdminService {
         if (digits == null) {
             throw new RequiredFieldException("cpf");
         }
-        if (!Validador.cpfValido(digits)) {
+        if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido.");
         }
         adminDAO.deleteByCpf(digits);
@@ -130,7 +130,7 @@ public class AdminService {
     }
 
     /** Padroniza os dados de entrada */
-    private Admin normalizarAdmin(Admin admin) {
+    private Admin normalizeAdmin(Admin admin) {
         if (admin == null) {
             return null;
         }
@@ -155,7 +155,7 @@ public class AdminService {
             throw new ValidationException("A senha excede o limite de bytes do BCrypt (72 bytes)");
         }
 
-        if (!Validador.senhaValida(password)) {
+        if (!Validator.isValidPassword(password)) {
             throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
@@ -182,14 +182,14 @@ public class AdminService {
         if (admin.getCpf() == null || admin.getCpf().isBlank()) {
             throw new RequiredFieldException("cpf");
         }
-        if (!Validador.cpfValido(admin.getCpf())) {
+        if (!Validator.isValidCpf(admin.getCpf())) {
             throw new ValidationException("CPF inválido.");
         }
 
         if (admin.getEmail() == null || admin.getEmail().isBlank()) {
             throw new RequiredFieldException("email");
         }
-        if (!Validador.emailValido(admin.getEmail())) {
+        if (!Validator.isValidEmail(admin.getEmail())) {
             throw new ValidationException("E-mail inválido.");
         }
         if (admin.getEmail().length() > 120) {
@@ -198,7 +198,7 @@ public class AdminService {
 
 // OPCIONAIS
         if (admin.getPhone() != null && !admin.getPhone().isBlank()
-                && !Validador.telefoneValido(admin.getPhone())) {
+                && !Validator.isValidPhone(admin.getPhone())) {
             throw new ValidationException("Telefone inválido.");
         }
     }

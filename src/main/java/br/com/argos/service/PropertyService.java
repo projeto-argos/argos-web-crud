@@ -6,7 +6,7 @@ import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Property;
 import br.com.argos.util.FilterUtil;
-import br.com.argos.util.Validador;
+import br.com.argos.util.Validator;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -145,11 +145,11 @@ public class PropertyService {
         }
 
 //        OPTCIONAIS
-        if (property.getCnpj() != null && !Validador.cnpjValido(property.getCnpj())) {
+        if (property.getCnpj() != null && !Validator.isValidCnpj(property.getCnpj())) {
             throw new ValidationException("CNPJ inválido.");
         }
 
-        if (property.getPhone() != null && !Validador.telefoneValido(property.getPhone())) {
+        if (property.getPhone() != null && !Validator.isValidPhone(property.getPhone())) {
             throw new ValidationException("Telefone inválido.");
         }
     }

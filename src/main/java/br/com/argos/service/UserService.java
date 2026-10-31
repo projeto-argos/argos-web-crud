@@ -4,7 +4,7 @@ import br.com.argos.dao.UserDAO;
 import br.com.argos.model.User;
 import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
-import br.com.argos.util.Validador;
+import br.com.argos.util.Validator;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -31,8 +31,7 @@ public class UserService {
     }
 
     /**
-     - padroniza os dados, valida e grava a senha já em hash.
-
+     - padroniza os dados, valida e grava a senha já em hash
      */
     public void create(User user) {
         User limpo = normalizeUser(user);
@@ -96,7 +95,7 @@ public class UserService {
         if (digits == null) {
             throw new RequiredFieldException("cpf");
         }
-        if (!Validador.cpfValido(digits)) {
+        if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido");
         }
         userDAO.deleteByCpf(digits);
@@ -113,7 +112,6 @@ public class UserService {
 
     /**
      - Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-
      - mensagem sempre a mesma.
 
      */
@@ -161,7 +159,7 @@ public class UserService {
             throw new ValidationException("A senha excede o limite de 72 bytes do BCrypt");
         }
 
-        if (!Validador.senhaValida(password)) {
+        if (!Validator.isValidPassword(password)) {
             throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
@@ -188,14 +186,14 @@ public class UserService {
         if (user.getCpf() == null || user.getCpf().isBlank()) {
             throw new RequiredFieldException("cpf");
         }
-        if (!Validador.cpfValido(user.getCpf())) {
+        if (!Validator.isValidCpf(user.getCpf())) {
             throw new ValidationException("CPF inválido");
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new RequiredFieldException("email");
         }
-        if (!Validador.emailValido(user.getEmail())) {
+        if (!Validator.isValidEmail(user.getEmail())) {
             throw new ValidationException("E-mail inválido");
         }
         if (user.getEmail().length() > 120) {
@@ -204,7 +202,7 @@ public class UserService {
 
         // OPCIONAIS
         if (user.getPhone() != null && !user.getPhone().isBlank()
-                && !Validador.telefoneValido(user.getPhone())) {
+                && !Validator.isValidPhone(user.getPhone())) {
             throw new ValidationException("Número de telefone inválido");
         }
 
