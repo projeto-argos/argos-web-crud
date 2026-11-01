@@ -19,7 +19,7 @@ import static br.com.argos.util.Normalizer.onlyDigits;
 /** Regras de negócio e validações relacionadas a admins. */
 public class AdminService {
 
-    // Hash falso, calculado uma vez, só para igualar o tempo de resposta do login
+    // Hash falso, só para igualar o tempo de resposta do login
     private static final String DUMMY_HASH = BCrypt.hashpw("senha-falsa-argos", BCrypt.gensalt());
 
     private final AdminDAO adminDAO;
