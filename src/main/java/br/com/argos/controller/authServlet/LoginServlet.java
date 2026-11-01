@@ -4,6 +4,7 @@ package br.com.argos.controller.authServlet;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Admin;
 import br.com.argos.service.AdminService;
+import br.com.argos.service.TurnstileService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,11 +22,13 @@ public class LoginServlet extends HttpServlet {
 
     // ATRIBUTOS
     private AdminService adminService;
+    private TurnstileService turnstileService;
 
     // CICLO DE VIDA DO SERVLET
     @Override
     public void init() {
         adminService = new AdminService();
+        turnstileService = new TurnstileService();
     }
 
     // EXIBE PAGINA DE LOGIN
@@ -67,11 +70,24 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // VERIFICA SE NAO E ROBO
+            String turnstileToken =
+                    request.getParameter("cf-turnstile-response");
+            try {
+                turnstileService.verifyTurnstile(turnstileToken, request.getRemoteAddr());
+            } catch (ValidationException e) {
+                request.setAttribute("erro", e.getMessage());
+                request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
+                return;
+            }
+
             // CRIA SESSAO
             Admin admin = adminService.authenticate(email, password);
 
             HttpSession session = request.getSession(true);
-            session.setAttribute("admin", admin);
+
+            // TROCA O ID DA SESSAO
+            request.changeSessionId();
 
             // ADMIN LOGADO
             Map<String, String> loggedUser = new HashMap<>();
@@ -79,6 +95,7 @@ public class LoginServlet extends HttpServlet {
             loggedUser.put("name", admin.getFullName());
             loggedUser.put("type", "ADMIN");
             session.setAttribute("usuarioLogado", loggedUser);
+            session.setAttribute("idAdminLogado", admin.getIdAdmin());
 
             // REDIRECIONA
             response.sendRedirect(
