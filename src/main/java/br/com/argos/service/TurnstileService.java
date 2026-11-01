@@ -1,6 +1,7 @@
 package br.com.argos.service;
 
 import br.com.argos.exceptions.ValidationException;
+import br.com.argos.util.AppConfig;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,9 +23,11 @@ public class TurnstileService {
             throw new ValidationException("Confirme que você é humano.");
         }
 
-        String secret = System.getenv("TURNSTILE_SECRET");
-        if (secret == null || secret.isBlank()) {
-            throw new IllegalStateException("Variável TURNSTILE_SECRET não configurada.");
+        // variável de ambiente ou arquivo .env (src/main/resources)
+        String secret = AppConfig.get("TURNSTILE_SECRET");
+        if (secret == null) {
+            throw new IllegalStateException(
+                    "TURNSTILE_SECRET não configurada (variável de ambiente ou arquivo .env).");
         }
 
         String params = "secret=" + URLEncoder.encode(secret, StandardCharsets.UTF_8)
