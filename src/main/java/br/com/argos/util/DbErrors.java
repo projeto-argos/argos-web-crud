@@ -10,14 +10,11 @@ import java.util.Map;
 
 /**
  * Traduz erros do PostgreSQL em exceções que o usuário entende.
- * A mensagem é escolhida pelo NOME da constraint violada (e não pelo texto do erro,
- * que inclui o valor digitado e poderia confundir).
  */
 public final class DbErrors {
 
     private static final String CHAVE_DUPLICADA = "23505";
 
-    // nome da constraint (schema.sql) -> mensagem para o usuário
     private static final Map<String, String> DUPLICADOS = Map.of(
             "uk_admin_cpf", "CPF já registrado.",
             "uk_user_cpf", "CPF já registrado.",
@@ -31,7 +28,6 @@ public final class DbErrors {
     private DbErrors() {
     }
 
-    /** Sempre use: throw DbErrors.translate("mensagem", e); */
     public static RuntimeException translate(String message, SQLException e) {
         if (CHAVE_DUPLICADA.equals(e.getSQLState())) {
             String mensagem = DUPLICADOS.get(constraintName(e));
