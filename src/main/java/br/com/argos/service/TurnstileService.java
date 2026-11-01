@@ -22,7 +22,6 @@ public class TurnstileService {
     private static final String VERIFY_URL =
             "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-    // Se a Cloudflare não responder neste tempo, o login é negado (não fica travado)
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
     private final HttpClient client = HttpClient.newBuilder()
@@ -37,7 +36,6 @@ public class TurnstileService {
         // variável de ambiente ou arquivo .env (src/main/resources)
         String secret = AppConfig.get("TURNSTILE_SECRET");
         if (secret == null) {
-            // Erro de configuração nosso: vai para o log; o usuário vê uma mensagem simples
             LOG.severe("TURNSTILE_SECRET não configurada (variável de ambiente ou arquivo .env).");
             throw new ValidationException("Verificação de segurança indisponível no momento. Tente novamente mais tarde.");
         }
@@ -64,7 +62,7 @@ public class TurnstileService {
             }
 
         } catch (IOException e) {
-            // inclui o timeout (HttpTimeoutException é um IOException)
+            // inclui o timeout
             LOG.log(Level.WARNING, "Falha ao falar com a Cloudflare (Turnstile)", e);
             throw new ValidationException("Não foi possível verificar agora, tente novamente.");
         } catch (InterruptedException e) {
