@@ -34,8 +34,6 @@ public class AnimalService {
     }
 
     public void create(Animal animal){
-        // "Liberado para abate" nunca vem da tela: é sempre falso no cadastro
-        // (o cálculo real depende do módulo de medicamentos e carências)
         Animal normalized = withClearedForSlaughter(normalizeAnimal(animal), false);
         validateAnimal(normalized, true);
         animalDAO.insert(normalized);
@@ -91,7 +89,6 @@ public class AnimalService {
         if (current == null){
             throw new ValidationException("Animal não encontrado.");
         }
-        // na edição mantém o valor que já está no banco, ignorando o que veio da tela
         Animal normalized = withClearedForSlaughter(normalizeAnimal(animal), current.isClearedForSlaughter());
         validateAnimal(normalized, false);
         animalDAO.update(normalized);
