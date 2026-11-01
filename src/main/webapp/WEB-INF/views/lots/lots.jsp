@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
 
     <!-- CSS -->
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
@@ -31,12 +32,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
     <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/pesquisa.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
     <script src="${ctx}/assets/js/filtro.js" defer></script>
+    <script src="${ctx}/assets/js/pesquisa.js" defer></script>
 </head>
 <body>
 
@@ -62,19 +65,19 @@
         <div class="painel-topo">
             <h1>Lotes cadastrados</h1>
 
-            <c:set var="filtrando" value="${not empty param.lotCode or not empty param.herdId or not empty param.category or not empty param.headCount or not empty param.openDate}"/>
+            <c:set var="filtrando" value="${not empty filter.lotCode or not empty filter.herdId or not empty filter.category or not empty filter.headCount or not empty filter.openDate}"/>
             <div class="painel-acoes">
             <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                 <summary>Filtrar</summary>
                 <form method="get" action="${ctx}/lots">
-                    <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${param.lotCode}'/>"/></div>
+                    <div class="campo"><label for="filtro-lotCode">Código lote</label><input type="text" id="filtro-lotCode" name="lotCode" value="<c:out value='${filter.lotCode}'/>"/></div>
                     <c:if test="${not empty herds}">
                         <div class="campo">
                             <label for="filtro-herdId">Rebanho</label>
                             <select id="filtro-herdId" name="herdId">
                                 <option value="">Todos</option>
                                 <c:forEach var="herd" items="${herds}">
-                                    <option value="<c:out value='${herd.idHerd}'/>" ${param.herdId == herd.idHerd ? 'selected' : ''}><c:out value="${herd.name}"/></option>
+                                    <option value="<c:out value='${herd.idHerd}'/>" ${filter.herdId == herd.idHerd ? 'selected' : ''}><c:out value="${herd.name}"/></option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -83,13 +86,13 @@
                         <label for="filtro-category">Categoria</label>
                         <select id="filtro-category" name="category">
                             <option value="">Todas</option>
-                            <option value="BREEDING" ${param.category == 'BREEDING' ? 'selected' : ''}>Cria</option>
-                            <option value="REARING" ${param.category == 'REARING' ? 'selected' : ''}>Recria</option>
-                            <option value="FATTENING" ${param.category == 'FATTENING' ? 'selected' : ''}>Engorda</option>
+                            <option value="CRIA" ${filter.category == 'CRIA' ? 'selected' : ''}>Cria</option>
+                            <option value="RECRIA" ${filter.category == 'RECRIA' ? 'selected' : ''}>Recria</option>
+                            <option value="ENGORDA" ${filter.category == 'ENGORDA' ? 'selected' : ''}>Engorda</option>
                         </select>
                     </div>
-                    <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${param.headCount}'/>"/></div>
-                    <div class="campo"><label for="filtro-openDate">Data de abertura</label><input type="date" id="filtro-openDate" name="openDate" value="<c:out value='${param.openDate}'/>"/></div>
+                    <div class="campo"><label for="filtro-headCount">Quantidade de cabeças</label><input type="number" id="filtro-headCount" name="headCount" min="0" value="<c:out value='${filter.headCount}'/>"/></div>
+                    <div class="campo"><label for="filtro-openDate">Data de abertura</label><input type="date" id="filtro-openDate" name="openDate" value="<c:out value='${filter.openDate}'/>"/></div>
                     <div class="filtro-acoes"><a href="${ctx}/lots" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                 </form>
             </details>
@@ -127,9 +130,9 @@
                         <td><c:forEach var="herd" items="${herds}"><c:if test="${herd.idHerd == lot.herdId}"><c:out value="${herd.name}"/></c:if></c:forEach></td>
                         <td>
                             <c:choose>
-                                <c:when test="${lot.category == 'BREEDING'}">Cria</c:when>
-                                <c:when test="${lot.category == 'REARING'}">Recria</c:when>
-                                <c:when test="${lot.category == 'FATTENING'}">Engorda</c:when>
+                                <c:when test="${lot.category == 'CRIA'}">Cria</c:when>
+                                <c:when test="${lot.category == 'RECRIA'}">Recria</c:when>
+                                <c:when test="${lot.category == 'ENGORDA'}">Engorda</c:when>
                                 <c:otherwise><c:out value="${lot.category}"/></c:otherwise>
                             </c:choose>
                         </td>
@@ -196,9 +199,9 @@
                         <label for="campoCategoria">Categoria</label>
                         <select id="campoCategoria" name="category" required>
                             <option value="" disabled selected>Selecione a categoria</option>
-                            <option value="BREEDING">Cria</option>
-                            <option value="REARING">Recria</option>
-                            <option value="FATTENING">Engorda</option>
+                            <option value="CRIA">Cria</option>
+                            <option value="RECRIA">Recria</option>
+                            <option value="ENGORDA">Engorda</option>
                         </select>
                     </div>
                     <div class="campo">
@@ -212,12 +215,14 @@
                     </div>
                     <div class="campo largura-total">
                         <label for="campoRebanho">Rebanho</label>
-                        <select id="campoRebanho" name="herdId" required>
-                            <option value="" disabled selected>Selecione o rebanho</option>
-                            <c:forEach var="herd" items="${herds}">
-                                <option value="<c:out value='${herd.idHerd}'/>"><c:out value="${herd.name}"/></option>
-                            </c:forEach>
-                        </select>
+                        <div class="pesquisa" data-pesquisa data-name="herdId" data-obrigatorio>
+                            <input type="text" id="campoRebanho" class="pesquisa-texto" placeholder="Pesquisar rebanho" aria-label="Rebanho">
+                            <ul class="pesquisa-lista" hidden>
+                                <c:forEach var="herd" items="${herds}">
+                                    <li data-id="<c:out value='${herd.idHerd}'/>"><c:out value="${herd.name}"/></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -249,7 +254,9 @@
         </div>
     </dialog>
 
-</main>
+<jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
+
+    </main>
 
 </body>
 </html>

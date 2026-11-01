@@ -1,15 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%-- Tela de carregamento --%>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/carregamento.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/carregamento.css?v=3">
 
 <div class="carregamento" id="carregamento" role="status" aria-live="polite" aria-hidden="true">
     <div class="carregamento-cena" aria-hidden="true">
         <i class="carregamento-poeira"></i>
         <i class="carregamento-poeira"></i>
         <i class="carregamento-poeira"></i>
-        <img class="carregamento-mascote"
-             src="${pageContext.request.contextPath}/assets/img/mascote-correndo.webp"
-             alt="" width="292" height="360">
+        <span class="carregamento-mascote"></span>
         <span class="carregamento-sombra"></span>
         <span class="carregamento-chao"></span>
     </div>

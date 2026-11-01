@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IHerdDAO;
 import br.com.argos.model.Herd;
@@ -37,7 +38,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting herd: ", e);
+            throw DbErrors.translate("Erro ao cadastrar rebanho", e);
         }
     }
 
@@ -59,13 +60,13 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for herd: " + id, e);
+            throw new DataAccessException("Erro ao buscar rebanho: " + id, e);
         }
     }
 
     @Override
     public List<Herd> findAll() {
-        String sql = "SELECT * FROM HERD WHERE active = true";
+        String sql = "SELECT * FROM HERD WHERE active = true ORDER BY herd_name";
         List<Herd> herds = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -76,7 +77,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
                 herds.add(mapHerd(rs));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing herds: ", e);
+            throw new DataAccessException("Erro ao listar rebanhos", e);
         }
 
         return herds;
@@ -103,7 +104,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             return herds;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for herd by name: " + name, e);
+            throw new DataAccessException("Erro ao buscar rebanho pelo nome: " + name, e);
         }
     }
 
@@ -128,7 +129,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             return herds;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for herds by property: " + propertyId, e);
+            throw new DataAccessException("Erro ao buscar rebanhos da propriedade: " + propertyId, e);
         }
     }
 
@@ -152,11 +153,11 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Herd not found " + herd.getIdHerd());
+                throw new DataAccessException("Rebanho não encontrado: " + herd.getIdHerd());
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating herd: ", e);
+            throw DbErrors.translate("Erro ao atualizar rebanho", e);
         }
     }
 
@@ -176,7 +177,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
                     stmt.setObject(1, id);
 
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("Herd not found " + id);
+                        throw new DataAccessException("Rebanho não encontrado: " + id);
                     }
                 }
 
@@ -189,7 +190,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting herd: " + id, e);
+            throw new DataAccessException("Erro ao excluir rebanho: " + id, e);
         }
     }
 
@@ -221,7 +222,7 @@ public class HerdDAO implements GenericDAO<Herd, UUID>, IHerdDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting herds by property: " + propertyId, e);
+            throw new DataAccessException("Erro ao excluir rebanhos da propriedade: " + propertyId, e);
         }
     }
 

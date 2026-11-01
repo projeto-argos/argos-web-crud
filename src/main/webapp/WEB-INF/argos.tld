@@ -16,4 +16,9 @@
         <function-class>br.com.argos.util.JspDateFormat</function-class>
         <function-signature>java.lang.String formatDateTime(java.lang.Object)</function-signature>
     </function>
+    <function>
+        <name>states</name>
+        <function-class>br.com.argos.util.BrazilStates</function-class>
+        <function-signature>java.util.List list()</function-signature>
+    </function>
 </taglib>

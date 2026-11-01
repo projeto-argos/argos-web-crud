@@ -46,7 +46,7 @@ public class AddressService {
 
     public Address findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         return addressDAO.findById(id);
@@ -71,7 +71,7 @@ public class AddressService {
         Address normalized = normalizeAddress(address);
 
         if (normalized.getIdAddress() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         validateAddress(normalized);
@@ -80,7 +80,7 @@ public class AddressService {
 
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         addressDAO.delete(id);

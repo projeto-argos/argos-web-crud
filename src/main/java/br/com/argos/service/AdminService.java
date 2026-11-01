@@ -4,7 +4,7 @@ import br.com.argos.dao.AdminDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
-import br.com.argos.util.Validador;
+import br.com.argos.util.Validator;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.exceptions.RequiredFieldException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -34,7 +34,7 @@ public class AdminService {
      * O admin nasce sempre ativo.
      */
     public void create(Admin admin) {
-        Admin limpo = normalizarAdmin(admin);
+        Admin limpo = normalizeAdmin(admin);
         validarAdmin(limpo, true);
 
         String hash = BCrypt.hashpw(limpo.getPassword(), BCrypt.gensalt());
@@ -45,7 +45,7 @@ public class AdminService {
 
     public Admin findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         return adminDAO.findById(id);
     }
@@ -65,17 +65,17 @@ public class AdminService {
 
     public Admin findByEmail(String email){
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         return adminDAO.findByEmail(Normalizer.email(email));
     }
 
     /** Atualiza os dados cadastrais */
     public void update(Admin admin) {
-        Admin limpo = normalizarAdmin(admin);
+        Admin limpo = normalizeAdmin(admin);
         validarAdmin(limpo, false);
         if (limpo.getIdAdmin() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         adminDAO.update(limpo);
     }
@@ -83,7 +83,7 @@ public class AdminService {
     /** Desativa o admin (soft delete)*/
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         adminDAO.delete(id);
     }
@@ -91,9 +91,9 @@ public class AdminService {
     public void deleteByCpf(String cpf) {
         String digits = onlyDigits(cpf);
         if (digits == null) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
-        if (!Validador.cpfValido(digits)) {
+        if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido.");
         }
         adminDAO.deleteByCpf(digits);
@@ -102,7 +102,7 @@ public class AdminService {
     /** Valida a senha, gera o hash e depois chama o DAO */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         validatePassword(newPassword);
         adminDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
@@ -114,10 +114,10 @@ public class AdminService {
      */
     public Admin authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         Admin admin = adminDAO.findByEmailForAuthentication(Normalizer.email(email));
@@ -130,7 +130,7 @@ public class AdminService {
     }
 
     /** Padroniza os dados de entrada */
-    private Admin normalizarAdmin(Admin admin) {
+    private Admin normalizeAdmin(Admin admin) {
         if (admin == null) {
             return null;
         }
@@ -146,7 +146,7 @@ public class AdminService {
     /** Regras da senha em texto puro */
     private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
@@ -155,7 +155,7 @@ public class AdminService {
             throw new ValidationException("A senha excede o limite de bytes do BCrypt (72 bytes)");
         }
 
-        if (!Validador.senhaValida(password)) {
+        if (!Validator.isValidPassword(password)) {
             throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
@@ -173,23 +173,23 @@ public class AdminService {
         }
 
         if (admin.getFullName() == null || admin.getFullName().isBlank()) {
-            throw new RequiredFieldException("full_name");
+            throw new RequiredFieldException("nome completo");
         }
         if (admin.getFullName().length() > 120) {
             throw new ValidationException("O nome não pode exceder 120 caracteres.");
         }
 
         if (admin.getCpf() == null || admin.getCpf().isBlank()) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
-        if (!Validador.cpfValido(admin.getCpf())) {
+        if (!Validator.isValidCpf(admin.getCpf())) {
             throw new ValidationException("CPF inválido.");
         }
 
         if (admin.getEmail() == null || admin.getEmail().isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
-        if (!Validador.emailValido(admin.getEmail())) {
+        if (!Validator.isValidEmail(admin.getEmail())) {
             throw new ValidationException("E-mail inválido.");
         }
         if (admin.getEmail().length() > 120) {
@@ -198,7 +198,7 @@ public class AdminService {
 
 // OPCIONAIS
         if (admin.getPhone() != null && !admin.getPhone().isBlank()
-                && !Validador.telefoneValido(admin.getPhone())) {
+                && !Validator.isValidPhone(admin.getPhone())) {
             throw new ValidationException("Telefone inválido.");
         }
     }

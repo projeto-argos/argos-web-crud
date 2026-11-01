@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
 
     <!-- CSS -->
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
@@ -31,12 +32,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
     <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/pesquisa.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
     <script src="${ctx}/assets/js/filtro.js" defer></script>
+    <script src="${ctx}/assets/js/pesquisa.js" defer></script>
 </head>
 <body>
 
@@ -64,14 +67,14 @@
 
                 <div class="painel-acoes">
 
-                    <c:set var="filtrando" value="${not empty param.name or not empty param.cnpj or not empty param.phone or not empty param.userIds}"/>
+                    <c:set var="filtrando" value="${not empty filter.name or not empty filter.cnpj or not empty filter.phone or not empty filter.userIds}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/properties">
-                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
-                            <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${param.cnpj}'/>"/></div>
-                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${param.phone}'/>"/></div>
-                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-userIds">Usuário</label><select id="filtro-userIds" name="userIds"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${param.userIds == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${filter.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-cnpj">CNPJ</label><input type="text" id="filtro-cnpj" name="cnpj" value="<c:out value='${filter.cnpj}'/>"/></div>
+                            <div class="campo"><label for="filtro-phone">Telefone</label><input type="text" id="filtro-phone" name="phone" value="<c:out value='${filter.phone}'/>"/></div>
+                            <c:if test="${not empty users}"><div class="campo"><label for="filtro-userIds">Usuário</label><select id="filtro-userIds" name="userIds"><option value="">Todos</option><c:forEach var="user" items="${users}"><option value="<c:out value='${user.idUser}'/>" ${filter.userIds == user.idUser ? 'selected="selected"' : ''}><c:out value="${user.fullName}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/properties" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -183,13 +186,17 @@
                         <div class="campo">
                             <label for="campoCep">CEP</label>
                             <input type="text" id="campoCep" name="zipCode" placeholder="ex: 14000000"
-                                   inputmode="numeric" maxlength="8" pattern="\d{8}"
+                                   required inputmode="numeric" maxlength="8" pattern="\d{8}"
                                    title="Digite os 8 números do CEP, sem traço" autocomplete="off">
                         </div>
                         <div class="campo">
                             <label for="campoEstado">Estado</label>
-                            <input type="text" id="campoEstado" name="state" placeholder="ex: SP"
-                                   maxlength="2" pattern="[A-Za-z]{2}" title="Sigla do estado, 2 letras" autocomplete="off">
+                            <select id="campoEstado" name="state" required>
+                                <option value="">Selecione</option>
+                                <c:forEach var="uf" items="${argos:states()}">
+                                    <option value="${uf}">${uf}</option>
+                                </c:forEach>
+                            </select>
                         </div>
                         <div class="campo">
                             <label for="campoCidade">Cidade</label>
@@ -216,12 +223,15 @@
                     <div class="form-grade">
                         <div class="campo largura-total">
                             <label for="campoUsuario">Usuário</label>
-                            <select id="campoUsuario" name="userIds" required>
-                                <option value="">Selecione</option>
-                                <c:forEach var="user" items="${users}">
-                                    <option value="<c:out value='${user.idUser}'/>"><c:out value="${user.fullName}"/></option>
-                                </c:forEach>
-                            </select>
+                            <div class="pesquisa" data-pesquisa data-name="userIds" data-obrigatorio data-varios>
+                                <ul class="pesquisa-escolhidos"></ul>
+                                <input type="text" id="campoUsuario" class="pesquisa-texto" placeholder="Pesquisar usuário" aria-label="Usuário">
+                                <ul class="pesquisa-lista" hidden>
+                                    <c:forEach var="user" items="${users}">
+                                        <li data-id="<c:out value='${user.idUser}'/>"><c:out value="${user.fullName}"/></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -252,6 +262,8 @@
                 </form>
             </div>
         </dialog>
+
+    <jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
 
     </main>
 

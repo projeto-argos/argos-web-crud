@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.model.Admin;
 import br.com.argos.interfaces.IAdminDAO;
@@ -35,7 +36,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting admin: ", e);
+            throw DbErrors.translate("Erro ao cadastrar administrador", e);
         }
     }
 
@@ -58,7 +59,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error searching for admin " + id, e);
+            throw new DataAccessException("Erro ao buscar administrador: " + id, e);
         }
     }
 
@@ -80,7 +81,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             return null;
 
         } catch (SQLException sqle){
-            throw new DataAccessException("Error searching for admin by email" + email, sqle);
+            throw new DataAccessException("Erro ao buscar administrador pelo e-mail: " + email, sqle);
         }
     }
 
@@ -103,7 +104,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for admin for authentication", e
+                    "Erro ao buscar administrador para autenticação", e
             );
         }
     }
@@ -121,7 +122,7 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
                 admins.add(mapAdmin(rs, false));
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing admins: ", e);
+            throw new DataAccessException("Erro ao listar administradores", e);
         }
 
         return admins;
@@ -145,11 +146,11 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
            int rowsAffected = stmt.executeUpdate();
 
            if (rowsAffected == 0) {
-               throw new DataAccessException("Admin not found " + admin.getIdAdmin());
+               throw new DataAccessException("Administrador não encontrado: " + admin.getIdAdmin());
            }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating admin: ", e);
+            throw DbErrors.translate("Erro ao atualizar administrador", e);
 
         }
     }
@@ -167,11 +168,11 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Admin not found " + id);
+                throw new DataAccessException("Administrador não encontrado: " + id);
             }
 
         } catch (SQLException sqle) {
-            throw new DataAccessException("Error updating admin password: ", sqle);
+            throw new DataAccessException("Erro ao atualizar a senha do administrador", sqle);
         }
     }
 
@@ -188,11 +189,11 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Admin not found " + id);
+                throw new DataAccessException("Administrador não encontrado: " + id);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deactivating admin: " + id, e);
+            throw new DataAccessException("Erro ao excluir administrador: " + id, e);
 
         }
     }
@@ -211,11 +212,11 @@ public class AdminDAO implements GenericDAO<Admin, UUID>, IAdminDAO {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Admin not found with cpf " + cpf);
+                throw new DataAccessException("Administrador não encontrado com o CPF " + cpf);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting admin: " + cpf, e);
+            throw new DataAccessException("Erro ao excluir administrador: " + cpf, e);
         }
     }
 

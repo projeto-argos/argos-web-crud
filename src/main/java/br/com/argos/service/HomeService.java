@@ -11,7 +11,6 @@ import java.util.Objects;
 
 /**
  * Monta os dados da página inicial reaproveitando os Services que já existem.
- * Não tem DAO próprio: só junta o que os outros Services já devolvem.
  */
 public class HomeService {
 
@@ -65,7 +64,7 @@ public class HomeService {
             all.add(new RecentRecord(a.getEarTag(), "Animal", a.getUpdatedAt()));
         }
         for (Lot l : lots) {
-            all.add(new RecentRecord(l.getCategory(), "Lotes", l.getUpdatedAt()));
+            all.add(new RecentRecord(l.getLotCode(), "Lote", l.getUpdatedAt()));
         }
         for (Herd h : herds) {
             all.add(new RecentRecord(h.getName(), "Rebanho", h.getUpdatedAt()));

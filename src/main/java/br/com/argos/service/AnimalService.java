@@ -34,7 +34,7 @@ public class AnimalService {
 
     public Animal findById(UUID id){
         if (id == null){
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         return animalDAO.findById(id);
     }
@@ -59,14 +59,14 @@ public class AnimalService {
 
     public Animal findByEarTag(String earTag){
         if (earTag == null || earTag.isBlank()){
-            throw new RequiredFieldException("earTag");
+            throw new RequiredFieldException("brinco");
         }
         return animalDAO.findByEarTag(Normalizer.text(earTag));
     }
 
     public List<Animal> findByBatch(UUID batchId){
         if (batchId == null) {
-            throw new RequiredFieldException("batchId");
+            throw new RequiredFieldException("lote");
         }
         return animalDAO.findByBatch(batchId);
     }
@@ -76,7 +76,7 @@ public class AnimalService {
             throw new ValidationException("O animal não pode ser nulo.");
         }
         if (animal.getIdAnimal() == null){
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         Animal normalized = normalizeAnimal(animal);
         validateAnimal(normalized, false);
@@ -85,14 +85,14 @@ public class AnimalService {
 
     public void delete(UUID id){
         if (id == null){
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         animalDAO.delete(id);
     }
 
     public void deleteByEarTag(String earTag) {
         if (earTag == null || earTag.isBlank()) {
-            throw new RequiredFieldException("earTag");
+            throw new RequiredFieldException("brinco");
         }
         animalDAO.deleteByEarTag(earTag.trim());
     }

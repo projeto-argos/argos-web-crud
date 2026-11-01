@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.logging.Filter;
 
 import static br.com.argos.util.Normalizer.text;
 
@@ -39,7 +38,7 @@ public class LotService {
 
     public Lot findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         return lotDAO.findById(id);
@@ -49,7 +48,7 @@ public class LotService {
         return findAll().stream()
                 .filter(lot -> headCount == null || headCount.isBlank() || String.valueOf(lot.getHeadCount()).equals(headCount.trim()))
                 .filter(lot -> FilterUtil.contains(lot.getCategory(), category))
-                .filter(lot -> FilterUtil.contains(lot.getLotCode(), FilterUtil.digits(lotCode)))
+                .filter(lot -> FilterUtil.contains(lot.getLotCode(), lotCode))
                 .filter(lot -> openDate == null || Objects.equals(lot.getOpenDate(), openDate))
                 .toList();
     }
@@ -60,9 +59,9 @@ public class LotService {
 
     public Lot findByLotCodeAndHerd(String lotCode, UUID idHerd){
         if (idHerd == null) {
-            throw new RequiredFieldException("idHerd");
+            throw new RequiredFieldException("rebanho");
         } if (lotCode == null || lotCode.isBlank()) {
-            throw new RequiredFieldException("lotCode");
+            throw new RequiredFieldException("código do lote");
         }
 
         return lotDAO.findByLotCodeAndHerd(lotCode, idHerd);
@@ -70,7 +69,7 @@ public class LotService {
 
     public List<Lot> findByHerd(UUID idHerd) {
         if (idHerd == null) {
-            throw new RequiredFieldException("idHerd");
+            throw new RequiredFieldException("rebanho");
         }
 
         return lotDAO.findByHerd(idHerd);
@@ -80,7 +79,7 @@ public class LotService {
         String normalizedCategory = text(category);
 
         if (normalizedCategory == null) {
-            throw new RequiredFieldException("category");
+            throw new RequiredFieldException("categoria");
         }
 
         normalizedCategory = normalizedCategory.toUpperCase();
@@ -93,7 +92,7 @@ public class LotService {
         Lot normalized = normalizeLot(lot);
 
         if (normalized.getIdLot() == null) {
-            throw new RequiredFieldException("idLot");
+            throw new RequiredFieldException("lote");
         }
 
         validateLot(normalized);
@@ -102,7 +101,7 @@ public class LotService {
 
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
 
         lotDAO.delete(id);
@@ -110,7 +109,7 @@ public class LotService {
 
     public void deleteByHerd(UUID idHerd) {
         if (idHerd == null) {
-            throw new RequiredFieldException("idHerd");
+            throw new RequiredFieldException("rebanho");
         }
 
         lotDAO.deleteByHerd(idHerd);
@@ -129,7 +128,7 @@ public class LotService {
                 lot.getHerdId(),
                 lot.getHeadCount(),
                 category != null ? category.toUpperCase() : null,
-                lot.getLotCode(),
+                lotCode,
                 lot.getOpenDate(),
                 lot.getUpdatedAt(),
                 lot.isActive()
@@ -138,11 +137,11 @@ public class LotService {
 
     private void validateLot(Lot lot) {
         if (lot.getHerdId() == null) {
-            throw new RequiredFieldException("idHerd");
+            throw new RequiredFieldException("rebanho");
         }
 
         if (lot.getLotCode() == null) {
-            throw new RequiredFieldException("lotCode");
+            throw new RequiredFieldException("código do lote");
         }
 
         if (lot.getLotCode().length() > 20) {
@@ -150,7 +149,7 @@ public class LotService {
         }
 
         if (lot.getCategory() == null) {
-            throw new RequiredFieldException("category");
+            throw new RequiredFieldException("categoria");
         }
 
         validateCategory(lot.getCategory());
@@ -161,9 +160,9 @@ public class LotService {
     }
 
     private void validateCategory(String category) {
-        if (!category.equals("FATTENING")
-                && !category.equals("BREEDING")
-                && !category.equals("REARING")) {
+        if (!category.equals("ENGORDA")
+                && !category.equals("CRIA")
+                && !category.equals("RECRIA")) {
             throw new ValidationException("A categoria deve ser ENGORDA, RECRIA ou CRIA.");
         }
     }
