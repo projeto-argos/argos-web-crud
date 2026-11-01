@@ -72,7 +72,6 @@ public class HerdService {
             throw new RequiredFieldException("propriedade");
         }
 
-        // a propriedade precisa existir e estar ativa
         if (propertyDAO.findById(herd.getPropertyId()) == null) {
             throw new ValidationException("A propriedade informada não existe ou foi excluída.");
         }

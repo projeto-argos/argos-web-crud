@@ -149,12 +149,10 @@ public class LotService {
             throw new RequiredFieldException("rebanho");
         }
 
-        // o rebanho precisa existir e estar ativo
         if (herdDAO.findById(lot.getHerdId()) == null) {
             throw new ValidationException("O rebanho informado não existe ou foi excluído.");
         }
 
-        // text() transforma "   " em "", então não basta testar null
         if (lot.getLotCode() == null || lot.getLotCode().isBlank()) {
             throw new RequiredFieldException("código do lote");
         }
