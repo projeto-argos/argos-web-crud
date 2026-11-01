@@ -20,6 +20,9 @@ import static br.com.argos.util.Normalizer.onlyDigits;
 /** Regras de negócio e validações relacionadas a usuários. */
 public class UserService {
 
+    // Hash falso, calculado uma vez, só para igualar o tempo de resposta do login
+    private static final String DUMMY_HASH = BCrypt.hashpw("senha-falsa-argos", BCrypt.gensalt());
+
     private final UserDAO userDAO;
 
     public UserService() {
@@ -125,7 +128,13 @@ public class UserService {
 
         User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
 
-        if (user == null || !user.isActive() || !BCrypt.checkpw(password, user.getPassword())) {
+        if (user == null || !user.isActive()) {
+            // gasta o mesmo tempo do BCrypt, para não dar para descobrir quais e-mails existem
+            BCrypt.checkpw(password, DUMMY_HASH);
+            throw new ValidationException("Credenciais inválidas");
+        }
+
+        if (!BCrypt.checkpw(password, user.getPassword())) {
             throw new ValidationException("Credenciais inválidas");
         }
 

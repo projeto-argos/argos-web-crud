@@ -1,6 +1,7 @@
 package br.com.argos.service;
 
 import br.com.argos.dao.HerdDAO;
+import br.com.argos.dao.PropertyDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Herd;
@@ -18,13 +19,19 @@ public class HerdService {
     private static final String DEFAULT_PURPOSE = "CORTE";
 
     private final HerdDAO herdDAO;
+    private final PropertyDAO propertyDAO;
 
     public HerdService() {
-        this(new HerdDAO());
+        this(new HerdDAO(), new PropertyDAO());
     }
 
     public HerdService(HerdDAO herdDAO) {
+        this(herdDAO, new PropertyDAO());
+    }
+
+    public HerdService(HerdDAO herdDAO, PropertyDAO propertyDAO) {
         this.herdDAO = Objects.requireNonNull(herdDAO, "HerdDAO cannot be null");
+        this.propertyDAO = Objects.requireNonNull(propertyDAO, "PropertyDAO cannot be null");
     }
 
     public void create(Herd herd) {
@@ -63,6 +70,11 @@ public class HerdService {
     public List<Herd> findByProperty(UUID propertyId) {
         if (propertyId == null) {
             throw new RequiredFieldException("propriedade");
+        }
+
+        // a propriedade precisa existir e estar ativa
+        if (propertyDAO.findById(herd.getPropertyId()) == null) {
+            throw new ValidationException("A propriedade informada não existe ou foi excluída.");
         }
         return herdDAO.findByProperty(propertyId);
     }

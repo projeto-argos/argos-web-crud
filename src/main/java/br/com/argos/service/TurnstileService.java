@@ -10,13 +10,24 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/** Confere com a Cloudflare se o token do Turnstile ("você é humano") é válido. */
 public class TurnstileService {
+
+    private static final Logger LOG = Logger.getLogger(TurnstileService.class.getName());
 
     private static final String VERIFY_URL =
             "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-    private final HttpClient client = HttpClient.newHttpClient();
+    // Se a Cloudflare não responder neste tempo, o login é negado (não fica travado)
+    private static final Duration TIMEOUT = Duration.ofSeconds(5);
+
+    private final HttpClient client = HttpClient.newBuilder()
+            .connectTimeout(TIMEOUT)
+            .build();
 
     public void verifyTurnstile(String token, String remoteIp) {
         if (token == null || token.isBlank()) {
@@ -26,8 +37,9 @@ public class TurnstileService {
         // variável de ambiente ou arquivo .env (src/main/resources)
         String secret = AppConfig.get("TURNSTILE_SECRET");
         if (secret == null) {
-            throw new IllegalStateException(
-                    "TURNSTILE_SECRET não configurada (variável de ambiente ou arquivo .env).");
+            // Erro de configuração nosso: vai para o log; o usuário vê uma mensagem simples
+            LOG.severe("TURNSTILE_SECRET não configurada (variável de ambiente ou arquivo .env).");
+            throw new ValidationException("Verificação de segurança indisponível no momento. Tente novamente mais tarde.");
         }
 
         String params = "secret=" + URLEncoder.encode(secret, StandardCharsets.UTF_8)
@@ -39,6 +51,7 @@ public class TurnstileService {
         try {
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create(VERIFY_URL))
+                    .timeout(TIMEOUT)
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(params))
                     .build();
@@ -51,6 +64,8 @@ public class TurnstileService {
             }
 
         } catch (IOException e) {
+            // inclui o timeout (HttpTimeoutException é um IOException)
+            LOG.log(Level.WARNING, "Falha ao falar com a Cloudflare (Turnstile)", e);
             throw new ValidationException("Não foi possível verificar agora, tente novamente.");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

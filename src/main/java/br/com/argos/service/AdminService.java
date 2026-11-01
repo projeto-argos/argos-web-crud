@@ -19,6 +19,9 @@ import static br.com.argos.util.Normalizer.onlyDigits;
 /** Regras de negócio e validações relacionadas a admins. */
 public class AdminService {
 
+    // Hash falso, calculado uma vez, só para igualar o tempo de resposta do login
+    private static final String DUMMY_HASH = BCrypt.hashpw("senha-falsa-argos", BCrypt.gensalt());
+
     private final AdminDAO adminDAO;
 
     public AdminService() {
@@ -122,7 +125,12 @@ public class AdminService {
 
         Admin admin = adminDAO.findByEmailForAuthentication(Normalizer.email(email));
 
-        if (admin == null || !admin.isActive() || !BCrypt.checkpw(password, admin.getPassword())) {
+        if (admin == null || !admin.isActive()) {
+            BCrypt.checkpw(password, DUMMY_HASH);
+            throw new ValidationException("Credenciais inválidas.");
+        }
+
+        if (!BCrypt.checkpw(password, admin.getPassword())) {
             throw new ValidationException("Credenciais inválidas.");
         }
 
