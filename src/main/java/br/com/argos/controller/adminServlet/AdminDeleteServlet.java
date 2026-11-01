@@ -1,5 +1,6 @@
 package br.com.argos.controller.adminServlet;
 
+import br.com.argos.model.Admin;
 import br.com.argos.service.AdminService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @WebServlet(name = "AdminDeleteServlet", value = "/admins/delete")
@@ -34,8 +36,19 @@ public class AdminDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-                // EXCLUI ADMINISTRADOR
                 UUID id = UUID.fromString(idParam);
+
+                // NAO DEIXA EXCLUIR O ADMIN LOGADO
+                UUID idAdminLogado = (UUID) request.getSession().getAttribute("idAdminLogado");
+                if (id.equals(idAdminLogado)) {
+                    request.setAttribute("erro", "Você não pode excluir o próprio administrador.");
+                    List<Admin> admins = adminService.findAll();
+                    request.setAttribute("admins", admins);
+                    request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
+                    return;
+                }
+
+                // EXCLUI ADMINISTRADOR
                 adminService.delete(id);
 
             } catch (Exception e) {

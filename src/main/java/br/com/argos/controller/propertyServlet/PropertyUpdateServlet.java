@@ -151,6 +151,11 @@ public class PropertyUpdateServlet extends HttpServlet {
             Property property =
                     propertyService.findById(idProperty);
 
+            // VERIFICA SE A PROPRIEDADE EXISTE
+            if (property == null) {
+                throw new RuntimeException("Propriedade não encontrada.");
+            }
+
             UUID addressId =
                     property.getAddressId();
 
