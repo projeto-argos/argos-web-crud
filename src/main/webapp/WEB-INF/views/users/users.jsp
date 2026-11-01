@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
 
     <!-- CSS -->
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
@@ -65,9 +66,9 @@
             <div class="painel-acoes">
 
                 <c:set var="filtrando"
-                       value="${not empty param.fullName or not empty param.cpf
-                     or not empty param.email or not empty param.phone
-                     or not empty param.role}"/>
+                       value="${not empty filter.fullName or not empty filter.cpf
+                     or not empty filter.email or not empty filter.phone
+                     or not empty filter.role}"/>
 
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
@@ -76,27 +77,27 @@
                         <div class="campo">
                             <label for="filtroNome">Nome completo</label>
                             <input type="text" id="filtroNome" name="fullName" placeholder="Ex.: João Silva"
-                                   value="<c:out value='${param.fullName}'/>">
+                                   value="<c:out value='${filter.fullName}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroCpf">CPF</label>
                             <input type="text" id="filtroCpf" name="cpf" placeholder="Ex.: 12345678901"
-                                   value="<c:out value='${param.cpf}'/>">
+                                   value="<c:out value='${filter.cpf}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroEmail">E-mail</label>
                             <input type="text" id="filtroEmail" name="email" placeholder="Ex.: joao@email.com"
-                                   value="<c:out value='${param.email}'/>">
+                                   value="<c:out value='${filter.email}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroTelefone">Telefone</label>
                             <input type="text" id="filtroTelefone" name="phone" placeholder="Ex.: 11999999999"
-                                   value="<c:out value='${param.phone}'/>">
+                                   value="<c:out value='${filter.phone}'/>">
                         </div>
                         <div class="campo">
                             <label for="filtroCargo">Cargo</label>
                             <input type="text" id="filtroCargo" name="role" placeholder="Ex.: Administrador"
-                                   value="<c:out value='${param.role}'/>">
+                                   value="<c:out value='${filter.role}'/>">
                         </div>
 
                         <div class="filtro-acoes">
@@ -227,9 +228,10 @@
                         <input type="text" id="campoCargo" name="role" placeholder="ex: Médico Veterinário"
                                required maxlength="50" autocomplete="off">
                     </div>
-                    <div class="campo" data-so-cadastro>
-                        <label for="campoSenha">Senha</label>
+                    <div class="campo">
+                        <label for="campoSenha" data-senha-rotulo>Senha</label>
                         <input type="password" id="campoSenha" name="password" placeholder="Defina a senha de acesso"
+                               data-senha data-placeholder-cadastro="Defina a senha de acesso"
                                required autocomplete="new-password">
                     </div>
                 </div>
@@ -262,7 +264,9 @@
         </div>
     </dialog>
 
-</main>
+<jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
+
+    </main>
 
 </body>
 </html>

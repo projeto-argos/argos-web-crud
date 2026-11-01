@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.ILotDAO;
 import br.com.argos.model.Lot;
@@ -44,7 +45,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting lot.", e);
+            throw DbErrors.translate("Erro ao cadastrar lote.", e);
         }
     }
 
@@ -70,7 +71,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for lot: " + id, e);
+                    "Erro ao buscar lote: " + id, e);
         }
     }
 
@@ -96,7 +97,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             return lots;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing lots.", e);
+            throw new DataAccessException("Erro ao listar lotes.", e);
         }
     }
 
@@ -123,7 +124,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for lot by code and herd.", e);
+                    "Erro ao buscar lote pelo código e rebanho.", e);
         }
     }
 
@@ -153,7 +154,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error listing lots by herd: " + idHerd, e);
+                    "Erro ao listar lotes do rebanho: " + idHerd, e);
         }
     }
 
@@ -183,7 +184,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error listing lots by category: " + category, e);
+                    "Erro ao listar lotes da categoria: " + category, e);
         }
     }
 
@@ -226,17 +227,15 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
 
             if (rowsAffected == 0) {
                 throw new DataAccessException(
-                        "Lot not found: " + lot.getIdLot());
+                        "Lote não encontrado: " + lot.getIdLot());
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Error updating lot: " + lot.getIdLot(), e);
+            throw DbErrors.translate("Erro ao atualizar lote: " + lot.getIdLot(), e);
         }
     }
 
     // SOFT DELETE BY ID
-    // Inativa o lote e, na mesma transacao, seus animais, aplicacoes e periodos de carencia.
     @Override
     public void delete(UUID id) {
         String sql = """
@@ -256,7 +255,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
                     stmt.setObject(1, id);
 
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("Lot not found: " + id);
+                        throw new DataAccessException("Lote não encontrado: " + id);
                     }
                 }
 
@@ -269,12 +268,11 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deactivating lot: " + id, e);
+            throw new DataAccessException("Erro ao excluir lote: " + id, e);
         }
     }
 
     // SOFT DELETE ALL LOTS OF A HERD
-    // Tambem inativa animais, aplicacoes e periodos de carencia desses lotes.
     @Override
     public void deleteByHerd(UUID idHerd) {
         String sql = """
@@ -304,7 +302,7 @@ public class LotDAO implements GenericDAO<Lot, UUID>, ILotDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deactivating lots of herd: " + idHerd, e);
+            throw new DataAccessException("Erro ao excluir lotes do rebanho: " + idHerd, e);
         }
     }
 

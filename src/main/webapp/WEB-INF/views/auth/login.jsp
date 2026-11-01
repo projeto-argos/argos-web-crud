@@ -18,8 +18,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/logo-tipo.svg">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/login.css">
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -38,7 +40,7 @@
     </div>
 
     <div class="logo_login">
-        <a class="brand" href="${pageContext.request.contextPath}/login"><img src="${pageContext.request.contextPath}/assets/img/Logo Deitada clara.svg" alt="Argos"></a>
+        <a class="brand" href="${pageContext.request.contextPath}/login"><img src="${pageContext.request.contextPath}/assets/img/logo-horizontal-claro.svg" alt="Argos"></a>
     </div>
 
     <p class="slogan_login">Gestão de pecuária e de medicamentos aplicados em bovinos</p>
@@ -84,6 +86,7 @@
 
             <p class="msg_erro" id="msgErro" role="alert" aria-live="polite"><c:out value="${erroLogin}"/></p>
 
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAFub9l8SIz9aiVuZ"></div>
             <button type="submit" class="btn_entrar" id="btnEntrar">Entrar</button>
 
         </form>

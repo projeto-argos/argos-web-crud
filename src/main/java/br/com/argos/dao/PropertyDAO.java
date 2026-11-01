@@ -2,6 +2,7 @@ package br.com.argos.dao;
 
 import br.com.argos.connection.ConnectionFactory;
 import br.com.argos.exceptions.DataAccessException;
+import br.com.argos.util.DbErrors;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.interfaces.GenericDAO;
 import br.com.argos.interfaces.IPropertyDAO;
@@ -49,7 +50,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (!rs.next()) {
-                        throw new DataAccessException("Property insert did not return an ID.");
+                        throw new DataAccessException("O cadastro da propriedade não retornou um ID.");
                     }
                     property.setIdProperty(rs.getObject("id_property", UUID.class));
                 }
@@ -64,7 +65,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting property", e);
+            throw DbErrors.translate("Erro ao cadastrar propriedade", e);
         }
     }
 
@@ -87,7 +88,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching for property: " + id, e);
+                    "Erro ao buscar propriedade: " + id, e);
         }
     }
 
@@ -113,7 +114,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             return properties;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing properties", e);
+            throw new DataAccessException("Erro ao listar propriedades", e);
         }
     }
 
@@ -143,7 +144,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching properties by name: " + name, e);
+                    "Erro ao buscar propriedades pelo nome: " + name, e);
         }
     }
 
@@ -178,7 +179,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error searching properties by user: " + userId, e);
+                    "Erro ao buscar propriedades do usuário: " + userId, e);
         }
     }
 
@@ -208,7 +209,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                 stmt.setObject(5, property.getIdProperty());
 
                 if (stmt.executeUpdate() == 0) {
-                    throw new DataAccessException("Property not found: " + property.getIdProperty());
+                    throw new DataAccessException("Propriedade não encontrada: " + property.getIdProperty());
                 }
 
                 replaceUserLinks(conn, property.getIdProperty(), property.getUserIds());
@@ -221,7 +222,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating property", e);
+            throw DbErrors.translate("Erro ao atualizar propriedade", e);
         }
     }
 
@@ -251,7 +252,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                     stmt.setObject(1, id);
 
                     if (stmt.executeUpdate() == 0) {
-                        throw new DataAccessException("Property not found: " + id);
+                        throw new DataAccessException("Propriedade não encontrada: " + id);
                     }
                 }
 
@@ -264,7 +265,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting property: " + id, e);
+            throw new DataAccessException("Erro ao excluir propriedade: " + id, e);
         }
     }
 
@@ -283,7 +284,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException(
-                    "Error deleting properties by user: " + userId, e);
+                    "Erro ao desvincular propriedades do usuário: " + userId, e);
         }
     }
 
@@ -349,7 +350,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (UUID userId : userIds) {
                 if (userId == null) {
-                    throw new ValidationException("User ID cannot be null.");
+                    throw new ValidationException("O ID do usuário não pode ser nulo.");
                 }
 
                 stmt.setObject(1, userId);
@@ -358,7 +359,7 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
                     rs.next();
 
                     if (rs.getInt(1) == 0) {
-                        throw new ValidationException("User not found or inactive: " + userId);
+                        throw new ValidationException("Usuário não encontrado ou inativo: " + userId);
                     }
                 }
             }

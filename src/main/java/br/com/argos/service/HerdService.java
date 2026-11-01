@@ -15,7 +15,7 @@ import static br.com.argos.util.Normalizer.text;
 /** Regras de negócio e validações relacionadas a rebanhos. */
 public class HerdService {
 
-    private static final String DEFAULT_PURPOSE = "Beef";
+    private static final String DEFAULT_PURPOSE = "CORTE";
 
     private final HerdDAO herdDAO;
 
@@ -35,7 +35,7 @@ public class HerdService {
 
     public Herd findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         return herdDAO.findById(id);
     }
@@ -55,14 +55,14 @@ public class HerdService {
 
     public List<Herd> findByName(String name) {
         if (name == null || name.isBlank()) {
-            throw new RequiredFieldException("name");
+            throw new RequiredFieldException("nome");
         }
         return herdDAO.findByName(name.strip());
     }
 
     public List<Herd> findByProperty(UUID propertyId) {
         if (propertyId == null) {
-            throw new RequiredFieldException("propertyId");
+            throw new RequiredFieldException("propriedade");
         }
         return herdDAO.findByProperty(propertyId);
     }
@@ -70,7 +70,7 @@ public class HerdService {
     public void update(Herd herd) {
         Herd normalized = normalizeHerd(herd);
         if (normalized.getIdHerd() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         validateHerd(normalized);
         herdDAO.update(normalized);
@@ -78,22 +78,22 @@ public class HerdService {
 
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         herdDAO.delete(id);
     }
 
     public int deleteByProperty(UUID propertyId) {
         if (propertyId == null) {
-            throw new RequiredFieldException("propertyId");
+            throw new RequiredFieldException("propriedade");
         }
         return herdDAO.deleteByProperty(propertyId);
     }
 
-    /** Limpa os dados: purpose vazio vira "Beef" e head_count nulo vira 0. */
+    /** Limpa os dados: purpose vazio vira "CORTE" e head_count nulo vira 0. */
     private Herd normalizeHerd(Herd herd) {
         if (herd == null) {
-            throw new RequiredFieldException("herd");
+            throw new RequiredFieldException("rebanho");
         }
 
         String purpose = text(herd.getPurpose());
@@ -115,7 +115,7 @@ public class HerdService {
 
         // OBRIGATÓRIOS
         if (herd.getName() == null || herd.getName().isBlank()) {
-            throw new RequiredFieldException("name");
+            throw new RequiredFieldException("nome");
         }
 
         if (herd.getName().length() > 60) {
@@ -123,7 +123,7 @@ public class HerdService {
         }
 
         if (herd.getPropertyId() == null) {
-            throw new RequiredFieldException("propertyId");
+            throw new RequiredFieldException("propriedade");
         }
 
         if (herd.getHeadCount() < 0) {

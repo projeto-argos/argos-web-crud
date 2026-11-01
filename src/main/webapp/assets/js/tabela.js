@@ -33,7 +33,7 @@ document.querySelectorAll(".telefone").forEach(function (celula) {
 });
 
 
-let filtrosAplicados = new URLSearchParams(window.location.search);
+let filtrosAplicados = new URLSearchParams();
 
 function aplicarFiltros(parametros) {
     filtrosAplicados = parametros;

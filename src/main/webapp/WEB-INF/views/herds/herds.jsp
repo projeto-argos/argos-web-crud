@@ -24,6 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Rubik:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="icon" href="${pageContext.request.contextPath}/assets/img/LogoTipo.svg">
 
     <!-- CSS -->
     <link rel="stylesheet" href="${ctx}/assets/css/sidebar.css">
@@ -31,12 +32,14 @@
     <link rel="stylesheet" href="${ctx}/assets/css/forms.css">
     <link rel="stylesheet" href="${ctx}/assets/css/filtro.css">
     <link rel="stylesheet" href="${ctx}/assets/css/feedbackMessages.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/pesquisa.css">
 
     <!-- JAVASCRIPT -->
     <script src="${ctx}/assets/js/sidebar.js"></script>
     <script src="${ctx}/assets/js/popup.js" defer></script>
     <script src="${ctx}/assets/js/tabela.js" defer></script>
     <script src="${ctx}/assets/js/filtro.js" defer></script>
+    <script src="${ctx}/assets/js/pesquisa.js" defer></script>
 </head>
 <body>
 
@@ -62,14 +65,14 @@
             <div class="painel-topo">
                 <h1>Rebanhos cadastrados</h1>
 <div class="painel-acoes">
-                <c:set var="filtrando" value="${not empty param.name or not empty param.breed or not empty param.purpose or not empty param.propertyId}"/>
+                <c:set var="filtrando" value="${not empty filter.name or not empty filter.breed or not empty filter.purpose or not empty filter.propertyId}"/>
                 <details class="filtro ${filtrando ? 'filtro-ativo' : ''}">
                     <summary>Filtrar</summary>
                     <form method="get" action="${ctx}/herds">
-                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${param.name}'/>"/></div>
-                            <div class="campo"><label for="filtro-breed">Raça</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${param.breed}'/>"/></div>
-                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${param.purpose}'/>"/></div>
-                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${param.propertyId == property.idProperty ? 'selected="selected"' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
+                            <div class="campo"><label for="filtro-name">Nome</label><input type="text" id="filtro-name" name="name" value="<c:out value='${filter.name}'/>"/></div>
+                            <div class="campo"><label for="filtro-breed">Raça</label><input type="text" id="filtro-breed" name="breed" value="<c:out value='${filter.breed}'/>"/></div>
+                            <div class="campo"><label for="filtro-purpose">Finalidade</label><input type="text" id="filtro-purpose" name="purpose" value="<c:out value='${filter.purpose}'/>"/></div>
+                            <c:if test="${not empty properties}"><div class="campo"><label for="filtro-propertyId">Propriedade</label><select id="filtro-propertyId" name="propertyId"><option value="">Todas</option><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>" ${filter.propertyId == property.idProperty ? 'selected="selected"' : ''}><c:out value="${property.name}"/></option></c:forEach></select></div></c:if>
                         <div class="filtro-acoes"><a href="${ctx}/herds" class="btn-pilula btn-neutro">Limpar</a><button type="submit" class="btn-pilula">Aplicar filtro</button></div>
                     </form>
                 </details>
@@ -173,12 +176,19 @@
                         <div class="campo">
                             <label for="campoFinalidade">Finalidade</label>
                             <select id="campoFinalidade" name="purpose" required>
-                                <option value="Beef">Bovinos de corte (Beef)</option>
+                                <option value="CORTE">Bovinos de corte</option>
                             </select>
                         </div>
                         <div class="campo">
                             <label for="campoPropriedade">Propriedade</label>
-                            <select id="campoPropriedade" name="propertyId" required><option value="">Selecione</option><c:if test="${not empty properties}"><c:forEach var="property" items="${properties}"><option value="<c:out value='${property.idProperty}'/>"><c:out value="${property.name}"/></option></c:forEach></c:if></select>
+                            <div class="pesquisa" data-pesquisa data-name="propertyId" data-obrigatorio>
+                                <input type="text" id="campoPropriedade" class="pesquisa-texto" placeholder="Pesquisar propriedade" aria-label="Propriedade">
+                                <ul class="pesquisa-lista" hidden>
+                                    <c:forEach var="property" items="${properties}">
+                                        <li data-id="<c:out value='${property.idProperty}'/>"><c:out value="${property.name}"/></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
                         </div>
                         <div class="campo">
                             <label for="campoQuantidade">Quantidade de cabeças</label>
@@ -214,6 +224,8 @@
                 </form>
             </div>
         </dialog>
+
+    <jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
 
     </main>
 

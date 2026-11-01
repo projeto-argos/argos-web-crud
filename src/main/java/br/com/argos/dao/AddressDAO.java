@@ -38,13 +38,13 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
-                    throw new DataAccessException("Address insert did not return an ID.");
+                    throw new DataAccessException("O cadastro do endereço não retornou um ID.");
                 }
                 address.setIdAddress(rs.getObject("id_address", UUID.class));
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error inserting address.", e);
+            throw new DataAccessException("Erro ao cadastrar o endereço.", e);
         }
     }
 
@@ -67,7 +67,7 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error finding address by ID.", e);
+            throw new DataAccessException("Erro ao buscar o endereço pelo ID.", e);
         }
     }
 
@@ -90,7 +90,7 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             return addresses;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error listing addresses.", e);
+            throw new DataAccessException("Erro ao listar os endereços.", e);
         }
     }
 
@@ -123,12 +123,12 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
 
             if (rowsAffected == 0) {
                 throw new DataAccessException(
-                        "Address not found: " + address.getIdAddress()
+                        "Endereço não encontrado: " + address.getIdAddress()
                 );
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error updating address.", e);
+            throw new DataAccessException("Erro ao atualizar o endereço.", e);
         }
     }
 
@@ -147,11 +147,11 @@ public class AddressDAO implements GenericDAO<Address, UUID> {
             int rowsAffected = stmt.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DataAccessException("Address not found: " + id);
+                throw new DataAccessException("Endereço não encontrado: " + id);
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error deleting address.", e);
+            throw new DataAccessException("Erro ao excluir o endereço.", e);
         }
     }
 

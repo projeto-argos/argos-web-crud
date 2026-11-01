@@ -4,7 +4,7 @@ import br.com.argos.dao.UserDAO;
 import br.com.argos.model.User;
 import br.com.argos.util.FilterUtil;
 import br.com.argos.util.Normalizer;
-import br.com.argos.util.Validador;
+import br.com.argos.util.Validator;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -31,8 +31,7 @@ public class UserService {
     }
 
     /**
-     - padroniza os dados, valida e grava a senha já em hash.
-
+     - padroniza os dados, valida e grava a senha já em hash
      */
     public void create(User user) {
         User limpo = normalizeUser(user);
@@ -47,7 +46,7 @@ public class UserService {
 
     public User findById(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         return userDAO.findById(id);
     }
@@ -68,7 +67,7 @@ public class UserService {
 
     public User findByEmail(String email){
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         return userDAO.findByEmail(Normalizer.email(email));
     }
@@ -78,7 +77,7 @@ public class UserService {
         User limpo = normalizeUser(user);
         validateUser(limpo, false);
         if (limpo.getIdUser() == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         userDAO.update(limpo);
     }
@@ -86,7 +85,7 @@ public class UserService {
     /** Desativa o usuário (soft delete) */
     public void delete(UUID id) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         userDAO.delete(id);
     }
@@ -94,9 +93,9 @@ public class UserService {
     public void deleteByCpf(String cpf) {
         String digits = onlyDigits(cpf);
         if (digits == null) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
-        if (!Validador.cpfValido(digits)) {
+        if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido");
         }
         userDAO.deleteByCpf(digits);
@@ -105,7 +104,7 @@ public class UserService {
     /** Troca a senha */
     public void changePassword(UUID id, String newPassword) {
         if (id == null) {
-            throw new RequiredFieldException("id");
+            throw new RequiredFieldException("ID");
         }
         validatePassword(newPassword);
         userDAO.updatePassword(id, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
@@ -113,16 +112,15 @@ public class UserService {
 
     /**
      - Confere e-mail e senha. Devolve o usuário autenticado ou lança ValidationException.
-
      - mensagem sempre a mesma.
 
      */
     public User authenticate(String email, String password) {
         if (email == null || email.isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         User user = userDAO.findByEmailForAuthentication(Normalizer.email(email));
@@ -152,7 +150,7 @@ public class UserService {
     /** Regras da senha em texto puro  */
     private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
-            throw new RequiredFieldException("password");
+            throw new RequiredFieldException("senha");
         }
 
         int tamanhoEmBytes = password.getBytes(StandardCharsets.UTF_8).length;
@@ -161,7 +159,7 @@ public class UserService {
             throw new ValidationException("A senha excede o limite de 72 bytes do BCrypt");
         }
 
-        if (!Validador.senhaValida(password)) {
+        if (!Validator.isValidPassword(password)) {
             throw new ValidationException("A senha deve ter entre 8 e 64 caracteres");
         }
     }
@@ -179,23 +177,23 @@ public class UserService {
         }
 
         if (user.getFullName() == null || user.getFullName().isBlank()) {
-            throw new RequiredFieldException("full_name");
+            throw new RequiredFieldException("nome completo");
         }
         if (user.getFullName().length() > 120) {
             throw new ValidationException("O nome não pode exceder 120 caracteres");
         }
 
         if (user.getCpf() == null || user.getCpf().isBlank()) {
-            throw new RequiredFieldException("cpf");
+            throw new RequiredFieldException("CPF");
         }
-        if (!Validador.cpfValido(user.getCpf())) {
+        if (!Validator.isValidCpf(user.getCpf())) {
             throw new ValidationException("CPF inválido");
         }
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new RequiredFieldException("email");
+            throw new RequiredFieldException("e-mail");
         }
-        if (!Validador.emailValido(user.getEmail())) {
+        if (!Validator.isValidEmail(user.getEmail())) {
             throw new ValidationException("E-mail inválido");
         }
         if (user.getEmail().length() > 120) {
@@ -204,7 +202,7 @@ public class UserService {
 
         // OPCIONAIS
         if (user.getPhone() != null && !user.getPhone().isBlank()
-                && !Validador.telefoneValido(user.getPhone())) {
+                && !Validator.isValidPhone(user.getPhone())) {
             throw new ValidationException("Número de telefone inválido");
         }
 
