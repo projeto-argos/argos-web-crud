@@ -77,7 +77,7 @@
         <a class="card-total" href="${ctx}/herds">
             <div class="card-total-topo">
                 <span class="card-total-rotulo">Total de rebanhos</span>
-                <span class="card-total-icone"><i class="fa-solid fa-people-group"></i></span>
+                <span class="card-total-icone"><i class="fa-solid fa-warehouse icon"></i></span>
             </div>
             <p class="card-total-numero"><c:out value="${summary.totalHerds}" default="0"/></p>
         </a>
