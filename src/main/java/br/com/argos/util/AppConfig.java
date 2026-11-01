@@ -5,8 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Lê configurações e segredos (como TURNSTILE_SECRET).
- * Ordem: 1) variável de ambiente do sistema; 2) arquivo .env em src/main/resources.
+ * Lê configurações e segredos.
  * Assim a chave nunca fica escrita no código nem vai para o Git.
  */
 public final class AppConfig {
@@ -17,7 +16,6 @@ public final class AppConfig {
     private AppConfig() {
     }
 
-    /** Devolve o valor da configuração ou null se não existir (ou estiver em branco). */
     public static String get(String key) {
         String value = System.getenv(key);
         if (value == null || value.isBlank()) {
@@ -33,7 +31,6 @@ public final class AppConfig {
                 props.load(input);
             }
         } catch (IOException e) {
-            // sem .env: continua só com as variáveis de ambiente
         }
         return props;
     }
