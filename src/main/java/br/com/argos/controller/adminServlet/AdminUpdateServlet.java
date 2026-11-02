@@ -116,8 +116,8 @@ public class AdminUpdateServlet extends HttpServlet {
             // TRATA ERRO
             String message = e.getMessage();
 
-            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
-            if (e instanceof IllegalArgumentException) {
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO OU AUSENTE
+            if (e instanceof IllegalArgumentException || e instanceof NullPointerException) {
                 message = "Dados inválidos, confira os campos.";
             }
 
