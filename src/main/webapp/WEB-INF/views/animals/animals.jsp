@@ -201,7 +201,6 @@
                         <input type="number" id="campoPeso" name="weight" placeholder="ex: 400.00"
                                required min="10" max="99999.99" step="0.01" inputmode="decimal" autocomplete="off">
                     </div>
-                    <%-- Campo mantido escondido: o Servlet ainda recebe clearedForSlaughter (o calculo real depende do modulo de aplicacoes) --%>
                     <input type="hidden" name="clearedForSlaughter" value="false">
                     <div class="campo largura-total">
                         <label for="campoMotivo">Motivo exceção</label>
