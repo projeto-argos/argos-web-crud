@@ -22,15 +22,14 @@ public class AdminInsertServlet extends HttpServlet {
         adminService = new AdminService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-        request.getRequestDispatcher(
-                "/WEB-INF/views/admins/admins.jsp"
-        ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/admins");
     }
 
     // PROCESSA FORMULÁRIO
