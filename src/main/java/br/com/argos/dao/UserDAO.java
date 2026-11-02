@@ -221,23 +221,31 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     @Override
     public void deleteByCpf(String cpf) {
         String sql = """
-            UPDATE "USER" SET active = false, updated_at = now() WHERE cpf = ? AND active = true
+            SELECT id_user FROM "USER" WHERE cpf = ? AND active = true
         """;
+
+        UUID id = null;
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, cpf);
 
-            int rowsAffected = stmt.executeUpdate();
-
-            if (rowsAffected == 0) {
-                throw new DataAccessException("Usuário não encontrado com o CPF " + cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    id = rs.getObject("id_user", UUID.class);
+                }
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Erro ao excluir usuário: " + cpf, e);
+            throw new DataAccessException("Erro ao buscar usuário pelo CPF: " + cpf, e);
         }
+
+        if (id == null) {
+            throw new DataAccessException("Usuário não encontrado com o CPF " + cpf);
+        }
+
+        delete(id);
     }
 
     // MAPPER
