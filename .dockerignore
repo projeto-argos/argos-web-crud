@@ -7,7 +7,3 @@ target/
 .idea/
 .smarttomcat/
 *.md
-CLAUDE.md
-AGENTS.md
-PROMPT-*.md
-RELATORIO-*.md
