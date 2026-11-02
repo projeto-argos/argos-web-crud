@@ -54,12 +54,10 @@ public class PropertyUpdateServlet extends HttpServlet {
                     List<User> allUsers = userService.findAll();
                     List<User> users = new ArrayList<>();
 
+                    // FILTRA OS USUARIOS DA PROPRIEDADE
                     List<UUID> userIds = property.getUserIds();
-                    for (int i = 0; i < userIds.size(); i++) {
-                        UUID userId = userIds.get(i);
-                        User user = userService.findById(userId);
-
-                        if (user != null) {
+                    for (User user : allUsers) {
+                        if (userIds.contains(user.getIdUser())) {
                             users.add(user);
                         }
                     }
@@ -108,9 +106,7 @@ public class PropertyUpdateServlet extends HttpServlet {
             List<UUID> userIds = new ArrayList<>();
 
             if (userIdsString != null) {
-                for (int i = 0; i < userIdsString.length; i++) {
-                    String userIdString =
-                            userIdsString[i];
+                for (String userIdString : userIdsString) {
 
                     if (userIdString != null &&
                             !userIdString.isBlank()) {
@@ -207,8 +203,7 @@ public class PropertyUpdateServlet extends HttpServlet {
 
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
-            for (int i = 0; i < properties.size(); i++) {
-                Property property = properties.get(i);
+            for (Property property : properties) {
                 Address address = addressesById.get(property.getAddressId());
 
                 if (address != null) {
