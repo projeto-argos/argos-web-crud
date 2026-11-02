@@ -180,6 +180,26 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
         }
     }
 
+    @Override
+    public void reactivateByCpf(String cpf) {
+        String sql = """
+                UPDATE "USER" SET active = true, updated_at = now() WHERE cpf = ? AND active = false
+                """;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+
+            if (stmt.executeUpdate() == 0) {
+                throw new DataAccessException("Nenhum usuário excluído encontrado com o CPF " + cpf + ".");
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Erro ao reativar usuário: " + cpf, e);
+        }
+    }
+
     // SOFT DELETE
     @Override
     public void delete(UUID id){

@@ -26,4 +26,12 @@ public interface IUserDAO extends GenericDAO<User, UUID> {
      * @param cpf CPF do usuário
      */
     void deleteByCpf(String cpf);
+
+    /**
+     * Reativa o usuário excluído (inativo) que tem o CPF informado.
+     * Os vínculos com propriedades não voltam: foram apagados na exclusão.
+     *
+     * @param cpf CPF do usuário (só números)
+     */
+    void reactivateByCpf(String cpf);
 }

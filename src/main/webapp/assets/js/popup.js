@@ -90,8 +90,8 @@ function reabrirComErro(caixaValores) {
         (valores[item.dataset.nome] = valores[item.dataset.nome] || []).push(item.dataset.valor);
     });
 
-    // Erro numa exclusão, só o aviso aparece
-    if (location.pathname.endsWith("/delete")) {
+    // Erro numa exclusão ou reativação, só o aviso aparece
+    if (location.pathname.endsWith("/delete") || location.pathname.endsWith("/reactivate")) {
         return;
     }
 
