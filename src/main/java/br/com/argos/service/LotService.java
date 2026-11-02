@@ -1,5 +1,6 @@
 package br.com.argos.service;
 
+import br.com.argos.dao.HerdDAO;
 import br.com.argos.dao.LotDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
@@ -19,14 +20,22 @@ import static br.com.argos.util.Normalizer.text;
 public class LotService {
 
     private final LotDAO lotDAO;
+    private final HerdDAO herdDAO;
 
     public LotService() {
-        this(new LotDAO());
+        this(new LotDAO(), new HerdDAO());
     }
 
     public LotService(LotDAO lotDAO) {
+        this(lotDAO, new HerdDAO());
+    }
+
+    public LotService(LotDAO lotDAO, HerdDAO herdDAO) {
         this.lotDAO = Objects.requireNonNull(
                 lotDAO, "LotDAO cannot be null"
+        );
+        this.herdDAO = Objects.requireNonNull(
+                herdDAO, "HerdDAO cannot be null"
         );
     }
 
@@ -140,7 +149,11 @@ public class LotService {
             throw new RequiredFieldException("rebanho");
         }
 
-        if (lot.getLotCode() == null) {
+        if (herdDAO.findById(lot.getHerdId()) == null) {
+            throw new ValidationException("O rebanho informado não existe ou foi excluído.");
+        }
+
+        if (lot.getLotCode() == null || lot.getLotCode().isBlank()) {
             throw new RequiredFieldException("código do lote");
         }
 
