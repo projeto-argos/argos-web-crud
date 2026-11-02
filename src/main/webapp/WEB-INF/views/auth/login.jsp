@@ -8,8 +8,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="erroLogin" value="${not empty error ? error : erro}"/>
-<%-- Endereço da landing page (botão "Voltar"). Troque aqui se o link mudar. --%>
-<c:set var="urlLanding" value="https://projeto-argos.github.io/argos-landingpage/"/>
+<%-- Endereço da landing page --%>
+<c:set var="urlLanding" value="https://argos-landingpage.vercel.app/"/>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
