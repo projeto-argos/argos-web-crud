@@ -8,6 +8,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="erroLogin" value="${not empty error ? error : erro}"/>
+<%-- Endereço da landing page (botão "Voltar"). Troque aqui se o link mudar. --%>
+<c:set var="urlLanding" value="https://projeto-argos.github.io/argos-landingpage/"/>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -26,6 +28,10 @@
 <body>
 
 <main class="login">
+
+    <a href="${urlLanding}" class="btn_voltar" aria-label="Voltar para a página inicial do ARGOS">
+        <span aria-hidden="true">&larr;</span> Voltar
+    </a>
 
     <div class="onda_verde_login">
         <svg preserveAspectRatio="none" viewBox="0 0 632 884" fill="none">
