@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * {@code AuthFilter} porta das telas do painel: só deixa passar quem
+ * {@code AuthFilter} só deixa passar quem
  * tem sessão com o atributo {@code "loggedUser"} do tipo {@code "ADMIN"}, gravado pelo LoginServlet.
  * Quem não tem é redirecionado para {@code /login}.
  * <p>
- * Também confere, de tempos em tempos, se o admin da sessão ainda existe e está ativo no banco:
+ * Também confere, de tempos em tempos, se o admin da sessão ainda existe e está ativo no banco
  * se ele foi excluído por outro admin, a sessão é encerrada na hora.
  */
 @WebFilter(urlPatterns = {"/home", "/welcome", "/admins/*", "/users/*", "/properties/*", "/animals/*", "/lots/*", "/herds/*"})
