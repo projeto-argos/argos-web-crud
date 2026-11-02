@@ -82,6 +82,18 @@ public class UserService {
         userDAO.update(limpo);
     }
 
+    /** Reativa um usuário excluído pelo CPF. */
+    public void reactivateByCpf(String cpf) {
+        String digits = onlyDigits(cpf);
+        if (digits == null) {
+            throw new RequiredFieldException("CPF");
+        }
+        if (!Validator.isValidCpf(digits)) {
+            throw new ValidationException("CPF inválido.");
+        }
+        userDAO.reactivateByCpf(digits);
+    }
+
     /** Desativa o usuário (soft delete) */
     public void delete(UUID id) {
         if (id == null) {

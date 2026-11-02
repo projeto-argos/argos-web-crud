@@ -13,6 +13,7 @@
 <c:set var="urlInserir" value="${ctx}/users/register"/>
 <c:set var="urlAtualizar" value="${ctx}/users/edit"/>
 <c:set var="urlExcluir" value="${ctx}/users/delete"/>
+<c:set var="urlReativar" value="${ctx}/users/reactivate"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -114,6 +115,9 @@
                 </button>
                 <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
                     <i class="fa-solid fa-trash-can"></i> Excluir por CPF
+                </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalReativar">
+                    <i class="fa-solid fa-rotate-left"></i> Reativar por CPF
                 </button>
             </div>
         </div>
@@ -234,6 +238,7 @@
                     <div class="campo">
                         <label for="campoSenha" data-senha-rotulo>Senha</label>
                         <input type="password" id="campoSenha" name="password" placeholder="Defina a senha de acesso"
+                                   minlength="8" maxlength="64"
                                data-senha data-placeholder-cadastro="Defina a senha de acesso"
                                required autocomplete="new-password">
                     </div>
@@ -286,6 +291,30 @@
                     <div class="form-rodape">
                         <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
                         <button type="submit" class="btn-pilula btn-perigo">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <%-- POP-UP: reativar um usuário excluído (soft delete) pelo CPF --%>
+        <dialog class="modal modal-pequeno" id="modalReativar">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Reativar usuário pelo CPF</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlReativar}">
+                    <div class="campo">
+                        <label for="campoReativarCpf">CPF do usuário excluído</label>
+                        <input type="text" id="campoReativarCpf" name="cpf" placeholder="ex: 000.000.000-00" required autocomplete="off" inputmode="numeric" maxlength="14">
+                    </div>
+
+                    <p class="modal-texto">O usuário excluído com esse CPF volta para a lista. Os vínculos com propriedades não voltam: vincule-o de novo na propriedade.</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula">Reativar</button>
                     </div>
                 </form>
             </div>

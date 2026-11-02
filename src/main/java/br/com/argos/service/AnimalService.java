@@ -107,8 +107,6 @@ public class AnimalService {
         }
         String tag = earTag.trim();
 
-        // O brinco só é único DENTRO do lote: o mesmo brinco pode existir em lotes diferentes.
-        // Nesse caso não dá para saber qual animal excluir, então a exclusão é recusada.
         long total = animalDAO.findAll().stream()
                 .filter(animal -> tag.equals(animal.getEarTag()))
                 .count();
@@ -129,7 +127,7 @@ public class AnimalService {
         }
 
         if (animal.getEarTag() == null || animal.getEarTag().trim().isEmpty()) {
-            throw new ValidationException("O brinco não pode ser nulo ou vazio.");
+            throw new RequiredFieldException("brinco");
         }
 
         if (animal.getEarTag().trim().length() > 20) {
@@ -137,7 +135,7 @@ public class AnimalService {
         }
 
         if (animal.getWeight() == null) {
-            throw new ValidationException("O peso não pode ser nulo.");
+            throw new RequiredFieldException("peso");
         }
 
         BigDecimal minLimit = BigDecimal.ZERO;
@@ -169,7 +167,7 @@ public class AnimalService {
         }
 
         if (animal.getLotId() == null) {
-            throw new ValidationException("O ID do lote não pode ser nulo.");
+            throw new RequiredFieldException("lote");
         }
 
         if (lotDAO.findById(animal.getLotId()) == null) {

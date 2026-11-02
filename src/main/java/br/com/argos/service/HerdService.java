@@ -95,7 +95,11 @@ public class HerdService {
         if (propertyId == null) {
             throw new RequiredFieldException("propriedade");
         }
-        return herdDAO.deleteByProperty(propertyId);
+        int total = herdDAO.deleteByProperty(propertyId);
+        if (total == 0) {
+            throw new ValidationException("Nenhum rebanho ativo nessa propriedade.");
+        }
+        return total;
     }
 
     /** Limpa os dados: purpose vazio vira "CORTE" e head_count nulo vira 0. */
@@ -111,7 +115,7 @@ public class HerdService {
                 herd.getIdHerd(),
                 herd.getPropertyId(),
                 headCount != null ? headCount : 0,
-                purpose != null ? purpose : DEFAULT_PURPOSE,
+                purpose == null || purpose.isBlank() ? DEFAULT_PURPOSE : purpose,
                 text(herd.getName()),
                 text(herd.getBreed()),
                 herd.getUpdatedAt(),
