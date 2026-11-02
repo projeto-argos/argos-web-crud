@@ -112,15 +112,16 @@ public class AdminUpdateServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/admins");
 
-        } catch (IllegalArgumentException e) {
-            // DADOS EM FORMATO INVÁLIDO
-            request.setAttribute("erro", "Dados inválidos, confira os campos.");
-            List<Admin> admins = adminService.findAll();
-            request.setAttribute("admins", admins);
-            request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Admin> admins = adminService.findAll();
             request.setAttribute("admins", admins);
             request.getRequestDispatcher("/WEB-INF/views/admins/admins.jsp").forward(request, response);
