@@ -158,7 +158,7 @@ Depois do primeiro login, os demais administradores podem ser cadastrados pela p
 
 ## Variáveis de ambiente
 
-O projeto lê as configurações do banco de um arquivo `.env` em `src/main/resources/`.
+O projeto lê as configurações do banco e a chave secreta do Turnstile de um arquivo `.env` em `src/main/resources/` (ou de variáveis de ambiente com os mesmos nomes, que têm prioridade). Use o `.env.example` da raiz como modelo.
 
 ⚠️ **Nunca versionar o `.env`.** Ele já está no `.gitignore`.
 
@@ -167,6 +167,9 @@ O projeto lê as configurações do banco de um arquivo `.env` em `src/main/reso
 DB_URL=jdbc:postgresql://localhost:5432/nome_do_banco
 DB_USER=
 DB_PASSWORD=
+
+# CLOUDFLARE TURNSTILE (chave secreta do login)
+TURNSTILE_SECRET=
 ```
 
 ---

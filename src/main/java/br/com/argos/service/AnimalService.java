@@ -1,6 +1,7 @@
 package br.com.argos.service;
 
 import br.com.argos.dao.AnimalDAO;
+import br.com.argos.dao.LotDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Animal;
@@ -17,17 +18,23 @@ import java.util.UUID;
 public class AnimalService {
 
     private final AnimalDAO animalDAO;
+    private final LotDAO lotDAO;
 
     public AnimalService() {
-        this(new AnimalDAO());
+        this(new AnimalDAO(), new LotDAO());
     }
 
     public AnimalService(AnimalDAO animalDAO){
+        this(animalDAO, new LotDAO());
+    }
+
+    public AnimalService(AnimalDAO animalDAO, LotDAO lotDAO){
         this.animalDAO = Objects.requireNonNull(animalDAO, "AnimalDAO cannot be null");
+        this.lotDAO = Objects.requireNonNull(lotDAO, "LotDAO cannot be null");
     }
 
     public void create(Animal animal){
-        Animal normalized = normalizeAnimal(animal);
+        Animal normalized = withClearedForSlaughter(normalizeAnimal(animal), false);
         validateAnimal(normalized, true);
         animalDAO.insert(normalized);
     }
@@ -78,7 +85,11 @@ public class AnimalService {
         if (animal.getIdAnimal() == null){
             throw new RequiredFieldException("ID");
         }
-        Animal normalized = normalizeAnimal(animal);
+        Animal current = animalDAO.findById(animal.getIdAnimal());
+        if (current == null){
+            throw new ValidationException("Animal não encontrado.");
+        }
+        Animal normalized = withClearedForSlaughter(normalizeAnimal(animal), current.isClearedForSlaughter());
         validateAnimal(normalized, false);
         animalDAO.update(normalized);
     }
@@ -146,6 +157,10 @@ public class AnimalService {
             throw new ValidationException("O ID do lote não pode ser nulo.");
         }
 
+        if (lotDAO.findById(animal.getLotId()) == null) {
+            throw new ValidationException("O lote informado não existe ou foi excluído.");
+        }
+
         Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getLotId());
         if (existing != null){
             boolean sameAnimal = !newAnimal && animal.getIdAnimal().equals(existing.getIdAnimal());
@@ -154,6 +169,15 @@ public class AnimalService {
             }
         }
 
+    }
+
+    /** Copia o animal trocando só o campo "liberado para abate". */
+    private Animal withClearedForSlaughter(Animal animal, boolean cleared) {
+        return new Animal(animal.getIdAnimal(), animal.getLotId(), animal.getOriginLotId(),
+                animal.getWeight(), animal.getEarTag(), animal.getNotes(),
+                animal.getExceptionReason(), animal.getExceptionStartDate(),
+                animal.getExceptionEndDate(), animal.getBirthDate(), animal.getUpdatedAt(),
+                animal.isActive(), cleared);
     }
 
     private Animal normalizeAnimal(Animal animal) {

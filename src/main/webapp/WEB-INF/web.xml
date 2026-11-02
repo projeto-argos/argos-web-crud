@@ -3,6 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
+    <session-config>
+        <!-- a sessão expira depois de 20 minutos sem uso -->
+        <session-timeout>20</session-timeout>
+        <cookie-config>
+            <!-- o JavaScript da página não consegue ler o cookie -->
+            <http-only>true</http-only>
+        </cookie-config>
+        <!-- o ID da sessão só vai por cookie  -->
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/views/404.jsp</location>
