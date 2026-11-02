@@ -76,8 +76,7 @@ public class PropertyInsertServlet extends HttpServlet {
             List<UUID> userIds = new ArrayList<>();
 
             if (userIdsString != null) {
-                for (int i = 0; i < userIdsString.length; i++) {
-                    String userIdString = userIdsString[i];
+                for (String userIdString : userIdsString) {
 
                     if (userIdString != null && !userIdString.isBlank()) {
                         UUID userId = UUID.fromString(userIdString.trim());
@@ -162,8 +161,7 @@ public class PropertyInsertServlet extends HttpServlet {
 
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
-            for (int i = 0; i < properties.size(); i++) {
-                Property property = properties.get(i);
+            for (Property property : properties) {
                 Address address = addressesById.get(property.getAddressId());
 
                 if (address != null) {
