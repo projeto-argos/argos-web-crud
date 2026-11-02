@@ -130,15 +130,16 @@ public class UserUpdateServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/users");
 
-        } catch (IllegalArgumentException | DateTimeParseException e) {
-            // DADOS EM FORMATO INVÁLIDO
-            request.setAttribute("erro", "Dados inválidos, confira os campos.");
-            List<User> users = userService.findAll();
-            request.setAttribute("users", users);
-            request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<User> users = userService.findAll();
             request.setAttribute("users", users);
             request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
