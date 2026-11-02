@@ -23,7 +23,15 @@ public interface IPropertyDAO extends GenericDAO<Property, UUID> {
     List<Property> findByUser(UUID userId);
 
     /**
-     * Desativa as propriedades ativas associadas ao usuário informado.
+     * Desativa a propriedade ativa que usa o endereço informado.
+     * Cada propriedade tem um endereço só, então apaga no máximo uma.
+     *
+     * @param addressId identificador do endereço da propriedade
+     */
+    void deleteByAddress(UUID addressId);
+
+    /**
+     * Remove os vínculos entre o usuário informado e as propriedades (tabela user_property).
      *
      * @param userId identificador do usuário
      * @return quantidade de registros afetados

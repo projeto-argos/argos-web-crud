@@ -94,6 +94,15 @@ public class PropertyService {
         propertyDAO.delete(id);
     }
 
+    /** Exclui a propriedade pelo endereço dela. */
+    public void deleteByAddress(UUID addressId) {
+        if (addressId == null) {
+            throw new RequiredFieldException("endereço");
+        }
+
+        propertyDAO.deleteByAddress(addressId);
+    }
+
     public int removeUserLinks(UUID userId) {
         if (userId == null) {
             throw new RequiredFieldException("usuário");
