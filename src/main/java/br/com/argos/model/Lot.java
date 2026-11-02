@@ -9,7 +9,7 @@ public class Lot {
     // ATRIBUTOS
     private UUID idLot;
     private UUID herdId;
-    private Integer HeadCount;
+    private Integer headCount;
     private String category;
     private String lotCode;
     private LocalDate openDate;
@@ -23,7 +23,7 @@ public class Lot {
 
     public Lot(UUID herdId, Integer headCount, String category, String lotCode, LocalDate openDate) {
         this.herdId = herdId;
-        HeadCount = headCount;
+        this.headCount = headCount;
         this.category = category;
         this.lotCode = lotCode;
         this.openDate = openDate;
@@ -32,7 +32,7 @@ public class Lot {
     public Lot(UUID idLot, UUID herdId, Integer headCount, String category, String lotCode, LocalDate openDate) {
         this.idLot = idLot;
         this.herdId = herdId;
-        HeadCount = headCount;
+        this.headCount = headCount;
         this.category = category;
         this.lotCode = lotCode;
         this.openDate = openDate;
@@ -41,7 +41,7 @@ public class Lot {
     public Lot(UUID idLot, UUID herdId, Integer headCount, String category, String lotCode, LocalDate openDate, LocalDateTime updatedAt, boolean active) {
         this.idLot = idLot;
         this.herdId = herdId;
-        HeadCount = headCount;
+        this.headCount = headCount;
         this.category = category;
         this.lotCode = lotCode;
         this.openDate = openDate;
@@ -59,7 +59,7 @@ public class Lot {
     }
 
     public Integer getHeadCount() {
-        return HeadCount;
+        return headCount;
     }
 
     public String getCategory() {
@@ -92,7 +92,7 @@ public class Lot {
     }
 
     public void setHeadCount(Integer headCount) {
-        HeadCount = headCount;
+        this.headCount = headCount;
     }
 
     public void setCategory(String category) {
@@ -121,7 +121,7 @@ public class Lot {
         return "Lot{" +
                 "idLot=" + idLot +
                 ", herdId=" + herdId +
-                ", HeadCount=" + HeadCount +
+                ", headCount=" + headCount +
                 ", category='" + category + '\'' +
                 ", lotCode='" + lotCode + '\'' +
                 ", openDate=" + openDate +

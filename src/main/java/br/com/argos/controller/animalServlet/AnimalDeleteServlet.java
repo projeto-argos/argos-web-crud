@@ -46,6 +46,9 @@ public class AnimalDeleteServlet extends HttpServlet {
                 UUID id = UUID.fromString(idParam);
                 animalService.delete(id);
 
+                response.sendRedirect(request.getContextPath() + "/animals");
+                return;
+
             } catch (Exception e) {
                 // TRATA ERRO
                 throw new ServletException("Erro ao excluir animal", e);

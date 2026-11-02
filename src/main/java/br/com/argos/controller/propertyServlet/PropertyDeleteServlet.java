@@ -43,7 +43,6 @@ public class PropertyDeleteServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        // RECEBE O ID DA PROPRIEDADE
         String idParam = request.getParameter("id");
         String addressIdParam = request.getParameter("addressId");
 
@@ -54,7 +53,6 @@ public class PropertyDeleteServlet extends HttpServlet {
                 Property property = propertyService.findById(idProperty);
 
                 if (property != null) {
-                    // OBTÉM O ID DO ENDEREÇO
                     UUID addressId = property.getAddressId();
 
                     // EXCLUI A PROPRIEDADE
@@ -65,6 +63,10 @@ public class PropertyDeleteServlet extends HttpServlet {
                         addressService.delete(addressId);
                     }
                 }
+
+                response.sendRedirect(request.getContextPath() + "/properties");
+                return;
+
             } catch (Exception e) {
                 // TRATA ERRO
                 throw new ServletException("Erro ao excluir propriedade e endereço", e);

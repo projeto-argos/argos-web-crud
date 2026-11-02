@@ -28,7 +28,7 @@ public class AdminSelectServlet extends HttpServlet {
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws ServletException, IOException{
+    ) throws ServletException, IOException {
         try {
             // RECEBE FILTROS
             String fullName =

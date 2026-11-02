@@ -119,7 +119,14 @@ public class HerdUpdateServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Herd> herds = herdService.findAll();
             List<Property> properties = propertyService.findAll();
             request.setAttribute("herds", herds);

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,20 +30,14 @@ public class AnimalInsertServlet extends HttpServlet {
         lotService = new LotService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
-        // BUSCA TODOS OS LOTES
-        List<Lot> lots = lotService.findAll();
-        request.setAttribute("lots", lots);
-
-        request.getRequestDispatcher(
-                "/WEB-INF/views/animals/animals.jsp"
-        ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/animals");
     }
 
     // PROCESSA FORMULÁRIO
@@ -104,13 +99,6 @@ public class AnimalInsertServlet extends HttpServlet {
                         LocalDate.parse(exceptionEndDateString);
             }
 
-            String clearedForSlaughterString =
-                    request.getParameter("clearedForSlaughter");
-
-            boolean clearedForSlaughter =
-                    clearedForSlaughterString != null &&
-                            clearedForSlaughterString.equals("true");
-
             String notes =
                     request.getParameter("notes");
 
@@ -145,7 +133,7 @@ public class AnimalInsertServlet extends HttpServlet {
                     exceptionStartDate,
                     exceptionEndDate,
                     birthDate,
-                    clearedForSlaughter
+                    false
             );
 
             animalService.create(newAnimal);
@@ -156,7 +144,14 @@ public class AnimalInsertServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Animal> animals = animalService.findAll();
             List<Lot> lots = lotService.findAll();
             request.setAttribute("animals", animals);

@@ -27,25 +27,19 @@ public class HerdInsertServlet extends HttpServlet {
         propertyService = new PropertyService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
-        // BUSCA TODAS AS PROPRIEDADES
-        List<Property> properties = propertyService.findAll();
-        request.setAttribute("properties", properties);
-
-        request.getRequestDispatcher(
-                "/WEB-INF/views/herds/herds.jsp"
-        ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/herds");
     }
 
     // PROCESSA FORMULÁRIO
     @Override
-    protected void doPost (
+    protected void doPost(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
@@ -100,7 +94,14 @@ public class HerdInsertServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Herd> herds = herdService.findAll();
             List<Property> properties = propertyService.findAll();
             request.setAttribute("herds", herds);
