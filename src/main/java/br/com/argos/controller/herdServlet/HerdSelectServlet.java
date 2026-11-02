@@ -64,9 +64,7 @@ public class HerdSelectServlet extends HttpServlet {
             if (propertyId != null && !propertyId.isBlank()) {
                 List<Herd> herdsByProperty = new ArrayList<>();
 
-                for (int i = 0; i < herds.size(); i++) {
-                    Herd herd = herds.get(i);
-
+                for (Herd herd : herds) {
                     if (propertyId.equals(String.valueOf(herd.getPropertyId()))) {
                         herdsByProperty.add(herd);
                     }
