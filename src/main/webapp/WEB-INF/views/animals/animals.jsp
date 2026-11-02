@@ -206,7 +206,7 @@
                     <div class="campo largura-total">
                         <label for="campoMotivo">Motivo exceção</label>
                         <input type="text" id="campoMotivo" name="exceptionReason" placeholder="ex: Parainfluenza Bovino (PI-3)"
-                               maxlength="120" autocomplete="off">
+                               maxlength="255" autocomplete="off">
                     </div>
                     <div class="campo largura-total">
                         <label for="campoObservacoes">Observações</label>

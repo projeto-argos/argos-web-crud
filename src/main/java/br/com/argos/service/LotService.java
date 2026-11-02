@@ -121,6 +121,10 @@ public class LotService {
             throw new RequiredFieldException("rebanho");
         }
 
+        if (lotDAO.findByHerd(idHerd).isEmpty()) {
+            throw new ValidationException("Nenhum lote ativo neste rebanho.");
+        }
+
         lotDAO.deleteByHerd(idHerd);
     }
 
@@ -135,7 +139,7 @@ public class LotService {
         return new Lot(
                 lot.getIdLot(),
                 lot.getHerdId(),
-                lot.getHeadCount(),
+                lot.getHeadCount() != null ? lot.getHeadCount() : 0,
                 category != null ? category.toUpperCase() : null,
                 lotCode,
                 lot.getOpenDate(),

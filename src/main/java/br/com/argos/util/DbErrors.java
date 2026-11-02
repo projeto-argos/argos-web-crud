@@ -18,8 +18,8 @@ public final class DbErrors {
     private static final Map<String, String> DUPLICADOS = Map.of(
             "uk_admin_cpf", "CPF já registrado.",
             "uk_user_cpf", "CPF já registrado.",
-            "uk_admin_email", "Email já registrado.",
-            "uk_user_email", "Email já registrado.",
+            "uk_admin_email", "E-mail já registrado.",
+            "uk_user_email", "E-mail já registrado.",
             "uk_animal_eartag_lot", "Já existe um animal com esse brinco neste lote.",
             "uk_lot_code_herd", "Já existe um lote com esse código neste rebanho.",
             "uk_property_address", "Esse endereço já está em uso por outra propriedade."

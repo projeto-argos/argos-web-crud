@@ -234,6 +234,7 @@
                     <div class="campo">
                         <label for="campoSenha" data-senha-rotulo>Senha</label>
                         <input type="password" id="campoSenha" name="password" placeholder="Defina a senha de acesso"
+                                   minlength="8" maxlength="64"
                                data-senha data-placeholder-cadastro="Defina a senha de acesso"
                                required autocomplete="new-password">
                     </div>
