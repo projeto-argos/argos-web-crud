@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,6 +130,12 @@ public class UserUpdateServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/users");
 
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            // DADOS EM FORMATO INVÁLIDO
+            request.setAttribute("erro", "Dados inválidos, confira os campos.");
+            List<User> users = userService.findAll();
+            request.setAttribute("users", users);
+            request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
