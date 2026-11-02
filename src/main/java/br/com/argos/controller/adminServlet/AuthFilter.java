@@ -23,7 +23,7 @@ import java.util.UUID;
 public class AuthFilter implements Filter {
 
     // De quanto em quanto tempo o admin da sessão é conferido no banco
-    private static final long INTERVALO_CONFERENCIA_MS = 60_000;
+    private static final long CHECK_INTERVAL_MS = 60_000;
 
     private AdminService adminService;
 
@@ -68,9 +68,9 @@ public class AuthFilter implements Filter {
             return false;
         }
 
-        long agora = System.currentTimeMillis();
-        Object ultima = session.getAttribute("adminCheckedAt");
-        if (ultima instanceof Long ms && agora - ms < INTERVALO_CONFERENCIA_MS) {
+        long now = System.currentTimeMillis();
+        Object lastCheck = session.getAttribute("adminCheckedAt");
+        if (lastCheck instanceof Long ms && now - ms < CHECK_INTERVAL_MS) {
             return true;
         }
 
@@ -78,7 +78,7 @@ public class AuthFilter implements Filter {
         if (adminService.findById(adminId) == null) {
             return false;
         }
-        session.setAttribute("adminCheckedAt", agora);
+        session.setAttribute("adminCheckedAt", now);
         return true;
     }
 
