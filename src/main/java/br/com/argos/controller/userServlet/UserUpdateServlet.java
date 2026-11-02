@@ -134,8 +134,8 @@ public class UserUpdateServlet extends HttpServlet {
             // TRATA ERRO
             String message = e.getMessage();
 
-            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
-            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO OU AUSENTE
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException || e instanceof NullPointerException) {
                 message = "Dados inválidos, confira os campos.";
             }
 
