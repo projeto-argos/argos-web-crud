@@ -43,9 +43,10 @@ public class ConnectionFactory {
         config.setUsername(dbUser);
         config.setPassword(dbPassword);
 
-        // Pool de tamanho fixo
-        config.setMaximumPoolSize(8);
-        config.setMinimumIdle(8);
+//       1 conexão fica aberta e o pool cresce até DB_POOL_MAX só quando precisa.
+        config.setMaximumPoolSize(readPoolMax(env));
+        config.setMinimumIdle(1);
+        config.setIdleTimeout(60000);
 
         // Timeouts e Segurança
         config.setConnectionTimeout(30000);
@@ -75,6 +76,17 @@ public class ConnectionFactory {
             value = env.getProperty(key);
         }
         return (value == null || value.isBlank()) ? null : value;
+    }
+
+    /** Tamanho máximo do pool: variável DB_POOL_MAX (1 a 8); se faltar ou for inválida, 3. */
+    private static int readPoolMax(Properties env) {
+        String value = readSetting("DB_POOL_MAX", env);
+        try {
+            int max = value == null ? 3 : Integer.parseInt(value.trim());
+            return Math.max(1, Math.min(max, 8));
+        } catch (NumberFormatException e) {
+            return 3;
+        }
     }
 
     public static void init(){}

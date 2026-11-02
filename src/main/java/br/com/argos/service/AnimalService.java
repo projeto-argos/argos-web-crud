@@ -17,6 +17,10 @@ import java.util.UUID;
 /** Regras de negócio e validações relacionadas a animals. */
 public class AnimalService {
 
+    // Limites de data
+    private static final LocalDate MIN_DATE = LocalDate.of(1900, 1, 1);
+    private static final LocalDate MAX_END_DATE = LocalDate.of(2100, 12, 31);
+
     private final AnimalDAO animalDAO;
     private final LotDAO lotDAO;
 
@@ -138,15 +142,23 @@ public class AnimalService {
             throw new RequiredFieldException("peso");
         }
 
-        BigDecimal minLimit = BigDecimal.ZERO;
+        if (animal.getWeight().stripTrailingZeros().scale() > 2) {
+            throw new ValidationException("O peso deve ter no máximo 2 casas decimais.");
+        }
+
+        BigDecimal minLimit = new BigDecimal("10");
         BigDecimal maxLimit = new BigDecimal("99999.99");
 
-        if (animal.getWeight().compareTo(minLimit) <= 0 || animal.getWeight().compareTo(maxLimit) > 0) {
-            throw new ValidationException("O peso deve ser maior que 0 e no máximo 99999.99.");
+        if (animal.getWeight().compareTo(minLimit) < 0 || animal.getWeight().compareTo(maxLimit) > 0) {
+            throw new ValidationException("O peso deve ser de 10 a 99999,99 kg.");
         }
 
         if (animal.getBirthDate() != null && animal.getBirthDate().isAfter(LocalDate.now())) {
             throw new ValidationException("A data de nascimento não pode estar no futuro.");
+        }
+
+        if (animal.getBirthDate() != null && animal.getBirthDate().isBefore(MIN_DATE)) {
+            throw new ValidationException("A data de nascimento não pode ser anterior a 1900.");
         }
 
         if (animal.getExceptionReason() != null && animal.getExceptionReason().length() > 255) {
@@ -161,9 +173,17 @@ public class AnimalService {
             throw new ValidationException("A data de início não pode estar no futuro.");
         }
 
+        if (animal.getExceptionStartDate().isBefore(MIN_DATE)) {
+            throw new ValidationException("A data de início não pode ser anterior a 1900.");
+        }
+
         if (animal.getExceptionEndDate() != null
                 && animal.getExceptionEndDate().isBefore(animal.getExceptionStartDate())) {
             throw new ValidationException("A data de término não pode ser anterior à data de início.");
+        }
+
+        if (animal.getExceptionEndDate() != null && animal.getExceptionEndDate().isAfter(MAX_END_DATE)) {
+            throw new ValidationException("A data de término não pode ser posterior a 2100.");
         }
 
         if (animal.getLotId() == null) {

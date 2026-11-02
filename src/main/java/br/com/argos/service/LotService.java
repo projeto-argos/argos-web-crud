@@ -178,6 +178,10 @@ public class LotService {
         if (lot.getOpenDate() != null && lot.getOpenDate().isAfter(LocalDate.now())) {
             throw new ValidationException("A data de abertura não pode estar no futuro.");
         }
+
+        if (lot.getOpenDate() != null && lot.getOpenDate().isBefore(LocalDate.of(1900, 1, 1))) {
+            throw new ValidationException("A data de abertura não pode ser anterior a 1900.");
+        }
     }
 
     private void validateCategory(String category) {
