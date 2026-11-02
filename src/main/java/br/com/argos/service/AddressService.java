@@ -5,10 +5,9 @@ import br.com.argos.dao.AddressDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
 import br.com.argos.model.Address;
-import br.com.argos.model.Lot;
+import br.com.argos.util.BrazilStates;
 import br.com.argos.util.FilterUtil;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -93,6 +92,10 @@ public class AddressService {
 
         String state = text(address.getState());
         String zipCode = text(address.getZipCode());
+        // CEP com máscara
+        if (zipCode != null) {
+            zipCode = zipCode.replaceAll("[\\s.-]", "");
+        }
 
         return new Address(
                 address.getIdAddress(),
@@ -108,6 +111,15 @@ public class AddressService {
     }
 
     private void validateAddress(Address address) {
+        // Obrigatórios
+        if (address.getState() == null || address.getState().isBlank()) {
+            throw new RequiredFieldException("estado");
+        }
+
+        if (address.getZipCode() == null || address.getZipCode().isBlank()) {
+            throw new RequiredFieldException("CEP");
+        }
+
         if (address.getNumber() != null && address.getNumber() < 0) {
         throw new ValidationException(
                 "O número do endereço não pode ser negativo."
@@ -128,10 +140,16 @@ public class AddressService {
             );
         }
 
-        if (address.getState() != null
-                && !address.getState().matches("[A-Z]{2}")) {
+        if (!BrazilStates.list().contains(address.getState())) {
             throw new ValidationException(
-                    "O estado deve conter exatamente 2 letras."
+                    "Estado inválido. Use a sigla de um estado brasileiro (ex.: SP)."
+            );
+        }
+
+        if (address.getComplement() != null
+                && address.getComplement().length() > 150) {
+            throw new ValidationException(
+                    "O complemento não pode exceder 150 caracteres."
             );
         }
 

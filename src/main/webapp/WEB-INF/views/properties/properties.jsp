@@ -218,7 +218,7 @@
                         <div class="campo largura-total">
                             <label for="campoComplemento">Complemento</label>
                             <input type="text" id="campoComplemento" name="complement" placeholder="ex: Km 12, portão azul"
-                                   autocomplete="off">
+                                   maxlength="150" autocomplete="off">
                         </div>
                     </div>
 
