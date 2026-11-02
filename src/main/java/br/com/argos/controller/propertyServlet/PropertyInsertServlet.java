@@ -76,8 +76,7 @@ public class PropertyInsertServlet extends HttpServlet {
             List<UUID> userIds = new ArrayList<>();
 
             if (userIdsString != null) {
-                for (int i = 0; i < userIdsString.length; i++) {
-                    String userIdString = userIdsString[i];
+                for (String userIdString : userIdsString) {
 
                     if (userIdString != null && !userIdString.isBlank()) {
                         UUID userId = UUID.fromString(userIdString.trim());
@@ -154,18 +153,19 @@ public class PropertyInsertServlet extends HttpServlet {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
             List<Property> properties = propertyService.findAll();
+            // BUSCA TODOS OS ENDERECOS UMA VEZ SO
+            Map<UUID, Address> addressesById = new HashMap<>();
+            for (Address address : addressService.findAll()) {
+                addressesById.put(address.getIdAddress(), address);
+            }
+
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
-            for (int i = 0; i < properties.size(); i++) {
-                Property property = properties.get(i);
-                UUID addressId = property.getAddressId();
+            for (Property property : properties) {
+                Address address = addressesById.get(property.getAddressId());
 
-                if (addressId != null) {
-                    Address address = addressService.findById(addressId);
-
-                    if (address != null) {
-                        propertyAddresses.put(property.getIdProperty(), address);
-                    }
+                if (address != null) {
+                    propertyAddresses.put(property.getIdProperty(), address);
                 }
             }
             List<User> users = userService.findAll();

@@ -77,9 +77,7 @@ public class LotSelectServlet extends HttpServlet {
             if (herdId != null && !herdId.isBlank()) {
                 List<Lot> lotsByHerd = new ArrayList<>();
 
-                for (int i = 0; i < lots.size(); i++) {
-                    Lot lot = lots.get(i);
-
+                for (Lot lot : lots) {
                     if (herdId.equals(String.valueOf(lot.getHerdId()))) {
                         lotsByHerd.add(lot);
                     }
