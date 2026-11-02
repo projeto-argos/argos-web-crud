@@ -60,9 +60,7 @@ public class AnimalSelectServlet extends HttpServlet {
             if (lotId != null && !lotId.isBlank()) {
                 List<Animal> animalsByLot = new ArrayList<>();
 
-                for (int i = 0; i < animals.size(); i++) {
-                    Animal animal = animals.get(i);
-
+                for (Animal animal : animals) {
                     if (lotId.equals(String.valueOf(animal.getLotId()))) {
                         animalsByLot.add(animal);
                     }
