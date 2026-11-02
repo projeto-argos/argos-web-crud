@@ -53,6 +53,10 @@ public class AdminDeleteServlet extends HttpServlet {
                 // EXCLUI ADMINISTRADOR
                 adminService.delete(id);
 
+                // REDIRECIONA E ENCERRA, NAO DEIXA O BLOCO DO CPF RODAR
+                response.sendRedirect(request.getContextPath() + "/admins");
+                return;
+
             } catch (Exception e) {
                 // TRATA ERRO
                 throw new ServletException("Erro ao excluir administrador", e);
