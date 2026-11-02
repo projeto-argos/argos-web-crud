@@ -68,12 +68,11 @@ public class PropertySelectServlet extends HttpServlet {
             if (userIds != null && !userIds.isBlank()) {
                 List<Property> propertiesByUser = new ArrayList<>();
 
-                for (int i = 0; i < properties.size(); i++) {
-                    Property property = properties.get(i);
+                for (Property property : properties) {
                     List<UUID> propertyUserIds = property.getUserIds();
 
-                    for (int j = 0; j < propertyUserIds.size(); j++) {
-                        if (userIds.equals(String.valueOf(propertyUserIds.get(j)))) {
+                    for (UUID propertyUserId : propertyUserIds) {
+                        if (userIds.equals(String.valueOf(propertyUserId))) {
                             propertiesByUser.add(property);
                             break;
                         }
@@ -82,18 +81,19 @@ public class PropertySelectServlet extends HttpServlet {
                 properties = propertiesByUser;
             }
 
+            // BUSCA TODOS OS ENDERECOS UMA VEZ SO
+            Map<UUID, Address> addressesById = new HashMap<>();
+            for (Address address : addressService.findAll()) {
+                addressesById.put(address.getIdAddress(), address);
+            }
+
             Map<UUID, Address> propertyAddresses = new HashMap<>();
 
-            for (int i = 0; i < properties.size(); i++) {
-                Property property = properties.get(i);
-                UUID addressId = property.getAddressId();
+            for (Property property : properties) {
+                Address address = addressesById.get(property.getAddressId());
 
-                if (addressId != null) {
-                    Address address = addressService.findById(addressId);
-
-                    if (address != null) {
-                        propertyAddresses.put(property.getIdProperty(), address);
-                    }
+                if (address != null) {
+                    propertyAddresses.put(property.getIdProperty(), address);
                 }
             }
             List<User> users = userService.findAll();
