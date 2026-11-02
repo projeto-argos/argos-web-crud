@@ -101,6 +101,9 @@
                     data-titulo="Cadastrar Lote" data-botao="Cadastrar">
                 <i class="fa-solid fa-plus"></i> Novo lote
             </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
+                    <i class="fa-solid fa-trash-can"></i> Excluir por rebanho
+                </button>
             </div>
         </div>
 
@@ -253,6 +256,35 @@
             </form>
         </div>
     </dialog>
+
+        <%-- POP-UP: exclusão por outro campo --%>
+        <dialog class="modal modal-pequeno" id="modalExcluirCampo">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Excluir lotes do rebanho</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlExcluir}">
+                    <div class="campo">
+                        <label for="campoExcluirRebanho">Rebanho</label>
+                        <select id="campoExcluirRebanho" name="herdId" required>
+                            <option value="">Selecione</option>
+                            <c:forEach var="herd" items="${herds}">
+                                <option value="<c:out value='${herd.idHerd}'/>"><c:out value="${herd.name}"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <p class="modal-texto"><strong>Atenção:</strong> isso exclui <strong>TODOS</strong> os lotes deste rebanho, junto com os animais deles.</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula btn-perigo">Excluir todos</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
 <jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
 

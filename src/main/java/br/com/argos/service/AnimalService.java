@@ -105,7 +105,22 @@ public class AnimalService {
         if (earTag == null || earTag.isBlank()) {
             throw new RequiredFieldException("brinco");
         }
-        animalDAO.deleteByEarTag(earTag.trim());
+        String tag = earTag.trim();
+
+        // O brinco só é único DENTRO do lote: o mesmo brinco pode existir em lotes diferentes.
+        // Nesse caso não dá para saber qual animal excluir, então a exclusão é recusada.
+        long total = animalDAO.findAll().stream()
+                .filter(animal -> tag.equals(animal.getEarTag()))
+                .count();
+        if (total == 0) {
+            throw new ValidationException("Nenhum animal encontrado com o brinco " + tag + ".");
+        }
+        if (total > 1) {
+            throw new ValidationException("Existem " + total + " animais com o brinco " + tag
+                    + " em lotes diferentes. Exclua o animal certo pela tabela.");
+        }
+
+        animalDAO.deleteByEarTag(tag);
     }
 
     private void validateAnimal(Animal animal, boolean newAnimal) {

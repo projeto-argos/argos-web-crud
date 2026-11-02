@@ -83,6 +83,9 @@
                     data-titulo="Cadastrar Animal" data-botao="Cadastrar">
                 <i class="fa-solid fa-plus"></i> Novo animal
             </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
+                    <i class="fa-solid fa-trash-can"></i> Excluir por brinco
+                </button>
         </div>
             </div>
 
@@ -251,6 +254,30 @@
             </form>
         </div>
     </dialog>
+
+        <%-- POP-UP: exclusão por outro campo --%>
+        <dialog class="modal modal-pequeno" id="modalExcluirCampo">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Excluir animal pelo brinco</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlExcluir}">
+                    <div class="campo">
+                        <label for="campoExcluirBrinco">Brinco do animal</label>
+                        <input type="text" id="campoExcluirBrinco" name="earTag" placeholder="ex: BR-26-0001" required autocomplete="off" maxlength="20">
+                    </div>
+
+                    <p class="modal-texto">O animal com esse brinco será excluído. Se o mesmo brinco existir em lotes diferentes, a exclusão é recusada: nesse caso, exclua pela tabela.</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula btn-perigo">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
 <jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
 
