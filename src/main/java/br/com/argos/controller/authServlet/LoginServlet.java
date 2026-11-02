@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,10 @@ public class LoginServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+
+        // SESSAO PARA CONTAR AS TENTATIVAS
+        HttpSession session = request.getSession(true);
+
         try {
             // RECEBE DADOS
             String email =
@@ -81,10 +86,22 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
 
+            // VERIFICA SE ESTA BLOQUEADO
+            LocalDateTime lockedUntil =
+                    (LocalDateTime) session.getAttribute("lockedUntil");
+
+            if (lockedUntil != null &&
+                    lockedUntil.isAfter(LocalDateTime.now())) {
+                request.setAttribute("erro", "Muitas tentativas. Tente novamente em 5 minutos.");
+                request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
+                return;
+            }
+
             // CRIA SESSAO
             Admin admin = adminService.authenticate(email, password);
 
-            HttpSession session = request.getSession(true);
+            // LOGIN CERTO, ZERA AS TENTATIVAS
+            session.removeAttribute("attempts");
 
             // TROCA O ID DA SESSAO
             request.changeSessionId();
@@ -94,14 +111,30 @@ public class LoginServlet extends HttpServlet {
             loggedUser.put("id", admin.getIdAdmin().toString());
             loggedUser.put("name", admin.getFullName());
             loggedUser.put("type", "ADMIN");
-            session.setAttribute("usuarioLogado", loggedUser);
-            session.setAttribute("idAdminLogado", admin.getIdAdmin());
+            session.setAttribute("loggedUser", loggedUser);
+            session.setAttribute("loggedAdminId", admin.getIdAdmin());
 
             // REDIRECIONA
             response.sendRedirect(
                     request.getContextPath() + "/welcome");
 
         } catch (ValidationException e) {
+            // CONTA A TENTATIVA ERRADA
+            Integer attempts =
+                    (Integer) session.getAttribute("attempts");
+
+            if (attempts == null) {
+                attempts = 0;
+            }
+            attempts = attempts + 1;
+            session.setAttribute("attempts", attempts);
+
+            // BLOQUEIA DEPOIS DE 5 ERROS
+            if (attempts >= 5) {
+                session.setAttribute("lockedUntil", LocalDateTime.now().plusMinutes(5));
+                session.setAttribute("attempts", 0);
+            }
+
             // TRATA ERRO
             request.setAttribute("erro", "E-mail ou senha inválidos.");
             request.getRequestDispatcher("/WEB-INF/views/auth/login.jsp").forward(request, response);
