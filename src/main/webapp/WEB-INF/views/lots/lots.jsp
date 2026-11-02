@@ -214,7 +214,7 @@
                     </div>
                     <div class="campo">
                         <label for="campoDataAbertura">Data de Abertura</label>
-                        <input type="date" id="campoDataAbertura" name="openDate" required>
+                        <input type="date" id="campoDataAbertura" name="openDate" min="1900-01-01" required>
                     </div>
                     <div class="campo largura-total">
                         <label for="campoRebanho">Rebanho</label>

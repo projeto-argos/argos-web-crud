@@ -199,9 +199,8 @@
                     <div class="campo">
                         <label for="campoPeso">Peso</label>
                         <input type="number" id="campoPeso" name="weight" placeholder="ex: 400.00"
-                               required min="0" step="0.01" inputmode="decimal" autocomplete="off">
+                               required min="10" max="99999.99" step="0.01" inputmode="decimal" autocomplete="off">
                     </div>
-                    <%-- Campo mantido escondido: o Servlet ainda recebe clearedForSlaughter (o calculo real depende do modulo de aplicacoes) --%>
                     <input type="hidden" name="clearedForSlaughter" value="false">
                     <div class="campo largura-total">
                         <label for="campoMotivo">Motivo exceção</label>
@@ -215,15 +214,15 @@
                     </div>
                     <div class="campo">
                         <label for="campoNascimento">Data de Nascimento</label>
-                        <input type="date" id="campoNascimento" name="birthDate" required>
+                        <input type="date" id="campoNascimento" name="birthDate" min="1900-01-01" required>
                     </div>
                     <div class="campo">
                         <label for="campoInicioExcecao">Data início exceção</label>
-                        <input type="date" id="campoInicioExcecao" name="exceptionStartDate" required>
+                        <input type="date" id="campoInicioExcecao" name="exceptionStartDate" min="1900-01-01" required>
                     </div>
                     <div class="campo">
                         <label for="campoFimExcecao">Data final da exceção</label>
-                        <input type="date" id="campoFimExcecao" name="exceptionEndDate">
+                        <input type="date" id="campoFimExcecao" name="exceptionEndDate" min="1900-01-01" max="2100-12-31">
                     </div>
                 </div>
 
