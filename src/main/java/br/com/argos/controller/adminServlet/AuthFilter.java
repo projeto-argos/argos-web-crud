@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * {@code AuthFilter} porta das telas do painel: só deixa passar quem
- * tem sessão com o atributo {@code "usuarioLogado"} do tipo {@code "ADMIN"}, gravado pelo LoginServlet.
+ * tem sessão com o atributo {@code "loggedUser"} do tipo {@code "ADMIN"}, gravado pelo LoginServlet.
  * Quem não tem é redirecionado para {@code /login}.
  * <p>
  */
@@ -33,7 +33,7 @@ public class AuthFilter implements Filter {
 
         // só "ADMIN" entra no painel
         boolean loggedIn = session != null
-                && session.getAttribute("usuarioLogado") instanceof Map<?, ?> user
+                && session.getAttribute("loggedUser") instanceof Map<?, ?> user
                 && "ADMIN".equals(user.get("type"));
 
         if (loggedIn) {
