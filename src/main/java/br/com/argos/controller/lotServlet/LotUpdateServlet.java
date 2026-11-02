@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -117,6 +118,14 @@ public class LotUpdateServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/lots");
 
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            // DADOS EM FORMATO INVÁLIDO
+            request.setAttribute("erro", "Dados inválidos, confira os campos.");
+            List<Lot> lots = lotService.findAll();
+            List<Herd> herds = herdService.findAll();
+            request.setAttribute("lots", lots);
+            request.setAttribute("herds", herds);
+            request.getRequestDispatcher("/WEB-INF/views/lots/lots.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
             request.setAttribute("erro", e.getMessage());
