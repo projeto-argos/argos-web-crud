@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -131,7 +132,14 @@ public class UserUpdateServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<User> users = userService.findAll();
             request.setAttribute("users", users);
             request.getRequestDispatcher("/WEB-INF/views/users/users.jsp").forward(request, response);

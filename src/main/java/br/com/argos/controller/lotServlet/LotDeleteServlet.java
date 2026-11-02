@@ -42,9 +42,12 @@ public class LotDeleteServlet extends HttpServlet {
 
         if (idParam != null && !idParam.isBlank()) {
             try {
-                // EXCLUI USUÁRIO
+                // EXCLUI LOTE
                 UUID id = UUID.fromString(idParam);
                 lotService.delete(id);
+
+                response.sendRedirect(request.getContextPath() + "/lots");
+                return;
 
             } catch (Exception e) {
                 // TRATA ERRO

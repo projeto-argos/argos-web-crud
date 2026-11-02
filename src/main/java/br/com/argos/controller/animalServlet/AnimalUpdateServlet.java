@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -123,13 +124,6 @@ public class AnimalUpdateServlet extends HttpServlet {
                         LocalDate.parse(exceptionEndDateString);
             }
 
-            String clearedForSlaughterString =
-                    request.getParameter("clearedForSlaughter");
-
-            boolean clearedForSlaughter =
-                    clearedForSlaughterString != null &&
-                            clearedForSlaughterString.equals("true");
-
             String notes =
                     request.getParameter("notes");
 
@@ -165,7 +159,7 @@ public class AnimalUpdateServlet extends HttpServlet {
                     exceptionStartDate,
                     exceptionEndDate,
                     birthDate,
-                    clearedForSlaughter
+                    false
             );
 
             animalService.update(animalToUpdate);
@@ -177,7 +171,14 @@ public class AnimalUpdateServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Animal> animals = animalService.findAll();
             List<Lot> lots = lotService.findAll();
             request.setAttribute("animals", animals);

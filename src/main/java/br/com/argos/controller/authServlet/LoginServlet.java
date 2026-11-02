@@ -63,7 +63,7 @@ public class LoginServlet extends HttpServlet {
             String password =
                     request.getParameter("password");
 
-            // VEREFICA SE EMAIL E SENHA FORAM PASSADOS
+            // VERIFICA SE EMAIL E SENHA FORAM PASSADOS
             if (email == null ||
                     email.isBlank() ||
                     password == null ||

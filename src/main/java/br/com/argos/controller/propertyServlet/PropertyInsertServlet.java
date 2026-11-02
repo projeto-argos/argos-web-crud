@@ -34,20 +34,14 @@ public class PropertyInsertServlet extends HttpServlet {
         userService = new UserService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
-        // BUSCA TODOS OS USUÁRIOS
-        List<User> allUsers = userService.findAll();
-        request.setAttribute("allUsers", allUsers);
-
-        request.getRequestDispatcher(
-                "/WEB-INF/views/properties/properties.jsp"
-        ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/properties");
     }
 
     // PROCESSA FORMULÁRIO
@@ -151,8 +145,16 @@ public class PropertyInsertServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Property> properties = propertyService.findAll();
+
             // BUSCA TODOS OS ENDERECOS UMA VEZ SO
             Map<UUID, Address> addressesById = new HashMap<>();
             for (Address address : addressService.findAll()) {

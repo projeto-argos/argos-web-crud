@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,20 +29,14 @@ public class LotInsertServlet extends HttpServlet {
         herdService = new HerdService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
-            // BUSCA TODOS OS REBANHOS
-            List<Herd> herds = herdService.findAll();
-            request.setAttribute("herds", herds);
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/lots/lots.jsp"
-            ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/lots");
     }
 
     // PROCESSA FORMULÁRIO
@@ -108,7 +103,14 @@ public class LotInsertServlet extends HttpServlet {
 
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Lot> lots = lotService.findAll();
             List<Herd> herds = herdService.findAll();
             request.setAttribute("lots", lots);
