@@ -101,32 +101,6 @@ public class UserDAO implements GenericDAO<User, UUID>, IUserDAO {
     }
 
     @Override
-    public User findByEmailForAuthentication(String email){
-        String sql = """
-        SELECT * FROM "USER" WHERE email = ? AND active = true
-        """;
-
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)){
-
-            stmt.setString(1, email);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapUser(rs, true);
-                }
-            }
-
-            return null;
-
-        } catch (SQLException e) {
-            throw new DataAccessException(
-                    "Erro ao buscar usuário para autenticação", e
-            );
-        }
-    }
-
-    @Override
     public List<User> findAll() {
         String sql = """
         SELECT * FROM "USER" WHERE active = true ORDER BY full_name

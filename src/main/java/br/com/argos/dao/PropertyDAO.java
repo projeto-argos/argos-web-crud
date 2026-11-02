@@ -269,7 +269,36 @@ public class PropertyDAO implements GenericDAO<Property, UUID>, IPropertyDAO {
         }
     }
 
-//    DELETE BY USER
+//    SOFT DELETE BY ADDRESS
+    @Override
+    public void deleteByAddress(UUID addressId) {
+        String sql = "SELECT id_property FROM property WHERE id_address = ? AND active = true";
+
+        UUID idProperty = null;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, addressId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    idProperty = rs.getObject("id_property", UUID.class);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Erro ao buscar propriedade pelo endereço: " + addressId, e);
+        }
+
+        if (idProperty == null) {
+            throw new DataAccessException("Propriedade não encontrada para o endereço: " + addressId);
+        }
+
+        delete(idProperty);
+    }
+
+//    DELETE USER LINKS
     @Override
     public int removeUserLinks(UUID userId) {
         String sql = """
