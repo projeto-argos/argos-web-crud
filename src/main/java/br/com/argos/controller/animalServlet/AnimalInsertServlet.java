@@ -30,20 +30,14 @@ public class AnimalInsertServlet extends HttpServlet {
         lotService = new LotService();
     }
 
-    // EXIBE FORMULÁRIO
+    // REDIRECIONA PARA A LISTAGEM
     @Override
     protected void doGet(
             HttpServletRequest request,
             HttpServletResponse response
     ) throws ServletException, IOException {
-
-        // BUSCA TODOS OS LOTES
-        List<Lot> lots = lotService.findAll();
-        request.setAttribute("lots", lots);
-
-        request.getRequestDispatcher(
-                "/WEB-INF/views/animals/animals.jsp"
-        ).forward(request, response);
+        response.sendRedirect(
+                request.getContextPath() + "/animals");
     }
 
     // PROCESSA FORMULÁRIO
@@ -148,17 +142,16 @@ public class AnimalInsertServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/animals");
 
-        } catch (IllegalArgumentException | DateTimeParseException e) {
-            // DADOS EM FORMATO INVÁLIDO
-            request.setAttribute("erro", "Dados inválidos, confira os campos.");
-            List<Animal> animals = animalService.findAll();
-            List<Lot> lots = lotService.findAll();
-            request.setAttribute("animals", animals);
-            request.setAttribute("lots", lots);
-            request.getRequestDispatcher("/WEB-INF/views/animals/animals.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Animal> animals = animalService.findAll();
             List<Lot> lots = lotService.findAll();
             request.setAttribute("animals", animals);
