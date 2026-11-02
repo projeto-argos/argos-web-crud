@@ -155,6 +155,18 @@ public class PropertyUpdateServlet extends HttpServlet {
             UUID addressId =
                     property.getAddressId();
 
+            // ATUALIZA A PROPRIEDADE
+            Property propertyToUpdate = new Property(
+                    idProperty,
+                    addressId,
+                    userIds,
+                    name,
+                    phone,
+                    cnpj
+            );
+
+            propertyService.update(propertyToUpdate);
+
             // ATUALIZA O ENDEREÇO
             Address addressToUpdate = new Address(
                     addressId,
@@ -166,60 +178,31 @@ public class PropertyUpdateServlet extends HttpServlet {
                     zipCode
             );
 
-            addressService.update(addressToUpdate);
-
-            // ATUALIZA A PROPRIEDADE
-            Property propertyToUpdate = new Property(
-                    idProperty,
-                    addressId,
-                    userIds,
-                    name,
-                    phone,
-                    cnpj
-            );
-
             try {
-                propertyService.update(propertyToUpdate);
+                addressService.update(addressToUpdate);
 
             } catch (Exception e) {
-                // ENDEREÇO SALVO, MAS A PROPRIEDADE NÃO
+                // PROPRIEDADE SALVA, MAS O ENDEREÇO NÃO
                 throw new RuntimeException(
-                        "Endereço atualizado, mas a propriedade não foi salva: " + e.getMessage(), e);
+                        "Propriedade atualizada, mas o endereço não foi salvo: " + e.getMessage(), e);
             }
 
             // REDIRECIONA
             response.sendRedirect(
                     request.getContextPath() + "/properties");
 
-        } catch (IllegalArgumentException e) {
-            // DADOS EM FORMATO INVÁLIDO
-            request.setAttribute("erro", "Dados inválidos, confira os campos.");
-            List<Property> properties = propertyService.findAll();
-            // BUSCA TODOS OS ENDERECOS UMA VEZ SO
-            Map<UUID, Address> addressesById = new HashMap<>();
-            for (Address address : addressService.findAll()) {
-                addressesById.put(address.getIdAddress(), address);
-            }
-
-            Map<UUID, Address> propertyAddresses = new HashMap<>();
-
-            for (Property property : properties) {
-                Address address = addressesById.get(property.getAddressId());
-
-                if (address != null) {
-                    propertyAddresses.put(property.getIdProperty(), address);
-                }
-            }
-            List<User> users = userService.findAll();
-            request.setAttribute("properties", properties);
-            request.setAttribute("propertyAddresses", propertyAddresses);
-            request.setAttribute("users", users);
-            request.setAttribute("allUsers", users);
-            request.getRequestDispatcher("/WEB-INF/views/properties/properties.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Property> properties = propertyService.findAll();
+
             // BUSCA TODOS OS ENDERECOS UMA VEZ SO
             Map<UUID, Address> addressesById = new HashMap<>();
             for (Address address : addressService.findAll()) {
