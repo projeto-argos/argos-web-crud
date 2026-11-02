@@ -1,0 +1,13 @@
+# Não entra na imagem Docker: segredos, arquivos locais e builds antigos
+**/.env
+.env
+.env.*
+target/
+.git/
+.idea/
+.smarttomcat/
+*.md
+CLAUDE.md
+AGENTS.md
+PROMPT-*.md
+RELATORIO-*.md

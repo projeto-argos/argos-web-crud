@@ -90,11 +90,15 @@ function reabrirComErro(caixaValores) {
         (valores[item.dataset.nome] = valores[item.dataset.nome] || []).push(item.dataset.valor);
     });
 
+    // Erro numa exclusão, só o aviso aparece
+    if (location.pathname.endsWith("/delete")) {
+        return;
+    }
+
     const editando = location.pathname.endsWith("/edit");
     let botao = null;
 
     if (editando) {
-        // acha o botão "editar" do registro que estava sendo editado (pelo campo id...)
         const popupEdicao = document.querySelector("dialog.modal:not(#modalExcluir)");
         const campoId = popupEdicao && popupEdicao.querySelector('form input[type=hidden][name^="id"]');
         const idEditado = campoId && valores[campoId.name] ? valores[campoId.name][0] : null;

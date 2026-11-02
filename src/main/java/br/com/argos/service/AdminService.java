@@ -91,7 +91,10 @@ public class AdminService {
         adminDAO.delete(id);
     }
 
-    public void deleteByCpf(String cpf) {
+    /**
+     * Desativa o admin pelo CPF. Recebe quem está logado para não deixar o admin se excluir.
+     */
+    public void deleteByCpf(String cpf, UUID loggedAdminId) {
         String digits = onlyDigits(cpf);
         if (digits == null) {
             throw new RequiredFieldException("CPF");
@@ -99,6 +102,20 @@ public class AdminService {
         if (!Validator.isValidCpf(digits)) {
             throw new ValidationException("CPF inválido.");
         }
+
+        if (loggedAdminId == null) {
+            throw new ValidationException("Não foi possível identificar o administrador logado.");
+        }
+        Admin loggedAdmin = findById(loggedAdminId);
+        if (loggedAdmin == null) {
+            throw new ValidationException("Não foi possível identificar o administrador logado.");
+        }
+
+        // NÃO DEIXA EXCLUIR O ADMIN LOGADO
+        if (digits.equals(loggedAdmin.getCpf())) {
+            throw new ValidationException("Você não pode excluir o próprio administrador.");
+        }
+
         adminDAO.deleteByCpf(digits);
     }
 

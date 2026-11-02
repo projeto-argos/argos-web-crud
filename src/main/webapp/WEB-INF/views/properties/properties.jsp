@@ -83,6 +83,9 @@
                         data-titulo="Cadastrar Propriedade" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Nova propriedade
                 </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
+                    <i class="fa-solid fa-trash-can"></i> Excluir por endereço
+                </button>
             </div>
             </div>
 
@@ -254,6 +257,38 @@
                     <input type="hidden" name="id" value="">
 
                     <p class="modal-texto">Tem certeza que deseja excluir <strong data-mostrar="name"></strong>?</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula btn-perigo">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <%-- POP-UP: exclusão por outro campo --%>
+        <dialog class="modal modal-pequeno" id="modalExcluirCampo">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Excluir propriedade pelo endereço</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlExcluir}">
+                    <div class="campo">
+                        <label for="campoExcluirEndereco">Endereço</label>
+                        <select id="campoExcluirEndereco" name="addressId" required>
+                            <option value="">Selecione</option>
+                            <c:forEach var="property" items="${properties}">
+                                <c:set var="end" value="${propertyAddresses[property.idProperty]}"/>
+                                <c:if test="${not empty end}">
+                                    <option value="<c:out value='${property.addressId}'/>"><c:out value="${end.street}, ${end.number} - ${end.city}/${end.state} (${property.name})"/></option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <p class="modal-texto">A propriedade deste endereço será excluída, junto com os rebanhos, lotes e animais dela.</p>
 
                     <div class="form-rodape">
                         <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>

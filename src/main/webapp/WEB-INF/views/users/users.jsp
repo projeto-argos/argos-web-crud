@@ -112,6 +112,9 @@
                         data-titulo="Cadastrar Usuário" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo usuário
                 </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
+                    <i class="fa-solid fa-trash-can"></i> Excluir por CPF
+                </button>
             </div>
         </div>
 
@@ -263,6 +266,30 @@
             </form>
         </div>
     </dialog>
+
+        <%-- POP-UP: exclusão por outro campo --%>
+        <dialog class="modal modal-pequeno" id="modalExcluirCampo">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Excluir usuário pelo CPF</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlExcluir}">
+                    <div class="campo">
+                        <label for="campoExcluirCpf">CPF do usuário</label>
+                        <input type="text" id="campoExcluirCpf" name="cpf" placeholder="ex: 000.000.000-00" required autocomplete="off" inputmode="numeric" maxlength="14">
+                    </div>
+
+                    <p class="modal-texto">O usuário com esse CPF será excluído.</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula btn-perigo">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
 <jsp:include page="/WEB-INF/views/components/_reabrir.jsp"/>
 

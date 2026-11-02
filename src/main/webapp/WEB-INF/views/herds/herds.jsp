@@ -81,6 +81,9 @@
                         data-titulo="Cadastrar Rebanho" data-botao="Cadastrar">
                     <i class="fa-solid fa-plus"></i> Novo rebanho
                 </button>
+                <button type="button" class="btn btn-contorno" data-abrir="modalExcluirCampo">
+                    <i class="fa-solid fa-trash-can"></i> Excluir por propriedade
+                </button>
             </div>
             </div>
 
@@ -220,6 +223,35 @@
                     <div class="form-rodape">
                         <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
                         <button type="submit" class="btn-pilula btn-perigo">Excluir</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <%-- POP-UP: exclusão por outro campo --%>
+        <dialog class="modal modal-pequeno" id="modalExcluirCampo">
+            <div class="modal-caixa">
+                <div class="modal-topo">
+                    <h2>Excluir rebanhos da propriedade</h2>
+                    <button type="button" class="btn-fechar" data-fechar aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <form method="post" action="${urlExcluir}">
+                    <div class="campo">
+                        <label for="campoExcluirPropriedade">Propriedade</label>
+                        <select id="campoExcluirPropriedade" name="propertyId" required>
+                            <option value="">Selecione</option>
+                            <c:forEach var="property" items="${properties}">
+                                <option value="<c:out value='${property.idProperty}'/>"><c:out value="${property.name}"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <p class="modal-texto"><strong>Atenção:</strong> isso exclui <strong>TODOS</strong> os rebanhos desta propriedade, junto com os lotes e animais deles.</p>
+
+                    <div class="form-rodape">
+                        <button type="button" class="btn-pilula btn-neutro" data-fechar>Cancelar</button>
+                        <button type="submit" class="btn-pilula btn-perigo">Excluir todos</button>
                     </div>
                 </form>
             </div>

@@ -17,7 +17,7 @@
     height: 38px;
     padding: 0 16px;
     border: 1px solid var(--verde-claro);
-    border-radius: 8px;
+    border-radius: 100px;
     font-family: var(--fonte-titulo);
     font-size: 12px;
     font-weight: 700;
