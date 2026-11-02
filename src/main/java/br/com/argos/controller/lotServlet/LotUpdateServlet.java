@@ -82,8 +82,12 @@ public class LotUpdateServlet extends HttpServlet {
             String headCountString =
                     request.getParameter("headCount");
 
-            int headCount =
-                    Integer.parseInt(headCountString);
+            Integer headCount = null;
+
+            if (headCountString != null &&
+                    !headCountString.isBlank()) {
+                headCount = Integer.valueOf(headCountString);
+            }
 
             String category =
                     request.getParameter("category");
@@ -118,17 +122,16 @@ public class LotUpdateServlet extends HttpServlet {
             response.sendRedirect(
                     request.getContextPath() + "/lots");
 
-        } catch (IllegalArgumentException | DateTimeParseException e) {
-            // DADOS EM FORMATO INVÁLIDO
-            request.setAttribute("erro", "Dados inválidos, confira os campos.");
-            List<Lot> lots = lotService.findAll();
-            List<Herd> herds = herdService.findAll();
-            request.setAttribute("lots", lots);
-            request.setAttribute("herds", herds);
-            request.getRequestDispatcher("/WEB-INF/views/lots/lots.jsp").forward(request, response);
         } catch (Exception e) {
             // TRATA ERRO
-            request.setAttribute("erro", e.getMessage());
+            String message = e.getMessage();
+
+            // CAMPO NUMERICO, DATA OU ID EM FORMATO INVALIDO
+            if (e instanceof IllegalArgumentException || e instanceof DateTimeParseException) {
+                message = "Dados inválidos, confira os campos.";
+            }
+
+            request.setAttribute("erro", message);
             List<Lot> lots = lotService.findAll();
             List<Herd> herds = herdService.findAll();
             request.setAttribute("lots", lots);
