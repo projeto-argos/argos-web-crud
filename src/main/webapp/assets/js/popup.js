@@ -152,6 +152,42 @@ document.addEventListener("click", function (evento) {
     }
 });
 
+// Evita envio duplicado
+document.addEventListener("submit", function (evento) {
+    const formulario = evento.target;
+
+    if (formulario.method.toLowerCase() !== "post") {
+        return;
+    }
+
+    if (formulario.dataset.enviando === "true") {
+        evento.preventDefault();
+        return;
+    }
+
+    formulario.dataset.enviando = "true";
+    formulario.querySelectorAll("button[type=submit]").forEach(function (botao) {
+        botao.dataset.textoOriginal = botao.textContent;
+        botao.disabled = true;
+        botao.textContent = "Enviando...";
+    });
+});
+
+window.addEventListener("pageshow", function (evento) {
+    if (!evento.persisted) {
+        return;
+    }
+    document.querySelectorAll("form[data-enviando]").forEach(function (formulario) {
+        delete formulario.dataset.enviando;
+        formulario.querySelectorAll("button[type=submit]").forEach(function (botao) {
+            botao.disabled = false;
+            if (botao.dataset.textoOriginal) {
+                botao.textContent = botao.dataset.textoOriginal;
+            }
+        });
+    });
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     const valoresErro = document.getElementById("valoresErro");
     if (valoresErro) {
