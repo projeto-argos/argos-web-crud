@@ -170,6 +170,10 @@ public class LotService {
         if (lot.getHeadCount() != null && lot.getHeadCount() < 0) {
             throw new ValidationException("A contagem de cabeças não pode ser negativa.");
         }
+
+        if (lot.getOpenDate() != null && lot.getOpenDate().isAfter(LocalDate.now())) {
+            throw new ValidationException("A data de abertura não pode estar no futuro.");
+        }
     }
 
     private void validateCategory(String category) {
