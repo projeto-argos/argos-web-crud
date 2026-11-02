@@ -42,6 +42,9 @@ public class UserDeleteServlet extends HttpServlet {
                 UUID id = UUID.fromString(idParam);
                 userService.delete(id);
 
+                response.sendRedirect(request.getContextPath() + "/users");
+                return;
+
             } catch (Exception e) {
                 // TRATA ERRO
                 throw new ServletException("Erro ao excluir usuário", e);
