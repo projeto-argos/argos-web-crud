@@ -194,6 +194,11 @@ public class AnimalService {
             throw new ValidationException("O lote informado não existe ou foi excluído.");
         }
 
+        // lote de origem é opcional, se vier precisa existir
+        if (animal.getOriginLotId() != null && lotDAO.findById(animal.getOriginLotId()) == null) {
+            throw new ValidationException("O lote de origem informado não existe ou foi excluído.");
+        }
+
         Animal existing = animalDAO.findAnyByEarTagAndBatch(animal.getEarTag(), animal.getLotId());
         if (existing != null){
             boolean sameAnimal = !newAnimal && animal.getIdAnimal().equals(existing.getIdAnimal());
