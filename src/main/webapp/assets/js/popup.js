@@ -2,6 +2,17 @@
  * popup.js - abre e fecha pop-ups e reabre o pop-up
  */
 
+// Libera o formulário depois de um envio que não terminou
+function liberarFormulario(formulario) {
+    delete formulario.dataset.enviando;
+    formulario.querySelectorAll("button[type=submit]").forEach(function (botao) {
+        botao.disabled = false;
+        if (botao.dataset.textoOriginal) {
+            botao.textContent = botao.dataset.textoOriginal;
+        }
+    });
+}
+
 //  Abrir um pop-up
 function abrirPopup(botao) {
     const popup = document.getElementById(botao.dataset.abrir);
@@ -10,6 +21,8 @@ function abrirPopup(botao) {
     // Limpa o que foi digitado da última vez que o pop-up abriu
     // não limpa campos escondidos
     formulario.reset();
+
+    liberarFormulario(formulario);
 
     formulario.querySelectorAll("input[type=hidden]").forEach(function (campo) {
         if (campo.dataset.original === undefined) {
@@ -177,15 +190,7 @@ window.addEventListener("pageshow", function (evento) {
     if (!evento.persisted) {
         return;
     }
-    document.querySelectorAll("form[data-enviando]").forEach(function (formulario) {
-        delete formulario.dataset.enviando;
-        formulario.querySelectorAll("button[type=submit]").forEach(function (botao) {
-            botao.disabled = false;
-            if (botao.dataset.textoOriginal) {
-                botao.textContent = botao.dataset.textoOriginal;
-            }
-        });
-    });
+    document.querySelectorAll("form[data-enviando]").forEach(liberarFormulario);
 });
 
 document.addEventListener("DOMContentLoaded", function () {
