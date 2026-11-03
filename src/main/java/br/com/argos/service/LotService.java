@@ -4,6 +4,7 @@ import br.com.argos.dao.HerdDAO;
 import br.com.argos.dao.LotDAO;
 import br.com.argos.exceptions.RequiredFieldException;
 import br.com.argos.exceptions.ValidationException;
+import br.com.argos.model.Herd;
 import br.com.argos.model.Lot;
 import br.com.argos.util.FilterUtil;
 
@@ -153,7 +154,8 @@ public class LotService {
             throw new RequiredFieldException("rebanho");
         }
 
-        if (herdDAO.findById(lot.getHerdId()) == null) {
+        Herd herd = herdDAO.findById(lot.getHerdId());
+        if (herd == null) {
             throw new ValidationException("O rebanho informado não existe ou foi excluído.");
         }
 
@@ -175,12 +177,32 @@ public class LotService {
             throw new ValidationException("A contagem de cabeças não pode ser negativa.");
         }
 
+        validateHeadCountAgainstHerd(lot, herd);
+
         if (lot.getOpenDate() != null && lot.getOpenDate().isAfter(LocalDate.now())) {
             throw new ValidationException("A data de abertura não pode estar no futuro.");
         }
 
         if (lot.getOpenDate() != null && lot.getOpenDate().isBefore(LocalDate.of(1900, 1, 1))) {
             throw new ValidationException("A data de abertura não pode ser anterior a 1900.");
+        }
+    }
+
+    private void validateHeadCountAgainstHerd(Lot lot, Herd herd) {
+        int herdTotal = herd.getHeadCount() != null ? herd.getHeadCount() : 0;
+        int thisLot = lot.getHeadCount() != null ? lot.getHeadCount() : 0;
+
+        int otherLots = 0;
+        for (Lot other : lotDAO.findByHerd(lot.getHerdId())) {
+            boolean sameLot = lot.getIdLot() != null && lot.getIdLot().equals(other.getIdLot());
+            if (!sameLot && other.getHeadCount() != null) {
+                otherLots += other.getHeadCount();
+            }
+        }
+
+        if (otherLots + thisLot > herdTotal) {
+            throw new ValidationException("As cabeças dos lotes (" + (otherLots + thisLot)
+                    + ") não podem passar do total do rebanho (" + herdTotal + ").");
         }
     }
 
